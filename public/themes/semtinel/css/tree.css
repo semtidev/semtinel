@@ -1,0 +1,17 @@
+.nt-li:focus,
+.nt-li.active {
+  background-color: #f9fafb;
+  font-family: 'roboto-medium' !important;
+}
+.nt-li.active .nav-link {
+  font-family: 'roboto-medium' !important;
+}
+
+.nt-li:focus *,
+.nt-li.active * {
+  color: rgb(219, 92, 8) !important;
+}
+
+.nt-li>.d-flex:hover {
+  background-color: #f8f9fa;
+}

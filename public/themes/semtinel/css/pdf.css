@@ -1,0 +1,62 @@
+
+header {
+    position: fixed;
+    top: -100px;
+    left: 0px;
+    right: 0px;
+    padding: 10px 0;
+    height: 100px;
+    vertical-align: middle;
+}
+main {
+    padding: 0;
+}
+.pagenum {
+    font-size: 12px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    width: auto;
+}
+.headpage {
+    border-bottom: #999 1px solid;
+}
+/*.header-page { width: 100%; text-align: center; margin: 0; padding: 0;}*/
+p { page-break-after: always; }
+p:last-child { page-break-after: never; }
+.pagenum:after {
+    content: counter(page);
+}
+hr { margin: 50px auto; border-color: #ccc; }
+.page-break {
+    page-break-after: always;
+}
+.row-spacer {
+    font-size: 10px;
+}
+.pole {
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 0;
+}
+.title-document {
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 17px;
+    font-weight: 600;
+    padding: 5px 0;
+}
+.doc-label {
+    font-size: 12px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    width: auto;
+    color: rgb(90, 97, 109);
+}
+.doc-value {
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 0;
+}
+.table-params {
+    padding: 3px 7px;
+    border: 1px solid rgb(62, 66, 71);
+}
