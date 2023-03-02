@@ -8,10 +8,10 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td class="pole" valign="bottom">
-            Entrada de productos en obra
+            Entrada de Mercancía en Almac&eacute;n
         </td>
         <td width="50%" align="right">
-            <span class="doc-label">Proyecto:</span><br>
+            <span class="doc-label">Obra:</span><br>
             <span class="doc-value">{{ $project->name }}</span>
         </td>
     </tr>
@@ -19,19 +19,15 @@
 {{--  ORIGIN  --}}
 <table width="100%" border="1" cellpadding="0" cellspacing="0" style="margin-top: 20px">
     <tr>
-        <td width="25%" class="table-params">
+        <td width="35%" class="table-params">
             <span class="doc-label">Origen:</span><br>
             <span class="doc-value">{{ $origin }}</span>
         </td>
-        <td width="25%" class="table-params">
-            <span class="doc-label">Tipo de Documento:</span><br>
-            <span class="doc-value">{{ $document_type }}</span>
-        </td>
-        <td width="25%" class="table-params">
+        <td width="33%" class="table-params">
             <span class="doc-label">No. Documento:</span><br>
             <span class="doc-value">{{ $document_number }}</span>
         </td>
-        <td width="25%" class="table-params">
+        <td width="32%" class="table-params">
             <span class="doc-label">Orden de Compra:</span><br>
             <span class="doc-value">{{ $oc }}</span>
         </td>
@@ -113,7 +109,7 @@
             <span class="doc-value">{{ $warehouse_name }}</span>
         </td>
         <td width="35%" class="table-params">
-            <span class="doc-label">Responsable de Pañol:</span><br>
+            <span class="doc-label">Responsable:</span><br>
             <span class="doc-value">{{ $warehouse_owner }}</span>
         </td>
         <td class="table-params">

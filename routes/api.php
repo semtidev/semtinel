@@ -49,11 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('logistics/warehouse/{id}', [AdminController::class, "destroyWarehouse"])->name('api.admin.destroy.warehouse');
     // Logistics
     Route::get('logistics/entries/{pole}/{project}/{reload?}', [LogisticsController::class, "getEntries"])->name('logistics.api.get.entries');
+    Route::get('logistics/products_categories', [AdminController::class, "getProductsCategories"])->name('api.admin.get.productcategories');
     Route::post('logistics/entry/data', [OdooAeiController::class, "getEntryData"])->name('app.api.odoo.get.entry');
     Route::post('logistics/entry', [LogisticsController::class, "storeEntry"])->name('logistics.api.store.entry');
     Route::post('logistics/entry/upload', [LogisticsController::class, 'attachEntryScanning'])->name('logistics.api.upload.entry');
     Route::post('logistics/entry/confirm', [LogisticsController::class, 'confirmEntry'])->name('logistics.api.cofirm.entry');
     Route::post('logistics/entry/cancel', [LogisticsController::class, 'cancelEntry'])->name('logistics.api.cancel.entry');
+    Route::post('logistics/inventory/products', [LogisticsController::class, 'getInventoryProducts'])->name('logistics.api.inventory.products');
+    Route::post('logistics/inventory/lastproducts', [LogisticsController::class, 'getInventoryLastProducts'])->name('logistics.api.inventory.lastproducts');
+    Route::post('logistics/inventory/history/{entry?}/{product?}', [LogisticsController::class, 'getInventoryHistory'])->name('logistics.api.inventory.history');
 });
 
 // PDF routes

@@ -32,14 +32,14 @@ export default {
             cmp.project_name = cmp.projects[0]['name']
             localStorage.setItem('stnel_logist_pole', cmp.pole)
             localStorage.setItem('stnel_logist_project', cmp.project)
-            this.$router.push('/semtinel/logistics')
+            cmp.$router.push('/semtinel/logistics')
         },
         changeProject: function (project_id, project_name) {
             let cmp = this
             cmp.project = project_id
             cmp.project_name = project_name
             localStorage.setItem('stnel_logist_project', cmp.project)
-            this.$router.push('/semtinel/logistics')
+            cmp.$router.push('/semtinel/logistics')
         }
     },
     created() {
