@@ -60,15 +60,6 @@ const app = createApp({
                 // Projects store
                 localStorage.setItem('semtinel_projects', JSON.stringify(data))
             });
-        await fetch("http://localhost/semtinel/api/logistics/warehouses", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Warehouses store
-                localStorage.setItem('semtinel_warehouses', JSON.stringify(data))
-            });
     },
     mounted() {
         // Start bootstrap tooltips
@@ -91,19 +82,24 @@ const app = createApp({
             }
             else {
                 cmp.appurl = url
-                let url_parts = url.split('/')
+                let url_parts = url.split('/'), app_name_assigned = false, page_active_assigned = false
                 for (const appname in cmp.apps) {
                     const pages = cmp.apps[appname].split(',')
                     for (const key_page in pages) {
                         for (const key_part in url_parts) {
                             if (url_parts[key_part] == appname) {
                                 cmp.app_name = appname
+                                app_name_assigned = true
                             }
                             if (url_parts[key_part] == pages[key_page]) {
                                 cmp.page_active = pages[key_page]
+                                page_active_assigned = true
                             }
                         }
                     }
+                }
+                if (app_name_assigned && !page_active_assigned) {
+                    cmp.page_active = 'home'
                 }
             }
         },

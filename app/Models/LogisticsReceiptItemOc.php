@@ -18,6 +18,8 @@ class LogisticsReceiptItemOc extends Model
         'odoo_id_order_line',
         'odoo_id_order',
         'product_code', 
+        'category_name',
+        'category_complete_name', 
         'product_description', 
         'item_description',
         'um',

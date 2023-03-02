@@ -21,6 +21,7 @@ export default {
             docnum: '',
             product_quantity: '',
             cod_product: '',
+            oc: '',
             generic_descript: '',
             item_description: '',
             um: '',
@@ -33,12 +34,13 @@ export default {
         confirm_loading: false,
         cancel_loading: false,
         confirm_text: 'Confirmar',
-        session: JSON.parse(sessionStorage.getItem('semtinel'))
+        session: JSON.parse(sessionStorage.getItem('semtinel')),
+        pole: localStorage.getItem('stnel_logist_pole'),
+        project: localStorage.getItem('stnel_logist_project')
       };
     },
     created() {
         this.entry = JSON.parse(this.$route.params.entry)
-        console.log(this.entry)
         this.pagetitle = this.entry['document_number']
         if (this.entry['type'] == 'oc')
             this.table_oc = true
@@ -72,6 +74,7 @@ export default {
             if (cmp.table_oc) {
                 cmp.item_details = {
                     cod_product: cmp.entry['items'][idx].product_code,
+                    oc: cmp.entry['oc'],
                     generic_descript: cmp.entry['items'][idx].product_description,
                     item_description: cmp.entry['items'][idx].item_description,
                     um: cmp.entry['items'][idx].um,
@@ -85,6 +88,7 @@ export default {
             else {
                 cmp.item_details = {
                     cod_product: cmp.entry['items'][idx].product_code,
+                    oc: cmp.entry['items'][idx].oc,
                     docnum: cmp.entry['items'][idx].docnum,
                     item_description: cmp.entry['items'][idx].item_description,
                     um: cmp.entry['items'][idx].um,
@@ -111,20 +115,24 @@ export default {
         uploadDoc: function () {
             let cmp = this
             cmp.upload_form_loading = true
-            if (this.$refs.uploadFile.value == '') {
-                this.upload_form_error.error_text = 'Debe seleccionar el archivo que desea adjuntar.'
+            if (cmp.$refs.uploadFile.value == '') {
+                cmp.upload_form_error.error_text = 'Debe seleccionar el archivo que desea adjuntar.'
                 cmp.upload_form_loading = false
                 return
             }
-            this.upload_form_error.error_text = ''
+            cmp.upload_form_error.error_text = ''
             let data = new FormData(),
                 headers = {
                 'content-type': 'multipart/form-data',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            data.append('id', this.upload_id)
-            data.append('entry', this.upload_entry)
-            data.append('file', this.upload_file)
+            data.append('id', cmp.upload_id)
+            data.append('entry', cmp.upload_entry)
+            data.append('file', cmp.upload_file)
+            data.append('user', cmp.session.id)
+            data.append('pole', cmp.pole)
+            data.append('project', cmp.project)
+
             axios.post('http://localhost/semtinel/public/api/logistics/entry/upload', data, {
                     headers: headers
                 }).then(function (response) {
@@ -133,6 +141,8 @@ export default {
                         cmp.$refs.CloseUpload.click()
                         cmp.upload_form_loading = false
                         cmp.entry.attach_path = response.data.path
+                        let path_arr = cmp.entry.attach_path.split('.')
+                        cmp.entry.attach_type = path_arr[1]
                         toastr.success('El archivo fue adjuntado con éxito.')
                     }
                     else {
@@ -158,7 +168,10 @@ export default {
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
             axios.post('http://localhost/semtinel/public/api/logistics/entry/confirm', {
-                    'entry' : cmp.entry.id
+                    'entry' : cmp.entry.id,
+                    'user': cmp.session.id,
+                    'pole': cmp.pole,
+                    'project': cmp.project
                 }, {
                     headers: headers
                 }).then(function (response) {
@@ -188,7 +201,9 @@ export default {
             }
             axios.post('http://localhost/semtinel/public/api/logistics/entry/cancel', {
                     'entry' : cmp.entry.id,
-                    'user': cmp.session.email
+                    'user': cmp.session.id,
+                    'pole': cmp.pole,
+                    'project': cmp.project
                 }, {
                     headers: headers
                 }).then(function (response) {
@@ -266,7 +281,7 @@ export default {
                     :class="(entry.confirm == 1) ? 'disabled' : ''"
                     v-tooltip="'Cancelar entrada'"
                     v-on:click.stop="cancelEntry()">
-                  <i class="fas" :class="(cancel_loading) ? 'fa-spinner fa-pulse' : 'fa-times'"></i> Eliminar
+                  <i class="fas" :class="(cancel_loading) ? 'fa-spinner fa-pulse' : 'fa-times'"></i> Cancelar
                 </a>
             </div>
         <!-- /.col -->
@@ -279,7 +294,7 @@ export default {
                     <h6 class="p-0"><strong>{{ entry.origin }}</strong></h6>
                 </div>
                 <div class="form-group">
-                    <label class="mb-1">Typo de documento</label>
+                    <label class="mb-1">Tipo de documento</label>
                     <h6 class="p-0"><strong>{{ entry.document_type }}</strong></h6>
                 </div>
                 <div class="form-group">
@@ -321,11 +336,21 @@ export default {
                 <div class="form-group" >
                     <label class="mb-1">Documento escaneado</label><br>
                     <a href="javascript:void(0);" 
-                        v-if="entry.attach_path != '' && entry.attach_path != null"
+                        v-if="entry.attach_path != '' && entry.attach_path != null && entry.attach_type == 'pdf'"
                         v-on:click.stop="openScanner(entry.attach_path)">
-                        <img src="../../../../public/themes/semtinel/img/icon-pdf.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                        <img src="../../../../public/themes/semtinel/img/icon-pdf2.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
-                    <span class="badge badge-danger" v-if="entry.attach_path == '' || entry.attach_path == null">
+                    <a href="javascript:void(0);" 
+                        v-else-if="entry.attach_path != '' && entry.attach_path != null && entry.attach_type == 'png'"
+                        v-on:click.stop="openScanner(entry.attach_path)">
+                        <img src="../../../../public/themes/semtinel/img/icon-png.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                    </a>
+                    <a href="javascript:void(0);" 
+                        v-else-if="entry.attach_path != '' && entry.attach_path != null && entry.attach_type == 'jpg'"
+                        v-on:click.stop="openScanner(entry.attach_path)">
+                        <img src="../../../../public/themes/semtinel/img/icon-jpg.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                    </a>
+                    <span v-else class="badge badge-danger" v-if="entry.attach_path == '' || entry.attach_path == null">
                         No se ha adjuntado el documento escaneado aún.
                     </span>
                 </div>
@@ -457,10 +482,10 @@ export default {
                                         ref="uploadFile" 
                                         class="form-control" 
                                         type="file"
-                                        accept=".pdf" 
+                                        accept=".jpg,.jpeg,.png,.pdf" 
                                         v-on:change="onChangeFile">
                                     <span class="info-container">
-                                        <span class="text-sm text-muted">Seleccione solo archivos con extensión PDF</span>
+                                        <span class="text-sm text-muted">Seleccione solo archivos con extensiones PDF, JPG, JPEG, PNG</span>
                                     </span>
                                 </div>
                             </div>
@@ -509,6 +534,12 @@ export default {
                             <h6 class="detail-desc">{{ item_details.cod_product }}</h6>
                         </div>
                     </div>
+                    <div class="row py-1">
+                        <div class="col-md-12">
+                            <span class="detail-title">Orden de Compra</span>
+                            <h6 class="detail-desc">{{ item_details.oc }}</h6>
+                        </div>
+                    </div>
                     <div class="row py-1" v-if="table_oc && show_details">
                         <div class="col-md-12">
                             <span class="detail-title">Descripción del Producto</span>
@@ -527,7 +558,7 @@ export default {
                             <h6 class="detail-desc">{{ item_details.item_description.toUpperCase() }}</h6>
                         </div>
                     </div>
-                    <div class="row py-1">
+                    <div class="row py-1 mt-2">
                         <div :class="table_oc ? 'col-md-6' : 'col-md-4'">
                             <div class="text-center"><span class="detail-title">UM</span></div>
                             <h6 class="detail-desc text-center">{{ item_details.um }}</h6>

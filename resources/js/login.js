@@ -49,6 +49,7 @@ var login = createApp({
                 if (response.data.success) {
                     login.error_txt = ""
                     let user = {
+                        id: response.data.user.id,
                         email: response.data.user.email,
                         username: response.data.user.username,
                         first_name: response.data.user.first_name,
