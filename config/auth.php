@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'ldap' => [
+            'driver' => 'session',
+            'provider' => 'ldap',
+        ],
     ],
 
     /*
@@ -59,16 +63,29 @@ return [
     |
     */
 
-    'providers' => [
+    'providers' => [        
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'ldap' => [
+            'driver' => 'ldap',
+            'model' => LdapRecord\Models\OpenLDAP\User::class,
+            'rules' => [],
+            'database' => [
+                'model' => App\Models\User::class,
+                'sync_passwords' => true,
+                'sync_attributes' => [
+                    'first_name' => 'cn',
+                    'email' => 'mail',
+                    'username' => 'uid',
+                ],
+                'sync_existing' => [
+                    'email' => 'mail',
+                    'username' => 'uid',
+                ],
+            ],
+        ],
     ],
 
     /*
