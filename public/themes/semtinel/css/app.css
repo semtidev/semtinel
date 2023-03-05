@@ -45,6 +45,11 @@ a:active, a:focus {
     border: none;
 }
 
+.navbar-badge {
+    padding: 2px 3px !important;
+    font-family: 'Courier New', Courier, monospace !important;
+}
+
 .card .nav-link, .main-header .nav-link {
     color: #0c61b6 !important;
 }
@@ -363,7 +368,7 @@ form .info {
     color: #6d727a !important;
 }
 .empty-table {
-    color: #8c9199 !important;
+    color: #7b828d !important;
 }
 .mdi-20px {
     font-size: 20px !important;
@@ -392,7 +397,7 @@ table.dataTable.no-footer {
     border-bottom: 1px solid rgba(37, 40, 44, 0.9);
 }
 .badge-warning {
-    background-color: #e77635 !important;
+    background-color: #ff7332 !important;
 }
 .badge-dark {
     background-color: #4e5e6d !important;
@@ -531,12 +536,12 @@ table.dataTable.no-footer {
 .nav-pills .nav-link.active:hover {
     color: #fff !important;
 }
-.card-tools button {
+.filters-panel .card-tools button {
     color: #0c61b6;
     font-family: 'roboto' !important;
     font-size: 14px !important;
 }
-.card-tools button:hover {
+.filters-panel .card-tools button:hover {
     background-color: #fff;
     border-color: #dddddd !important;
     color: #024991;

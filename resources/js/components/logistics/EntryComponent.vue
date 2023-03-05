@@ -861,12 +861,12 @@ export default {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">Cantidad recibida:</label>
+                                    <label for="received_quantity">Cantidad recibida:</label>
                                     <input type="number" 
                                         class="form-control"
                                         :class="item_form_error.received_quantity ? 'border-error' : ''"
-                                        id="name"
-                                        name="name"
+                                        id="received_quantity"
+                                        name="received_quantity"
                                         step=".01"
                                         min="0"
                                         v-model="item_form_data.received_quantity">

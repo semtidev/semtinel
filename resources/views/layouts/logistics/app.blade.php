@@ -68,22 +68,47 @@
               @endisset
             </a>
             <div class="dropdown-menu dropdown-menu-right" style="left: inherit; right: 0px;">
+              
               <a href="logout" class="dropdown-item">
                 <i class="mdi mdi-power-plug-off"></i>&nbsp;Desconectar
               </a>
+
               <a href="admin" class="dropdown-item">
-                <i class="mdi mdi-cog"></i>&nbsp;Configuración
+                <i class="mdi mdi-cog"></i>&nbsp;Administrador
               </a>
+              
             </div>
           </li>
+          
           <li class="nav-item">
-            <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+            <a class="nav-link" data-widget="fullscreen" href="#" role="button" v-tooltip="'Pantalla Completa'">
               <i class="fas fa-expand-arrows-alt"></i>
             </a>
           </li>
+
           <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-              <i class="fas fa-th-large"></i>
+            <a 
+              class="nav-link" 
+              href="javascript:void(0);" 
+              role="button"
+              data-toggle="modal" 
+              data-target="#modal-role-cart"
+              v-tooltip="'Carrito de Productos'"
+              v-on:click="$root.calcTotalsCart()">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="badge badge-warning navbar-badge" v-if="$root.cart_quantity > 0">@{{ $root.cart_quantity }}</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a 
+              class="nav-link" 
+              data-widget="control-sidebar" 
+              data-controlsidebar-slide="true" 
+              href="#" 
+              role="button"
+              v-tooltip="'Configuración'">
+              <i class="fas fa-cog"></i>
             </a>
           </li>
         </ul>
@@ -140,6 +165,93 @@
       <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
+
+    <!-- Modal Cart -->
+    <div class="modal fade" id="modal-role-cart">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header header-info">
+                  <h4 class="modal-title"><span class="mdi mdi-cart"></span> Carrito de Productos</h4>
+                  <button type="button" 
+                      ref="CartClose" 
+                      class="close"
+                      data-dismiss="modal" 
+                      aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body rounded-bottom py-1 px-3">
+                  <div class="row">
+                      <div class="col-md-12">
+                        <div class="col-12 py-5 text-center empty-table" v-show="$root.cart_quantity == 0">
+                          <h5 class="text-navy">
+                            Ning&uacute;n producto ha sido agregado al carrito.
+                          </h5>
+                          <h6>
+                            Para agregar productos al carrito diríjase al Inventario para seleccionar los que desee.
+                          </h6>
+                          <br>
+                          <a 
+                            href="javascript:void(0);" 
+                            class="btn btn-secondary"
+                            v-on:click.stop="$root.goToInventory()">Ir al Inventario de Productos</a>
+                        </div>
+                        <table class="table table-striped" v-show="$root.cart_quantity > 0">
+                          <thead>
+                          <tr>
+                              <th>Descripci&oacute;n</th>
+                              <th width="80" class="text-center">UM</th>
+                              <th width="70" class="text-center">Ctdad</th>
+                              <th width="80" class="text-right">Precio</th>
+                              <th width="80" class="text-right">Total</th>
+                              <th width="50"></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="(item, idx) in $root.cart_items" :key="item.id">
+                              <td>@{{ item.description }}</td>
+                              <td class="text-center">@{{ item.um }}</td>
+                              <td class="text-center">@{{ item.quantity }}</td>
+                              <td class="text-right">@{{ item.price_unit }}</td>
+                              <td class="text-right">@{{ item.price_total }}</td>
+                              <td class="text-right">
+                                  <a href="javascript:void(0);"
+                                      class="btn-semti-tool"
+                                      style="padding: 4px 5px;"
+                                      v-tooltip="'Eliminar este producto del carrito'"
+                                      v-on:click.stop="$root.removeFromCart(idx)">
+                                      <span class="mdi mdi-trash-can-outline mdi-18px text-danger"></span>
+                                  </a>
+                              </td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td><strong>TOTAL</strong></td>
+                              <td></td>
+                              <td class="text-center"><strong>@{{ $root.cart_totals.quantity }}</strong></td>
+                              <td></td>
+                              <td class="text-right"><strong>$@{{ parseFloat($root.cart_totals.price_total).toFixed(2) }}</strong></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                  </div>
+                </div>
+              <div class="modal-footer justify-content-between" v-show="$root.cart_quantity > 0">
+                  <button type="button" class="btn btn-default ripple" data-dismiss="modal">Cancelar</button>
+                  <button type="button" 
+                  class="btn btn-primary ripple btn-secondary">
+                      <i class="mdi mdi-cart-arrow-right"></i>
+                      &nbsp;Crear Salida
+                  </button>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- /.Modal Cart -->
+
   </div>
 
   <!-- jQuery -->

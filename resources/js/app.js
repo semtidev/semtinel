@@ -29,6 +29,12 @@ const app = createApp({
             },
             app_name: 'semtinel',
             page_active: 'home',
+            cart_items: [],
+            cart_quantity: 0,
+            cart_totals: {
+                quantity: 0,
+                price_total: 0
+            },
             session: JSON.parse(sessionStorage.getItem('semtinel'))
         };
     },
@@ -74,6 +80,11 @@ const app = createApp({
         }
     },
     methods: {
+        
+        /**
+         *  Main App
+         */
+
         setAppActive: function (url = 'home') {
             const cmp = this
             if (url == 'home') {
@@ -105,6 +116,34 @@ const app = createApp({
         },
         changeAppActive: function() {
             LogisticsSidebarComponent.data.page_active = 'home'
+        },
+
+        /**
+         *  Logistic App
+         */
+
+        goToInventory: function () {
+            this.$refs.CartClose.click()
+            this.$router.push('/semtinel/logistics/inventory')
+        },
+        calcTotalsCart: function () {
+            let cmp = this
+            if (cmp.cart_quantity == 0) {
+                return;
+            }
+            // initialize quantities
+            cmp.cart_totals.quantity = 0
+            cmp.cart_totals.price_total = 0
+            cmp.cart_items.map(function(product) {
+                cmp.cart_totals.quantity += parseFloat(product.quantity)
+                cmp.cart_totals.price_total += parseFloat(product.price_total)
+            });
+        },
+        removeFromCart: function (idx) {
+            let cmp = this
+            cmp.cart_items.splice(idx, 1)
+            cmp.cart_quantity -= 1
+            cmp.calcTotalsCart()
         }
     }
 });
