@@ -496,6 +496,7 @@ class LogisticsController extends Controller
                             'category_complete_name' => $product->category_complete_name,
                             'description' => $product->item_description,
                             'um' => $product->um,
+                            'price_unit' => $product->price_unit,
                             'quantity' => number_format($product->received_quantity, 3, '.', ' '),
                             'warehouse_id' => $entry->warehouse_id,
                             'warehouse_name' => $entry->warehouse_name,
@@ -651,7 +652,7 @@ class LogisticsController extends Controller
                             'stowage_card' => $product->stowage_card,
                             'type' => $type
                         );
-                    }                    
+                    }
                 }
             }
         } catch (Throwable $th) {

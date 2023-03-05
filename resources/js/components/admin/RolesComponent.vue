@@ -302,32 +302,32 @@ export default {
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(item, idx) in roles" :key="item.id">
-                                <td class="text-center">{{ idx + 1 }}</td>
-                                <td>{{ item.name }}</td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0);"
-                                        class="btn-semti-tool"
-                                        style="padding: 4px 5px;"
-                                        data-toggle="modal" 
-                                        data-target="#modal-role-form"
-                                        v-tooltip="'Modificar este Rol'"
-                                        v-on:click="edit(item.id, item.name, item.owner, item.active)">
-                                        <span class="mdi mdi-pencil mdi-18px text-orange"></span>
-                                    </a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0);"
-                                        class="btn-semti-tool"
-                                        style="padding: 4px 5px;"
-                                        data-toggle="modal" 
-                                        data-target="#modal-role-delete"
-                                        v-tooltip="'Eliminar este Rol'"
-                                        v-on:click="deleteDialog(item.id, item.name)">
-                                        <span class="mdi mdi-trash-can-outline mdi-18px text-danger"></span>
-                                    </a>
-                                </td>
-                            </tr>
+                                <tr v-for="(item, idx) in roles" :key="item.id">
+                                    <td class="text-center">{{ idx + 1 }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td class="text-center">
+                                        <a href="javascript:void(0);"
+                                            class="btn-semti-tool"
+                                            style="padding: 4px 5px;"
+                                            data-toggle="modal" 
+                                            data-target="#modal-role-form"
+                                            v-tooltip="'Modificar este Rol'"
+                                            v-on:click="edit(item.id, item.name, item.owner, item.active)">
+                                            <span class="mdi mdi-pencil mdi-18px text-orange"></span>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:void(0);"
+                                            class="btn-semti-tool"
+                                            style="padding: 4px 5px;"
+                                            data-toggle="modal" 
+                                            data-target="#modal-role-delete"
+                                            v-tooltip="'Eliminar este Rol'"
+                                            v-on:click="deleteDialog(item.id, item.name)">
+                                            <span class="mdi mdi-trash-can-outline mdi-18px text-danger"></span>
+                                        </a>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

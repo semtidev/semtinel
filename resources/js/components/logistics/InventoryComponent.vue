@@ -52,6 +52,18 @@ export default {
             warehouse_owner: 0,
             stowage_card: ''
         },
+        productcart: {
+            id: 0,
+            desc: '',
+            um: '',
+            quantity: '',
+            price_unit: '',
+            price_total: ''
+        },
+        productcart_form_loading: false,
+        productcart_quantity: 1,
+        productcart_error: false,
+        productcart_form_okbtn_text: 'Aceptar',
         show_details: false,
         datatable_language: {
             "decimal": "",
@@ -100,6 +112,38 @@ export default {
         listReload: function () {
             //this.getEntriesTable(true)
         },
+        addCart: function (product) {
+            let cmp = this
+            cmp.productcart = {
+                id: product.id,
+                description: product.description,
+                um: product.um,
+                quantity: 1,
+                price_unit: parseFloat(product.price_unit).toFixed(2),
+                price_total: 1 * parseFloat(product.price_unit).toFixed(2)
+            }
+            cmp.productcart_quantity = 1
+        },
+        processAddCart: function () {
+            let cmp = this, exists = false, total
+            cmp.$root.cart_items.map(function(product, idx) {
+                if (product.id == cmp.productcart.id) {
+                    cmp.$root.cart_items[idx].quantity = cmp.productcart_quantity
+                    total = cmp.productcart_quantity * parseFloat(cmp.$root.cart_items[idx].price_unit).toFixed(2)
+                    total = parseFloat(total).toFixed(2)
+                    cmp.$root.cart_items[idx].price_total = total
+                    exists = true
+                }
+            })
+            cmp.productcart.quantity = cmp.productcart_quantity
+            cmp.productcart.price_total = cmp.productcart_quantity * parseFloat(cmp.productcart.price_unit).toFixed(2)
+            cmp.productcart.price_total = parseFloat(cmp.productcart.price_total).toFixed(2)
+            if (!exists) {
+                cmp.$root.cart_items.push(cmp.productcart)
+                cmp.$root.cart_quantity++
+            }            
+            cmp.$refs.addCartClose.click() 
+        },
         filterApply: function () {
             let cmp = this
             cmp.products_loading = true
@@ -137,7 +181,7 @@ export default {
                             [10, 15, 25, 50, "Todos"],
                         ],
                         pageLength: 10,
-                        //order: [[5, 'asc']],
+                        order: [[0, 'asc']],
                         "columnDefs": [{
                             "targets": 'no-sort',
                             "orderable": false,
@@ -175,7 +219,7 @@ export default {
                             [10, 15, 25, 50, "Todos"],
                         ],
                         pageLength: 10,
-                        //order: [[5, 'asc']],
+                        order: [[0, 'asc']],
                         "columnDefs": [{
                             "targets": 'no-sort',
                             "orderable": false,
@@ -334,7 +378,7 @@ export default {
                                 [10, 15, 25, 50, "Todos"],
                             ],
                             pageLength: 10,
-                            order: [[1, 'asc']],
+                            order: [[0, 'asc']],
                             "columnDefs": [{
                                 "targets": 'no-sort',
                                 "orderable": false,
@@ -414,10 +458,10 @@ export default {
         :project="project_name">
     </page-header>
 
-    <div class="card card-default" v-if="tabactive == 1">
+    <div class="card card-default filters-panel" v-if="tabactive == 1">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-filter" :class="(filter_apply) ? 'text-green' : ''"></i>&nbsp;Filtros
+                <i class="fas fa-filter" :class="(filter_apply) ? 'text-danger' : ''"></i>&nbsp;Filtros
                 <small v-if="filter_apply">(<i>Filtro aplicado</i>)</small>
             </h3>
             <div class="card-tools">
@@ -587,9 +631,10 @@ export default {
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
-                                    data-target="#modal-item-form"
-                                    v-tooltip="'Agregar al carrito'">
-                                    <span class="mdi mdi-cart mdi-18px text-danger"></span>
+                                    data-target="#modal-item-addcart"
+                                    v-tooltip="'Agregar al carrito'"
+                                    v-on:click="addCart(item)">
+                                    <span class="mdi mdi-cart mdi-18px text-orange"></span>
                                 </a>
                             </td>
                         </tr>
@@ -788,4 +833,58 @@ export default {
         </div>
     </div>
     <!-- /.Modal History -->
+
+    <!-- Modal Add Cart -->
+    <div class="modal fade" id="modal-item-addcart">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header header-green">
+                    <h4 class="modal-title">Agregar Producto al carrito</h4>
+                    <button type="button" 
+                        ref="addCartClose" 
+                        class="close"
+                        data-dismiss="modal" 
+                        aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-4 rounded-bottom pb-2">
+                    <div class="row py-1">
+                        <div class="col-12 pb-2">
+                            <span class="detail-title">Descripción</span>
+                            <h6 class="detail-desc">{{ productcart.description }}</h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="productcart_quantity" class="detail-title mb-1">Cantidad:</label>
+                                <input type="number" 
+                                    class="form-control"
+                                    :class="productcart_error ? 'border-error' : ''"
+                                    id="productcart_quantity"
+                                    name="productcart_quantity"
+                                    step=".01"
+                                    min="1"
+                                    v-model="productcart_quantity"
+                                    v-on:keyup.enter="processAddCart()">
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="button" 
+                                class="btn btn-primary btn-green ripple"
+                                style="margin-top: 32px;"
+                                :disabled="productcart_form_loading"
+                                v-on:click.stop="processAddCart()">
+                                <i class="mdi mdi-check-all" v-if="!productcart_form_loading"></i>
+                                <i class="mdi mdi-loading mdi-spin" v-else></i>
+                                {{ productcart_form_okbtn_text }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.Modal Add Cart -->
 </template>
