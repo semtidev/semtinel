@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SystStructurePart extends Model
+class SystStructureEop extends Model
 {
-    protected $table = 'syst_structure_parts';
+    protected $table = 'syst_structure_eop';
     public $timestamps = false;
 
     /**
@@ -15,6 +15,6 @@ class SystStructurePart extends Model
      * @var array
      */
     protected $fillable = [
-        'id_object', 'name', 'parent', 'node_order', 'abbr', 'active',
+        'id_project', 'description', 'parent', 'active',
     ];
 }

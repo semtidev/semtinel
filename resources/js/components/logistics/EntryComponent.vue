@@ -452,7 +452,7 @@ export default {
         // Asign proyects and select first
         this.changePole(this.store_poles[0]['id'], this.store_poles[0]['abbr'])
     }
-};
+}
 </script>
 
 <template>
