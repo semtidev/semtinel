@@ -36,7 +36,7 @@ export default {
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'entries') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-format-list-bulleted-square"></i>
-                    <p class="text">Entradas en obra</p>
+                    <p class="text">Todas las Entradas</p>
                 </router-link>
             </li>
             <li class="nav-header">INVENTARIOS</li>
@@ -65,7 +65,7 @@ export default {
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'outputs') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-format-list-bulleted-square"></i>
-                    <p class="text">Salidas de pañol</p>
+                    <p class="text">Todas las Salidas</p>
                 </router-link>
             </li>
             <li class="nav-header">NOTIFICACIONES</li>

@@ -11,8 +11,11 @@ use App\Models\SystWarehouse;
 use App\Models\RolePermission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Models\LogisticsReceiptItemOc;
+use App\Models\LogisticsReceiptItemDispatch;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Guid\Fields;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -91,6 +94,36 @@ class AdminController extends Controller
             );
         }
         return response()->json($warehouses,200);
+    }
+
+    /**
+     * Get Products Categories.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getProductsCategories()
+    {
+        $categories = array();
+
+        $qry_categories_oc = LogisticsReceiptItemOc::select(DB::raw('DISTINCT(category_name)'))
+                                ->select('category_name', 'category_complete_name')
+                                ->get();
+        foreach ($qry_categories_oc as $categorie) {
+            if (array_key_exists($categorie->category_name, $categories) === false && $categorie->category_name != null && $categorie->category_complete_name != null) {
+                $categories[$categorie->category_name] = $categorie->category_complete_name;
+            }            
+        }
+
+        $qry_categories_disp = LogisticsReceiptItemDispatch::select(DB::raw('DISTINCT(category_name)'))
+                                ->select('category_name', 'category_complete_name')
+                                ->get();
+        foreach ($qry_categories_disp as $categorie) {
+            if (array_key_exists($categorie->category_name, $categories) === false && $categorie->category_name != null && $categorie->category_complete_name != null) {
+                $categories[$categorie->category_name] = $categorie->category_complete_name;
+            }            
+        }
+
+        return response()->json($categories,200);
     }
     
     /**

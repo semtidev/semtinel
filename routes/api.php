@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StructureController;
+use App\Http\Controllers\AppController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OdooAeiController;
 use App\Http\Controllers\LogisticsController;
@@ -27,6 +28,8 @@ Route::put('structure', [StructureController::class, "updateStructure"])->name('
 Route::post('structure/delete', [StructureController::class, "deleteStructure"])->name('delete.structure');
 
 Route::middleware('auth:sanctum')->group(function () {
+    // System
+    Route::get('eop/{project}/{parent?}', [AppController::class, "treeEop"])->name('api.system.get.eop');
     // Poles & Projects
     Route::get('poles', [AdminController::class, "getPoles"])->name('api.admin.get.poles');
     Route::get('projects', [AdminController::class, "getProjects"])->name('api.admin.get.projects');
@@ -50,11 +53,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('logistics/warehouse/{id}', [AdminController::class, "destroyWarehouse"])->name('api.admin.destroy.warehouse');
     // Logistics
     Route::get('logistics/entries/{pole}/{project}/{reload?}', [LogisticsController::class, "getEntries"])->name('logistics.api.get.entries');
+    Route::get('logistics/products_categories', [AdminController::class, "getProductsCategories"])->name('api.admin.get.productcategories');
     Route::post('logistics/entry/data', [OdooAeiController::class, "getEntryData"])->name('app.api.odoo.get.entry');
     Route::post('logistics/entry', [LogisticsController::class, "storeEntry"])->name('logistics.api.store.entry');
     Route::post('logistics/entry/upload', [LogisticsController::class, 'attachEntryScanning'])->name('logistics.api.upload.entry');
     Route::post('logistics/entry/confirm', [LogisticsController::class, 'confirmEntry'])->name('logistics.api.cofirm.entry');
     Route::post('logistics/entry/cancel', [LogisticsController::class, 'cancelEntry'])->name('logistics.api.cancel.entry');
+    Route::post('logistics/inventory/products', [LogisticsController::class, 'getInventoryProducts'])->name('logistics.api.inventory.products');
+    Route::post('logistics/inventory/lastproducts', [LogisticsController::class, 'getInventoryLastProducts'])->name('logistics.api.inventory.lastproducts');
+    Route::post('logistics/inventory/history/{entry?}/{product?}', [LogisticsController::class, 'getInventoryHistory'])->name('logistics.api.inventory.history');
 });
 
 // PDF routes

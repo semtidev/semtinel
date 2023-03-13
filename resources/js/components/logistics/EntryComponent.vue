@@ -48,6 +48,7 @@ export default {
             docnum: '',
             product_quantity: '',
             cod_product: '',
+            oc: '',
             generic_descript: '',
             item_description: '',
             um: '',
@@ -214,6 +215,7 @@ export default {
             if (cmp.table_oc) {
                 cmp.item_details = {
                     cod_product: cmp.items[idx].cod_product,
+                    oc: cmp.items[idx].oc,
                     generic_descript: cmp.items[idx].generic_descript,
                     item_description: cmp.items[idx].item_description,
                     um: cmp.items[idx].um,
@@ -227,6 +229,7 @@ export default {
             else {
                 cmp.item_details = {
                     cod_product: cmp.items[idx].cod_product,
+                    oc: cmp.items[idx].oc,
                     docnum: cmp.items[idx].docnum,
                     item_description: cmp.items[idx].item_description,
                     um: cmp.items[idx].um,
@@ -408,7 +411,7 @@ export default {
                     'items': cmp.items,
                     'destin': cmp.destiny_data,
                     'status': cmp.entry_status,
-                    'user': cmp.session.email
+                    'user': cmp.session.id
                 }, {
                     headers: headers
                 }).then(function (response) {
@@ -449,7 +452,7 @@ export default {
         // Asign proyects and select first
         this.changePole(this.store_poles[0]['id'], this.store_poles[0]['abbr'])
     }
-};
+}
 </script>
 
 <template>
@@ -858,12 +861,12 @@ export default {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">Cantidad recibida:</label>
+                                    <label for="received_quantity">Cantidad recibida:</label>
                                     <input type="number" 
                                         class="form-control"
                                         :class="item_form_error.received_quantity ? 'border-error' : ''"
-                                        id="name"
-                                        name="name"
+                                        id="received_quantity"
+                                        name="received_quantity"
                                         step=".01"
                                         min="0"
                                         v-model="item_form_data.received_quantity">
@@ -940,6 +943,12 @@ export default {
                             <h6 class="detail-desc">{{ item_details.cod_product }}</h6>
                         </div>
                     </div>
+                    <div class="row py-1">
+                        <div class="col-md-12">
+                            <span class="detail-title">Orden de Compra</span>
+                            <h6 class="detail-desc">{{ item_details.oc }}</h6>
+                        </div>
+                    </div>
                     <div class="row py-1" v-if="table_oc && show_details">
                         <div class="col-md-12">
                             <span class="detail-title">Descripción del Producto</span>
@@ -958,7 +967,7 @@ export default {
                             <h6 class="detail-desc">{{ item_details.item_description.toUpperCase() }}</h6>
                         </div>
                     </div>
-                    <div class="row py-1">
+                    <div class="row py-1 mt-2">
                         <div :class="table_oc ? 'col-md-6' : 'col-md-4'">
                             <div class="text-center"><span class="detail-title">UM</span></div>
                             <h6 class="detail-desc text-center">{{ item_details.um }}</h6>
@@ -1013,7 +1022,7 @@ export default {
                 <div class="float-start" style="width: 70px"><i class="mdi mdi-chat-question mdi-48px"></i></div>
                 <div class="float-start pt-3" style="width: 85%">
                     <p>
-                        Se registrará una nueva Entrada desde "<strong>{{ origin_data.origin }}</strong>" del documento No. "<strong>{{ origin_data.docnum_value }}</strong>", con la recepción de "<strong>{{ items_selected }} Renglones</strong>" en envío de mercancia a la obra, hacia el pañol "<strong>{{ destiny_data.warehouse_name }}</strong>".<br>¿Confirma que desea realizar esta operación?
+                        Se registrará una nueva Entrada desde "<strong>{{ origin_data.origin }}</strong>" del documento No. "<strong>{{ origin_data.docnum_value }}</strong>", con la recepción de "<strong>{{ items_selected }} Renglones</strong>" en envío de mercancia a la obra, hacia el destino "<strong>{{ destiny_data.warehouse_name }}</strong>".<br>¿Confirma que desea realizar esta operación?
                     </p>
                 </div>
             </div>
