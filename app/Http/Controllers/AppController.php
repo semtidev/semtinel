@@ -50,7 +50,6 @@ class AppController extends Controller
             }
         }
 
-        $response = array('success' => true, 'tree' => $tree);
-        return response()->json($response, 200);
+        return $tree;
     }
 }

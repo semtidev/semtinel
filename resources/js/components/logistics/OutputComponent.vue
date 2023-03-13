@@ -37,7 +37,7 @@ export default {
             })
             .then((response) => response.json())
             .then((data) => {
-                cmp.tree_eop = data.tree
+                cmp.tree_eop = data
             });
     },
     components: {
