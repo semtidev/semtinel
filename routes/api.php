@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StructureController;
+use App\Http\Controllers\AppController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OdooAeiController;
 use App\Http\Controllers\LogisticsController;
@@ -26,6 +27,8 @@ Route::put('structure', [StructureController::class, "updateStructure"])->name('
 Route::post('structure/delete', [StructureController::class, "deleteStructure"])->name('delete.structure');
 
 Route::middleware('auth:sanctum')->group(function () {
+    // System
+    Route::get('eop/{project}/{parent?}', [AppController::class, "treeEop"])->name('api.system.get.eop');
     // Poles & Projects
     Route::get('poles', [AdminController::class, "getPoles"])->name('api.admin.get.poles');
     Route::get('projects', [AdminController::class, "getProjects"])->name('api.admin.get.projects');

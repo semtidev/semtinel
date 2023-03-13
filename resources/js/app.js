@@ -126,6 +126,10 @@ const app = createApp({
             this.$refs.CartClose.click()
             this.$router.push('/semtinel/logistics/inventory')
         },
+        goToOutput: function () {
+            this.$refs.CartClose.click()
+            this.$router.push('/semtinel/logistics/output')
+        },
         calcTotalsCart: function () {
             let cmp = this
             if (cmp.cart_quantity == 0) {

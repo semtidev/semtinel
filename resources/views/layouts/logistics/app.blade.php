@@ -242,7 +242,8 @@
               <div class="modal-footer justify-content-between" v-show="$root.cart_quantity > 0">
                   <button type="button" class="btn btn-default ripple" data-dismiss="modal">Cancelar</button>
                   <button type="button" 
-                  class="btn btn-primary ripple btn-secondary">
+                    class="btn btn-primary ripple btn-secondary"
+                    v-on:click.stop="$root.goToOutput()">
                       <i class="mdi mdi-cart-arrow-right"></i>
                       &nbsp;Crear Salida
                   </button>

@@ -553,12 +553,12 @@ export default {
                         @click="tabactive = 1">Productos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#lastentries" data-toggle="tab"
-                        @click="tabactive = 2">Últimas entradas</a>
+                    <a class="nav-link" href="#timeline" data-toggle="tab"
+                        @click="tabactive = 2">Historial</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#timeline" data-toggle="tab"
-                        @click="tabactive = 3">Historial</a>
+                    <a class="nav-link" href="#lastentries" data-toggle="tab"
+                        @click="tabactive = 3">Últimas entradas</a>
                 </li>
             </ul>
             <div class="inventory-period float-end pr-1" v-if="tabactive == 2 || tabactive == 3">
@@ -641,11 +641,19 @@ export default {
                     </tbody>
                 </table>
                 <!--  / Products table -->
-
             </div>
             <!-- /.tab-pane -->
 
-            <div class="tab-pane" id="lastentries" v-if="tabactive == 2">
+            <div class="tab-pane" id="timeline" v-if="tabactive == 2">
+                <timeline
+                    :history="history"
+                    :history_loading="history_loading"
+                    :history_empty="history_empty">
+                </timeline>
+            </div>
+            <!-- /.tab-pane -->
+
+            <div class="tab-pane" id="lastentries" v-if="tabactive == 3">
                 
                 <!-- loading -->
                 <div class="row" :class="!lastproducts_loading ? 'hidden' : ''">
@@ -711,16 +719,6 @@ export default {
                     </tbody>
                 </table>
                 <!--  / Products table -->
-
-            </div>
-            <!-- /.tab-pane -->
-
-            <div class="tab-pane" id="timeline" v-if="tabactive == 3">
-                <timeline
-                    :history="history"
-                    :history_loading="history_loading"
-                    :history_empty="history_empty">
-                </timeline>
             </div>
             <!-- /.tab-pane -->
 
@@ -856,7 +854,18 @@ export default {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="productcart_um" class="detail-title mb-1">UM:</label>
+                                <input type="text" 
+                                    class="form-control"
+                                    id="productcart_um"
+                                    name="productcart_um"
+                                    disabled="true"
+                                    v-model="productcart.um">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="productcart_quantity" class="detail-title mb-1">Cantidad:</label>
                                 <input type="number" 
@@ -870,10 +879,10 @@ export default {
                                     v-on:keyup.enter="processAddCart()">
                             </div>
                         </div>
-                        <div class="col-md-6 text-right">
+                        <div class="col-md-4 text-right">
                             <button type="button" 
                                 class="btn btn-primary btn-green ripple"
-                                style="margin-top: 32px;"
+                                style="margin-top: 28px;"
                                 :disabled="productcart_form_loading"
                                 v-on:click.stop="processAddCart()">
                                 <i class="mdi mdi-check-all" v-if="!productcart_form_loading"></i>
