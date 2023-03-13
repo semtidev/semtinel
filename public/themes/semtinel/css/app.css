@@ -296,7 +296,13 @@ form .btn-secondary:hover, .btn-secondary:active, .btn-secondary:visited, .btn-s
     background-color: #0f314b;
     border-color: #0f314b;
 }
-input[type=text]:focus, input[type=file]:focus, input[type=number]:focus, input[type=search]:focus, textarea:focus, select:focus {
+input[type=text]:focus, 
+input[type=file]:focus, 
+input[type=number]:focus, 
+input[type=search]:focus, 
+textarea:focus, 
+select:focus,
+.vue-treeselect__control:focus-within {
     outline: none !important;
     border:#32B751 1px solid !important;
     border-color: #32B751 !important;
