@@ -69,7 +69,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right" style="left: inherit; right: 0px;">
               
-              <a href="logout" class="dropdown-item">
+              <a href="/semtinel/logout" class="dropdown-item">
                 <i class="mdi mdi-power-plug-off"></i>&nbsp;Desconectar
               </a>
 

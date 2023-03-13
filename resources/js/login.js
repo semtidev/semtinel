@@ -36,7 +36,8 @@ var login = createApp({
     },
     methods: {
         async login(method){
-            let cmp = this;
+            let cmp = this,
+                path = (method == 'auth') ? 'login/auth' : 'login/ldap';
             cmp.form_processing = true
             if (method == 'ldap') {
                 cmp.login_windows = "Validando usuario..."
@@ -44,8 +45,8 @@ var login = createApp({
             else {
                 cmp.login_semtinel = "Validando usuario..."
             }
-            //await axios.get('sanctum/csrf-cookie')
-            await axios.post('api/login',this.auth).then(function (response) {
+            await axios.get('sanctum/csrf-cookie')
+            await axios.post('api/' + path, this.auth).then(function (response) {
                 if (response.data.success) {
                     login.error_txt = ""
                     let user = {

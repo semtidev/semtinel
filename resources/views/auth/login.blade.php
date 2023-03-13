@@ -73,6 +73,7 @@
                                         class="form-control @error('password') is-invalid @enderror" 
                                         v-model="auth.password"
                                         placeholder="Contrase&ntilde;a" 
+                                        v-on:keyup.enter="login('ldap')"
                                         required>
                                     <div class="input-group-append">
                                         <div class="input-group-text">

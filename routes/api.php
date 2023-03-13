@@ -20,8 +20,8 @@ use App\Http\Controllers\LogisticsController;
 |
 */
 
-Route::post('login', [AuthController::class, "login"])->name('api.login');
-Route::post('loginldap', [AuthController::class, "loginLdap"]);
+Route::post('login/auth', [AuthController::class, "login"])->name('api.login.auth');
+Route::post('login/ldap', [AuthController::class, "loginLdap"])->name('api.login.ldap');
 
 Route::get('tree_structures', [StructureController::class, "getTreeStructures"])->name('get.treestructures');
 Route::put('structure', [StructureController::class, "updateStructure"])->name('update.structure');

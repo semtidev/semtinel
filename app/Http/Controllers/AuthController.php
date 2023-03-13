@@ -19,24 +19,39 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {        
-        if (!Auth::guard('web')->attempt($request->only('username', 'password'))) {
-            return response()->json([
-             'message' => 'Invalid user'
-           ], 401);
-        }
-
-        $user = User::where('username', $request['username'])->firstOrFail();
-             $token = $user->createToken('authToken')->plainTextToken;
-        $redirectTo = route('app');
-        $response = array(
-           'success' => true,
-           'access_token' => $token,
-           'token_type' => 'Bearer',
-           'user' => $user, 
-           'redirect' => $redirectTo
+        $credentials = $request->all();
+        if (Auth::attempt($credentials, true)) {
+            
+            $user = Auth::getProvider()->retrieveByCredentials($credentials);
+            Auth::login($user);
+            $token   = $user->createToken('auth_token')->plainTextToken;
+            $client  = getIP();
+            
+            // Init session
+            session_start();
+            $session = array(
+                'active' => true,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user,
+                'client' => $client
             );
-        return response()->json($response, 200);
-        
+            $_SESSION['semtinel'] = $session;
+            $redirectTo = route('app');
+            $response = array(
+                'success' => true,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user, 
+                'redirect' => $redirectTo
+            );
+            return response()->json($response, 200);
+        }
+        else {
+            return response()->json([
+                'message' => 'Invalid user'
+            ], 401);
+        }        
     }
 
     /**
@@ -64,9 +79,20 @@ class AuthController extends Controller
         $valido = Auth::guard('ldap')->validate($credentials);
 
         if ($valido) {
-            $user = Auth::guard('ldap')->getLastAttempted();    
-           
+            $user = Auth::guard('ldap')->getLastAttempted();           
             $token = $user->createToken('auth_token')->plainTextToken;
+            $client  = getIP();
+
+            // Init session
+            session_start();
+            $session = array(
+                'active' => true,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user,
+                'client' => $client
+            );
+            $_SESSION['semtinel'] = $session;
             $redirectTo = route('app');
             $response = array(
                 'success' => true,
@@ -75,7 +101,7 @@ class AuthController extends Controller
                 'user' => $user, 
                 'redirect' => $redirectTo
                  );
-             return response()->json($response, 200);
+            return response()->json($response, 200);
         }
     
         return response()->json([
