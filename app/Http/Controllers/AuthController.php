@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AuthController extends Controller
 {
@@ -185,4 +186,30 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Delete user
+     * @param int $id
+     * @return User
+     */
+
+     public function destroyUser($id) {
+        $user='';
+        try {
+            // Delete user
+            $user = User::find(intval($id));
+            $user->projects()->detach();
+            $user->systems()->detach();
+            $user->delete();
+
+        } catch (Throwable $th) {
+            $response = array('success' => false, 'error' => $th->getMessage());
+            return response()->json($response, 500);
+        }
+
+        // Response
+        $response = array('success' => true,'user'=> $user);
+        return response()->json($response, 200);
+
+     }
 }

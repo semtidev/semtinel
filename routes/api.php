@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Users
     Route::get('admin/users', [AdminController::class, "getUsers"])->name('api.admin.get.users');
     Route::post('user/register', [AuthController::class, "createUser"])->name('api.admin.create.user');
+    Route::delete('user/{id}', [AuthController::class, "destroyUser"])->name('api.admin.destroy.user');
+
     // Logistics Warehouses
     Route::get('logistics/warehouses', [AdminController::class, "getWarehouses"])->name('api.admin.get.warehouses');
     Route::post('logistics/warehouse', [AdminController::class, "storeWarehouse"])->name('api.admin.store.warehouse');

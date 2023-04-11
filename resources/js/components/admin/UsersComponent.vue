@@ -37,7 +37,7 @@ export default {
             form_loading: false,
             delete_text: 'Eliminar',
             delete_id: '',
-            delete_role: '',
+            delete_user: '',
             delete_error: '',
             delete_loading: false,
             session: JSON.parse(sessionStorage.getItem('semtinel')),
@@ -189,13 +189,11 @@ export default {
                     toastr.error("Error: " + error);
                 });
         },
-        deleteDialog: function (id, role) {
-            this.delete_id   = id 
-            this.delete_role = role
-        },
-        createUser(){
-            console.log("crear")
-        },
+        deleteDialog: function (id, user) {
+            this.delete_id   = id;
+            this.delete_user = user;
+            console.log(user,id);
+        },        
         store: function() {  //Salvar la informacion del usuario en la BD
             let cmp = this           
             cmp.form_error = ''
@@ -215,6 +213,8 @@ export default {
                 cmp.form_okbtn_text = 'Aceptar';
                 toastr.success('El Usuario fue creado con éxito.');
                 cmp.$refs.Close.click();
+                cmp.listReload();
+
             })
             .catch((error) => {
                 this.errorMessage = error;
@@ -222,19 +222,13 @@ export default {
             });         
            
         },      
-        async destroy () {
+        destroy: function() {
             let cmp = this
             cmp.delete_error = ''
             cmp.delete_loading = true
-            cmp.delete_text = 'Procesando...'
-            let headers = {
-                'User-Agent': 'testing/1.0',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + cmp.session.access_token
-            }
-            await axios.delete('http://localhost/semtinel/api/admin/role/' + cmp.delete_id, {
-                    headers: headers
-                }, {}).then(function (response) {
+            cmp.delete_text = 'Procesando...'            
+            apiClient.delete('/user/' + cmp.delete_id, {headers: this.headers}, {})
+            .then((response) => {
                     if (response.data.success) {
                         cmp.delete_error = ''
                         cmp.delete_loading = false
@@ -242,7 +236,7 @@ export default {
                         // Hide modal
                         cmp.$refs.delClose.click();
                         // Notification
-                        toastr.success('El Rol fue Eliminado con éxito.')
+                        toastr.success('El usuario fue Eliminado con éxito.')
                         // Reload table
                         cmp.listReload()
                     }
@@ -349,6 +343,7 @@ export default {
                                             data-toggle="modal" 
                                             data-target="#modal-role-delete"
                                             v-tooltip="'Eliminar este usuario'"
+                                            @click="deleteDialog(item.id, item.username)"
                                             >
                                             <span class="mdi mdi-trash-can-outline mdi-18px text-danger"></span>
                                         </a>
@@ -661,7 +656,7 @@ export default {
         <div class="modal-body px-4">
             <div class="float-start" style="width: 70px"><i class="mdi mdi-chat-question mdi-48px"></i></div>
             <div class="float-start pt-3" style="width: 85%">
-                <p>El Rol "<strong>{{ delete_role }}</strong>" será Eliminado de la plataforma Semtinel.<br>Confirme que desea realizar esta operación.</p>
+                <p>El usuario "<strong>{{ delete_user }}</strong>" será Eliminado de la plataforma Semtinel.<br>Confirme que desea realizar esta operación.</p>
             </div>
             <div class="row pt-2" v-if="form_error != ''">
                 <div class="col-12 text-center">
