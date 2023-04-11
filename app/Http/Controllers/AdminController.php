@@ -13,6 +13,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\LogisticsReceiptItemOc;
 use App\Models\LogisticsReceiptItemDispatch;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Guid\Fields;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,26 @@ class AdminController extends Controller
     /////      GETTERS      //////
     //////////////////////////////
 
+    /**
+     * Get Users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getUsers()
+    {
+        $users     = array();
+        $qry_users = User::orderBy('first_name', 'ASC')->get();
+        foreach ($qry_users as $user) {
+            $users[] = array(
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'email' => $user->email,
+                'username' => $user->username
+            );
+        }
+        return response()->json($users,200);
+    }
+    
     /**
      * Get Poles.
      *
@@ -62,11 +83,11 @@ class AdminController extends Controller
     public function getProjects()
     {
         $projects     = array();
-        $qry_projects = SystStructureProject::orderBy('id_pole', 'ASC')->get();
+        $qry_projects = SystStructureProject::orderBy('pole_id', 'ASC')->get();
         foreach ($qry_projects as $project) {
             $projects[] = array(
                 'id' => $project->id,
-                'id_pole' => $project->id_pole,
+                'pole_id' => $project->id_pole,
                 'name' => $project->name,
                 'abbr' => $project->abbr,
                 'active' => $project->active
@@ -74,6 +95,18 @@ class AdminController extends Controller
         }
         return response()->json($projects,200);
     }
+
+    /**
+     * Get Projects by Pole id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getProjectsByPole($id)
+    {
+        $projects = SystPole::find($id)->projects;
+        return response()->json($projects,200);
+    }
+
 
     /**
      * Get Warehouses.

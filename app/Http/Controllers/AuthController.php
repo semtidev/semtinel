@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -123,5 +124,65 @@ class AuthController extends Controller
         session_destroy();
         
         return redirect(route('login'));
+    }
+
+    /**
+     * Create User
+     * @param Request $request
+     * @return User 
+     */
+    public function createUser(Request $request)
+    {
+        try {
+            //Validated
+            $validateUser = Validator::make($request->all(), 
+            [
+                'first_name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required'
+            ]);
+
+            if($validateUser->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'email' => $request->email,
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+                'syst_pole_id' => $request->syst_pole_id
+            ]);
+            //le asigna roles a los usuarios
+            if(!empty($request->roles)){
+                $user->assignRole($request->roles);
+            }
+
+            //asignar proyectos en la relacion mucho a mucho
+            if(!empty($request->projects)){
+                $user->projects()->attach($request->projects);
+            }
+
+            //asignar sistemas en la relacion mucho a mucho
+            if(!empty($request->systems)){
+                $user->systems()->attach($request->systems);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Created Successfully',
+                'token' => $user->createToken('auth_token')->plainTextToken
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 }

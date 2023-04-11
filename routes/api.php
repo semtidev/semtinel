@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Poles & Projects
     Route::get('poles', [AdminController::class, "getPoles"])->name('api.admin.get.poles');
     Route::get('projects', [AdminController::class, "getProjects"])->name('api.admin.get.projects');
+    Route::get('projectsbypole/{pole_id}', [AdminController::class, "getProjectsByPole"])->name('api.admin.get.projectsbypole');
     // Admin Systems
     Route::get('admin/systems', [AdminController::class, "getSystems"])->name('api.admin.get.system');
     Route::post('admin/system', [AdminController::class, "storeSystem"])->name('api.admin.store.system');
@@ -47,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('admin/permission', [AdminController::class, "storePermission"])->name('api.admin.store.permission');
     Route::delete('admin/permission/{id}', [AdminController::class, "destroyPermission"])->name('api.admin.destroy.permission');
     Route::get('admin/permission/roles/{id}', [AdminController::class, "getPermissionRoles"])->name('api.admin.get.permission_roles');
+    // Admin Users
+    Route::get('admin/users', [AdminController::class, "getUsers"])->name('api.admin.get.users');
+    Route::post('user/register', [AuthController::class, "createUser"])->name('api.admin.create.user');
     // Logistics Warehouses
     Route::get('logistics/warehouses', [AdminController::class, "getWarehouses"])->name('api.admin.get.warehouses');
     Route::post('logistics/warehouse', [AdminController::class, "storeWarehouse"])->name('api.admin.store.warehouse');
