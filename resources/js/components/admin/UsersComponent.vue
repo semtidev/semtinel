@@ -115,86 +115,160 @@ export default {
                 return false
             }
             return true
-        },        
-        create: function () {//Este es llamado cuando se da al boton "crear nuevo suario" 
-            let cmp = this
-            cmp.form_action       = 'create'
-            cmp.form_error        = ''
-            cmp.form_title        = 'Nuevo Usuario'
-            cmp.id      = ''
-            cmp.name    = ''
-            
+        },
+        getRoles: function() {
+            this.roles_loading = true;
             apiClient.get("/admin/roles", {headers: this.headers})
             .then((response) => {   
-                cmp.roles = response.data;
-                cmp.roles_loading = false
+                this.roles = response.data;
+                this.roles_loading = false;
             })
             .catch((error) => {
                 this.errorMessage = error;
                 toastr.error("Error: " + error);
-            });
-
-            apiClient.get("/admin/systems", {headers: this.headers})//It load Just active systems
-            .then((response) => {   
-                let active_systems = response.data.filter((item)=>{
-                    return item.active === 1;                    
-                });
-                cmp.systems = active_systems;
-                cmp.systems_loading = false
-            })
-            .catch((error) => {
-                this.errorMessage = error;
-                toastr.error("Error: " + error);
-            });
-
-            apiClient.get("/poles", {headers: this.headers})//Just the actived Poles
-            .then((response) => {
-                let active_poles = response.data.filter((item)=>{
-                    return item.active === 1;                    
-                });
-                cmp.poles = active_poles;
-                cmp.poles_loading = false;
-            })
-            .catch((error) => {
-                this.errorMessage = error;
-                toastr.error("Error: " + error);
-            });            
-            
+            });   
         },
-        edit: function (id, name, owner, active) {
-            let cmp = this
-            cmp.form_action      = 'edit'
-            cmp.form_error       = ''
-            cmp.form_title       = 'Editar Rol'
-            cmp.id     = id
-            cmp.name   = name
-            // Load role-permissions
-            cmp.permissions_loading = true
-            let headers = {
-                'User-Agent': 'testing/1.0',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + cmp.session.access_token
-            }
-            fetch("http://localhost/semtinel/api/admin/role/permissions/" + id, {
-                    method: 'GET',
-                    headers: headers
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    cmp.role_permissions = data;
-                    cmp.permissions_loading = false
+        getAsignedRoles: function(user_id) {
+            //primero carga todos los roles
+            apiClient.get("/admin/roles", {headers: this.headers})
+            .then((response) => {   //luego de que ha cargado los roles carga los del usuario
+                this.roles = response.data;
+                apiClient.get("/admin/user/roles/"+user_id, {headers: this.headers})// cargar roles del usuario     
+                .then((response) => {
+                    let arr = response.data.map((item)=>{return item.id});//tomar los ids de los roles 
+                    this.selected_roles = [...arr];
+                    this.roles_loading = false;
                 })
                 .catch(error => {
                     this.errorMessage = error;
                     toastr.error("Error: " + error);
                 });
+            })
+            .catch((error) => {
+                this.errorMessage = error;
+                toastr.error("Error: " + error);
+            }); 
+            
+        },
+        
+        getSystems: function() {
+            apiClient.get("/admin/systems", {headers: this.headers})//It load Just active systems
+            .then((response) => {   
+                let active_systems = response.data.filter((item)=>{
+                    return item.active === 1;                    
+                });
+                this.systems = active_systems;
+                this.systems_loading = false
+            })
+            .catch((error) => {
+                this.errorMessage = error;
+                toastr.error("Error: " + error);
+            });
+        },
+        getPoles: function() {
+            apiClient.get("/poles", {headers: this.headers})//Just the actived Poles
+            .then((response) => {
+                let active_poles = response.data.filter((item)=>{
+                    return item.active === 1;                    
+                });
+                this.poles = active_poles;
+                this.poles_loading = false;
+            })
+            .catch((error) => {
+                this.errorMessage = error;
+                toastr.error("Error: " + error);
+            });   
+        }, 
+        getAsignedSystems: function(user_id) {
+            apiClient.get("/admin/systems", {headers: this.headers})//Cargar solo los Systems activos
+            .then((response) => {   
+                let active_systems = response.data.filter((item)=>{
+                    return item.active === 1;                    
+                });
+                this.systems = active_systems;
+                apiClient.get("/admin/user/systems/"+user_id, {headers: this.headers})     
+                .then((response) => {
+                    let arr = response.data.map((item)=>{return item.id});
+                    this.selected_systems = [...arr];
+                    this.systems_loading = false;
+                })
+                .catch(error => {
+                    this.errorMessage = error;
+                    toastr.error("Error: " + error);
+                });
+            })
+            .catch((error) => {
+                this.errorMessage = error;
+                toastr.error("Error: " + error);
+            });
+            
+        },
+        getAsignedProjects: function(user_id,pole_id) {
+            apiClient.get("/poles", {headers: this.headers})//carga todos los Polos activos
+            .then((response) => {
+                let active_poles = response.data.filter((item)=>{
+                    return item.active === 1;                    
+                });
+                this.poles = active_poles;
+                apiClient.get("/admin/user/projects/"+user_id, {headers: this.headers})//carga los proyectos de ese usuario
+                .then((response) => {
+                    let arr = response.data.map((item)=>{return item.id});//para guardar solo los ids de los proyectos
+                    this.selected_projects = [...arr];
+                    this.selected_pole = pole_id;
+                    this.projects_loading = false;
+                })
+                .catch(error => {
+                    this.errorMessage = error;
+                    toastr.error("Error: " + error);
+                });
+            })
+            .catch((error) => {
+                this.errorMessage = error;
+                toastr.error("Error: " + error);
+            });  
+            
+        },
+        create: function () {//Este es llamado cuando se da al boton "crear nuevo suario" 
+            let cmp = this
+            cmp.form_action       = 'create'
+            cmp.form_error        = ''
+            cmp.form_title        = 'Nuevo Usuario'
+            cmp.id      = '';
+            cmp.name    = '';
+            cmp.username = '';
+            cmp.email = '';
+            cmp.password = '';
+            cmp.repassword = '';
+            cmp.selected_pole = '';
+            cmp.selected_projects = [];
+            cmp.selected_systems = [];
+            cmp.selected_roles = [];    
+            this.getRoles();
+            this.getSystems();
+            this.getPoles();
+        },
+        edit: function (user) {
+            let cmp = this
+            cmp.form_action      = 'edit'
+            cmp.form_error       = ''
+            cmp.form_title       = 'Editar Usuario'
+            console.log(user);
+            // Cargar la información del usuario
+            cmp.id = user.id;
+            cmp.name = user.first_name;
+            cmp.username = user.username;
+            cmp.email = user.email;
+            
+            this.getAsignedRoles(user.id);//los roles que tiene asignado
+            this.getAsignedSystems(user.id);
+            this.getAsignedProjects(user.id,user.pole_id)
+            
         },
         deleteDialog: function (id, user) {
             this.delete_id   = id;
             this.delete_user = user;
-            console.log(user,id);
-        },        
-        store: function() {  //Salvar la informacion del usuario en la BD
+        },
+        store: function () {
             let cmp = this           
             cmp.form_error = ''
             cmp.form_okbtn_text = 'Procesando...'
@@ -219,8 +293,42 @@ export default {
             .catch((error) => {
                 this.errorMessage = error;
                 toastr.error("Error: " + error);
-            });         
-           
+            }); 
+        },
+        update: function () {
+            let cmp = this           
+            cmp.form_error = ''
+            cmp.form_okbtn_text = 'Procesando...'
+            apiClient.put("/user",{ //insertar usuario
+                id: cmp.id,
+                first_name: cmp.name,
+                email: cmp.email,
+                username: cmp.username,
+                password: cmp.password,
+                syst_pole_id: cmp.selected_pole,
+                roles: cmp.selected_roles,
+                systems: cmp.selected_systems,
+                projects: cmp.selected_projects
+            },         
+            {headers: this.headers})
+            .then((response) => {   
+                cmp.form_okbtn_text = 'Aceptar';
+                toastr.success('El usuario fue actualizado con éxito.');
+                cmp.$refs.Close.click();
+                cmp.listReload();
+
+            })
+            .catch((error) => {
+                this.errorMessage = error;
+                toastr.error("Error: " + error);
+            }); 
+        }, 
+        submitHandler: function() {  //Salvar la informacion del usuario en la BD
+           if(this.form_action === 'create') {
+              this.store();
+           } else {
+              this.update();
+           }           
         },      
         destroy: function() {
             let cmp = this
@@ -332,6 +440,7 @@ export default {
                                             data-toggle="modal" 
                                             data-target="#modal-user-form"
                                             v-tooltip="'Modificar este usuario'"
+                                            @click="edit(item)"
                                             >
                                             <span class="mdi mdi-pencil mdi-18px text-orange"></span>
                                         </a>
@@ -375,7 +484,7 @@ export default {
                     </button>
                 </div>
                 <div class="modal-body px-4">
-                    <form @submit.prevent="store">
+                    <form @submit.prevent="submitHandler">
                         <input type="hidden" 
                             name="id_role" 
                             id="id_role"
@@ -402,6 +511,7 @@ export default {
                                     class="form-control"
                                     id="username"
                                     name="username"
+                                    autocomplete="off"
                                     required
                                     placeholder="Identificador de usuario"
                                     v-model="username">
@@ -426,11 +536,13 @@ export default {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">Contraseña:</label>
+                                    <label for="password">Contraseña:</label>
+                                    <div v-if="form_action==='edit'">Si no desea cambiar Contraseña deje el campo en blanco</div>
                                     <input type="password" 
                                     class="form-control"
                                     id="password"
-                                    required
+                                    :required="form_action === 'create' ? true : false"
+                                    autocomplete="off"
                                     name="password"
                                     placeholder="Escribe una contraseña"
                                     v-model="password">
@@ -440,12 +552,13 @@ export default {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">Repetir Contraseña:</label>
+                                    <label for="re-password">Repetir Contraseña:</label>
                                     <input type="password" 
                                     class="form-control"
                                     :class="classValid"
                                     id="re-password"
-                                    required
+                                    :required="form_action === 'create' ? true : false"
+                                    autocomplete="off"
                                     name="re-password"
                                     placeholder="Repetir la contraseña"
                                     v-model="repassword">
@@ -476,7 +589,7 @@ export default {
                                         <h6><span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando Roles...</span></h6>
                                     </div>
                                 </div>
-                                <div class="row" :class="(!systems_loading > 0) ? '' : 'hidden'">
+                                <div class="row" :class="(!roles_loading > 0) ? '' : 'hidden'">
                                     <div class="col-12">
                                         <table class="table table-striped">
                                             <thead>

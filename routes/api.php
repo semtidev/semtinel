@@ -52,6 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('admin/users', [AdminController::class, "getUsers"])->name('api.admin.get.users');
     Route::post('user/register', [AuthController::class, "createUser"])->name('api.admin.create.user');
     Route::delete('user/{id}', [AuthController::class, "destroyUser"])->name('api.admin.destroy.user');
+    Route::put('user', [AuthController::class, "updateUser"])->name('api.admin.update.user');
+    Route::get('admin/user/{id}', [AdminController::class, "getUser"])->name('api.admin.get.user');
+    Route::get('admin/user/roles/{id}', [AdminController::class, "getUserRoles"])->name('api.admin.get.userroles');
+    Route::get('admin/user/systems/{id}', [AdminController::class, "getUserSystems"])->name('api.admin.get.usersystems');
+    Route::get('admin/user/projects/{id}', [AdminController::class, "getUserProjects"])->name('api.admin.get.userprojects');
 
     // Logistics Warehouses
     Route::get('logistics/warehouses', [AdminController::class, "getWarehouses"])->name('api.admin.get.warehouses');

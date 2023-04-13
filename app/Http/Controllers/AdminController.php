@@ -49,10 +49,54 @@ class AdminController extends Controller
                 'id' => $user->id,
                 'first_name' => $user->first_name,
                 'email' => $user->email,
-                'username' => $user->username
+                'username' => $user->username,
+                'pole_id' => $user->syst_pole_id
             );
         }
         return response()->json($users,200);
+    }
+
+    /**
+     * Get User Roles.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserRoles($id)
+    {
+        $roles = User::find($id)->roles;
+        return response()->json($roles,200);
+    }
+
+    /**
+     * Get User.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUser($id)
+    {
+        $user = User::find($id);
+        return response()->json($user,200);
+    }
+
+    /**
+     * Get User Systems.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserSystems($id)
+    {
+        $systems = User::find($id)->systems;
+        return response()->json($systems,200);
+    }
+    /**
+     * Get User Projects.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserProjects($id)
+    {
+        $projects = User::find($id)->projects;
+        return response()->json($projects,200);
     }
     
     /**

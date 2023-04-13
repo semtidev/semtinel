@@ -211,5 +211,32 @@ class AuthController extends Controller
         $response = array('success' => true,'user'=> $user);
         return response()->json($response, 200);
 
-     }
+    }
+
+    /**
+     * Update User
+     * @param Request $request
+     * @return User
+     */
+    public function updateUser(Request $request){
+        $user = User::findOrFail(intval($request->id));
+        $data = [
+            'first_name' => $request->first_name,
+            'email' => $request->email,
+            'username' => $request->username,            
+            'syst_pole_id' => $request->syst_pole_id
+        ];
+        //comprobar si se entr'o un nuevo password
+        if($request->password !== '') $data['password']= Hash::make($request->password);
+
+        $user->update($data);
+
+        //las realaiones mucho a mucho
+        $user->systems()->sync($request->systems);
+        $user->projects()->sync($request->projects);
+        $user->roles()->sync($request->roles);
+        // Response
+        $response = array('success' => true,'user'=> $user);
+        return response()->json($response, 200);
+    }
 }
