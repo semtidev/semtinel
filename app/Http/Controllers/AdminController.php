@@ -80,10 +80,18 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getWarehouses()
+    public function getWarehouses($project = 0)
     {
-        $warehouses     = array();
-        $qry_warehouses = SystWarehouse::orderBy('id_project', 'ASC')->orderBy('name', 'ASC')->get();
+        $warehouses = array();
+        if ($project == 0) {
+            $qry_warehouses = SystWarehouse::orderBy('id_project', 'ASC')->orderBy('name', 'ASC')->get();
+        }
+        else {
+            $qry_warehouses = SystWarehouse::where('id_project', intval($project))
+                                            ->orderBy('id_project', 'ASC')
+                                            ->orderBy('name', 'ASC')
+                                            ->get();
+        }
         foreach ($qry_warehouses as $warehouse) {
             $warehouses[] = array(
                 'id' => $warehouse->id,

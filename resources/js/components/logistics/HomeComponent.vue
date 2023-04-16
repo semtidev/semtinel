@@ -6,6 +6,7 @@ import $ from "jquery";
 export default {
     data: function () {
       return {
+        project: localStorage.getItem('stnel_logist_project'),
         session: JSON.parse(sessionStorage.getItem('semtinel'))
       };
     },
@@ -17,6 +18,8 @@ export default {
     },
     async created() {
         let cmp = this
+        // Clear warehouse store
+        localStorage.setItem('semtinel_warehouses', '')
         // ---------------------------
         //   Create app local stores
         // ---------------------------
@@ -25,7 +28,7 @@ export default {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + cmp.session.access_token
         }
-        await fetch("http://localhost/semtinel/api/logistics/warehouses", {
+        await fetch("http://localhost/semtinel/api/logistics/warehouses/" + cmp.project, {
                 method: 'GET',
                 headers: headers
             })
@@ -54,5 +57,8 @@ export default {
 </script>
 
 <template>
-    <h1>I'm Home component</h1>
+    <div class="h-100 text-center app_name">
+        <div class="app-title">Semtinel - Logística</div>
+        <div class="app-subtitle">Sistema de Gesti&oacute;n de Pa&ntilde;oles</div>
+    </div>
 </template>

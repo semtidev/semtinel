@@ -11,6 +11,10 @@ export default {
         store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
         store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
         store_warehouses: JSON.parse(localStorage.getItem('semtinel_warehouses')),
+        pole: localStorage.getItem('stnel_logist_pole'),
+        pole_name: '',
+        project: localStorage.getItem('stnel_logist_project'),
+        project_name: '',
         projects: [],
         warehouses: [],
         items: [],
@@ -21,18 +25,20 @@ export default {
         btnsearch: 'Cargar Renglones',
         table_oc: false,
         show_details: false,
+        stowage_card_loading: false,
         origin_data: {
-            origin: 'Despacho de Almacen',
+            origin: 'Despacho de Almacén',
             doctype_title: 'Tipo de Documento',
             doctype_value: 'Orden de Despacho',
             docnum_title: 'Orden de Despacho (últimos 5 dígitos)',
             docnum_value: '',
             ocnumber: '',            
             origin_field_options: [
-                'Despacho de Almacen',
+                'Despacho de Almacén',
                 'Tiro Directo Altec',
                 'Tiro Directo Almest',
-                'Tiro Directo Compras Locales'
+                'Tiro Directo Compras Locales',
+                //'Transferencia de Pañol'
             ],
             doctype_field_options: [
                 'Orden de Despacho',
@@ -44,6 +50,8 @@ export default {
                 ocnumber: ''
             }
         },
+        origin_warehouse: '',
+        origin_warehouse_owner: '',
         item_details: {
             docnum: '',
             product_quantity: '',
@@ -59,8 +67,8 @@ export default {
             comment: ''
         },
         destiny_data: {
-            pole: '',
-            project: '',
+            pole: this.pole,
+            project: this.project,
             warehouse: '',
             warehouse_name: '',
             warehouse_owner: '',
@@ -71,7 +79,12 @@ export default {
             number: '',
             received_quantity: '',
             stowage_card: '',
-            comment: ''
+            has_stowage_card: false,
+            warehouse: '',
+            warehouse_name: '',
+            warehouse_owner: '',
+            comment: '',
+            product_quantity: ''
         },
         item_form_error: {
             received_quantity: false,
@@ -101,6 +114,17 @@ export default {
                 this.entry_okbtn_text = 'Aceptar'
         }
     },
+    created() {
+        let cmp = this
+        cmp.store_poles.map(function(value, key) {
+            if (value.abbr == cmp.pole)
+                cmp.pole_name = value.name
+        });
+        cmp.store_projects.map(function(value, key) {
+            if (value.id == cmp.project)
+                cmp.project_name = value.name
+        });
+    },
     methods: {
         changeOrigin: function (origin) {
             this.show_items                 = false
@@ -109,7 +133,7 @@ export default {
             this.origin_data.error.docnum   = ''
             this.origin_data.error.ocnumber = ''
 
-            if (origin != 'Despacho de Almacen') {
+            if (origin != 'Despacho de Almacén') {
                 this.origin_data.doctype_title = 'Orden de Compra'
                 this.origin_data.doctype_value = ''
                 this.origin_data.docnum_title  = 'Documento'
@@ -193,6 +217,10 @@ export default {
             cmp.destiny_data.warehouse_name = warehouse_name
             cmp.destiny_data.warehouse_owner = warehouse_owner
         },
+        changeWarehouseOrigin: function (warehouse_id) {
+            let cmp = this
+            cmp.origin_warehouse = warehouse_id
+        },
         itemsSelected: function () {
             let selected = 0;
             this.items.map(function (item, key) {
@@ -243,17 +271,63 @@ export default {
             }
             cmp.show_details = true
         },
-        edit: function (idx, received_quantity, stowage_card, comment) {
+        edit: function (idx, oc, item_description, received_quantity, stowage_card, comment, product_quantity = null) {
             let cmp = this
             cmp.form_error = ''
             cmp.item_form_data.idx = idx
             cmp.item_form_data.number = idx + 1
             cmp.item_form_data.received_quantity = received_quantity
-            cmp.item_form_data.stowage_card = (stowage_card != '-' && stowage_card != '') ? stowage_card : ''
             cmp.item_form_error.error_text = ''
             cmp.item_form_error.received_quantity = false
             cmp.item_form_error.stowage_card = false
             cmp.item_form_data.comment = comment
+            if (product_quantity != null) {
+                cmp.item_form_data.product_quantity = product_quantity
+            }
+            if (stowage_card != '-' && stowage_card != '') {
+                cmp.item_form_data.stowage_card = stowage_card
+            }
+            else {
+                cmp.item_form_data.stowage_card = ''
+                cmp.stowage_card_loading = true
+                let headers = {
+                    'User-Agent': 'testing/1.0',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + cmp.session.access_token
+                }            
+                axios.post('http://localhost/semtinel/public/api/logistics/entry/item/stowage_card', {
+                        'oc' : oc,
+                        'item_desciption': item_description,
+                    }, {
+                        headers: headers
+                    }).then(function (response) {
+                        if (response.data.success) {
+                            cmp.item_form_data.stowage_card = response.data.stowage_card
+                            if (response.data.stowage_card != '') {
+                                cmp.item_form_data.has_stowage_card = true
+                            }
+                            else {
+                                cmp.item_form_data.has_stowage_card = false
+                            }
+                            if (response.data.warehouse != '') {
+                                cmp.item_form_data.warehouse = response.data.warehouse
+                                cmp.item_form_data.warehouse_name = response.data.warehouse_name,
+                                cmp.item_form_data.warehouse_owner = response.data.warehouse_owner
+                            }
+                            cmp.stowage_card_loading = false
+                        }
+                        else {
+                            cmp.item_form_data.stowage_card = ''
+                            cmp.stowage_card_loading = false
+                            toastr.error('Error al intentar cargar la tarjeta de estiba.')
+                        }
+                    }).catch(function (error) {
+                        cmp.item_form_data.stowage_card = ''
+                        cmp.stowage_card_loading = false
+                        toastr.error('Error al intentar cargar la tarjeta de estiba.')
+                        return;
+                    })
+            }
         },
         updateItem: function () {
             let cmp = this,
@@ -261,6 +335,9 @@ export default {
                 received_quantity = cmp.item_form_data.received_quantity,
                 total_import = 0,
                 stowage_card = cmp.item_form_data.stowage_card,
+                warehouse = cmp.item_form_data.warehouse,
+                warehouse_name = cmp.item_form_data.warehouse_name,
+                warehouse_owner = cmp.item_form_data.warehouse_owner,
                 comment = cmp.item_form_data.comment
 
             cmp.item_form_error.error_text = ''
@@ -273,11 +350,28 @@ export default {
                 cmp.item_form_error.received_quantity = true
                 return
             }
+            if (cmp.item_form_data.product_quantity > 0 && cmp.item_form_data.product_quantity < received_quantity) {
+                cmp.item_form_error.error_text = 'La cantidad recibida no debe ecceder a la cantidad despachada'
+                cmp.item_form_error.received_quantity = true
+                return
+            }
             // Validate stowage card
             if ((stowage_card == '-' || stowage_card == '') && received_quantity > 0) {
                 cmp.item_form_error.error_text = 'Si registra una cantidad recibida debe asignar una tarjeta de estiba de destino'
                 cmp.item_form_error.stowage_card = true
                 return
+            }
+            // Validate warehouse
+            if (warehouse != '') {
+                cmp.items.map(function (item, key) {
+                    if (item.warehouse != '' && item.warehouse != warehouse) {
+                        cmp.item_form_error.error_text = 'Los productos que reciba deben ser del mismo Pañol'
+                        return
+                    }                    
+                })
+                cmp.destiny_data.warehouse       = warehouse
+                cmp.destiny_data.warehouse_name  = warehouse_name
+                cmp.destiny_data.warehouse_owner = warehouse_owner
             }
             if (stowage_card != '-' && stowage_card != '') {
                 cmp.items.map(function (item, key) {
@@ -300,6 +394,9 @@ export default {
             $('#item-' + (idx + 1) + '-comment').html(comment)
             cmp.items[idx]['received_quantity'] = received_quantity
             cmp.items[idx]['stowage_card'] = stowage_card
+            cmp.items[idx]['warehouse'] = (warehouse != '') ? warehouse : ''
+            cmp.items[idx]['warehouse_name'] = (warehouse_name != '') ? warehouse_name : ''
+            cmp.items[idx]['warehouse_owner'] = (warehouse_owner != '') ? warehouse_owner : ''
             cmp.items[idx]['comment'] = comment
             // Calc total price 
             if (received_quantity > 0) {
@@ -336,21 +433,21 @@ export default {
             this.origin_data.error.docnum   = ''
             this.origin_data.error.ocnumber = ''
 
-            if (this.origin_data.origin == 'Despacho de Almacen' && this.origin_data.doctype_value != 'Conduce') {
+            if (this.origin_data.origin == 'Despacho de Almacén' && this.origin_data.doctype_value != 'Conduce') {
                 if (this.origin_data.docnum_value == null || this.origin_data.docnum_value == '') {
                     this.origin_data.error.docnum = 'Este campo es obligatorio.'
                     isValid = false
-                }                
+                }
             }
             else {
                 if (this.origin_data.ocnumber == null || this.origin_data.ocnumber == '') {
                     this.origin_data.error.ocnumber = 'Este campo es obligatorio.'
                     isValid = false
-                }                
+                }
                 if (this.origin_data.docnum_value == null || this.origin_data.docnum_value == '') {
                     this.origin_data.error.docnum = 'Este campo es obligatorio.'
                     isValid = false;
-                }                
+                }
             }
 
             return isValid
@@ -397,7 +494,7 @@ export default {
             let cmp = this
             if (cmp.entry_error != '') {
                 // Hide modal
-                cmp.$refs.ConfirmClose.click();
+                cmp.$refs.ConfirmClose.click()
                 return
             }
             cmp.entry_loading = true
@@ -451,6 +548,8 @@ export default {
         this.destiny_data.pole = this.store_poles[0]['abbr']
         // Asign proyects and select first
         this.changePole(this.store_poles[0]['id'], this.store_poles[0]['abbr'])
+        // Asign first warehouse as destin
+        //this.destiny_data.warehouse = this.warehouses[0].id
     }
 }
 </script>
@@ -490,7 +589,7 @@ export default {
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 pl-1" v-if="origin_data.origin === 'Despacho de Almacen'">
+                    <div class="col-md-3 pl-1" v-if="origin_data.origin === 'Despacho de Almacén'">
                         <div class="form-group">
                             <label>{{ origin_data.doctype_title }}</label>
                             <select 
@@ -508,8 +607,8 @@ export default {
                             </select>
                         </div>
                     </div>
-                    <div class="pl-1" :class="origin_data.origin !== 'Despacho de Almacen' ? 'col-md-3' : 'col-md-2'" 
-                        v-if="origin_data.doctype_value === 'Conduce' || origin_data.origin !== 'Despacho de Almacen'">
+                    <div class="pl-1" :class="(origin_data.origin !== 'Despacho de Almacén') ? 'col-md-3' : 'col-md-2'" 
+                        v-if="origin_data.doctype_value === 'Conduce' || (origin_data.origin !== 'Despacho de Almacén' && origin_data.origin !== 'Transferencia de Pañol')">
                         <div class="form-group">
                             <label>Orden de Compra</label>
                             <input 
@@ -524,6 +623,23 @@ export default {
                             </span>
                         </div>
                     </div>
+                    <div class="col-md-3 pl-1" v-if="origin_data.origin == 'Transferencia de Pañol'">
+                        <div class="form-group">
+                            <label>Pa&ntilde;ol</label>
+                            <select 
+                                name="origin" 
+                                size="1" 
+                                class="form-control">
+                                <template v-for="(option, index) in warehouses" :key="index">
+                                    <option
+                                        :value="option['id']"
+                                        v-on:click.stop="changeWarehouseOrigin(option['id'])">
+                                        {{ option['name'] }}
+                                    </option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
                     <div class="pl-1" :class="origin_data.doctype_value !== 'Conduce' ? 'col-md-3' : 'col-md-2'">
                         <div class="form-group">
                             <label>No. {{ origin_data.docnum_title }}</label>
@@ -531,7 +647,7 @@ export default {
                                 type="text" 
                                 name="docnumber" 
                                 class="form-control"
-                                :maxlength="(origin_data.origin == 'Despacho de Almacen') ? '5' : '20'"
+                                :maxlength="(origin_data.origin == 'Despacho de Almacén') ? '5' : '20'"
                                 :class="origin_data.error.docnum != '' ? 'border-error' : ''"
                                 :disabled="search_loading" 
                                 v-model="origin_data.docnum_value"
@@ -627,7 +743,7 @@ export default {
                                         data-toggle="modal" 
                                         data-target="#modal-item-form"
                                         v-tooltip="'Anotar información de este Renglón'"
-                                        v-on:click="edit(idx, item.received_quantity, item.stowage_card, item.comment)">
+                                        v-on:click="edit(idx, item.oc, item.item_description, item.received_quantity, item.stowage_card, item.comment)">
                                         <span class="mdi mdi-pencil mdi-18px text-green"></span>
                                     </a>
                                 </td>
@@ -681,7 +797,7 @@ export default {
                                         data-toggle="modal" 
                                         data-target="#modal-item-form"
                                         v-tooltip="'Anotar información de este Renglón'"
-                                        v-on:click="edit(idx, item.received_quantity, item.stowage_card, item.comment)">
+                                        v-on:click="edit(idx, item.oc, item.item_description, item.received_quantity, item.stowage_card, item.comment, item.product_quantity)">
                                         <span class="mdi mdi-pencil mdi-18px text-green"></span>
                                     </a>
                                 </td>
@@ -711,7 +827,12 @@ export default {
                     <div class="col-md-3 pl-md-3">
                         <div class="form-group">
                             <label>Polo</label>
-                            <select 
+                            <input 
+                                type="text"
+                                class="form-control"
+                                :disabled="true"
+                                v-model="pole_name" />
+                            <!--<select 
                                 name="entry_pole"
                                 id="entry_pole" 
                                 size="1" 
@@ -724,13 +845,18 @@ export default {
                                         {{ option['name'] }}
                                     </option>
                                 </template>                                
-                            </select>
+                            </select>-->
                         </div>
                     </div>
                     <div class="col-md-3 pl-1">
                         <div class="form-group">
                             <label>Proyecto</label>
-                            <select 
+                            <input 
+                                type="text"
+                                class="form-control"
+                                :disabled="true"
+                                v-model="project_name" />
+                            <!--<select 
                                 name="project" 
                                 size="1" 
                                 class="form-control">
@@ -741,7 +867,7 @@ export default {
                                         {{ option['name'] }}
                                     </option>
                                 </template>                                
-                            </select>
+                            </select>-->
                         </div>
                     </div>
                     <div class="col-md-3 pl-1">
@@ -750,7 +876,8 @@ export default {
                             <select 
                                 name="origin" 
                                 size="1" 
-                                class="form-control">
+                                class="form-control"
+                                v-model="destiny_data.warehouse">
                                 <template v-for="(option, index) in warehouses" :key="index">
                                     <option
                                         :value="option['id']"
@@ -785,7 +912,7 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="origin_data.doctype_value === 'Conduce' || origin_data.origin !== 'Despacho de Almacen'">
+                <div class="row" v-if="origin_data.doctype_value === 'Conduce' || origin_data.origin !== 'Despacho de Almacén'">
                     <div class="form-group pt-2">
                         <label class="float-left mb-0 mt-1">Indique si la Entrada es Total o Parcial: </label>
                         <div class="form-check float-left ml-4">
@@ -877,12 +1004,14 @@ export default {
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="stowage_card">Tarjeta de estiba destino:</label>
-                                    <input type="text" 
+                                    <input 
+                                        type="text" 
                                         class="form-control"
                                         :class="item_form_error.stowage_card ? 'border-error' : ''"
+                                        :disabled="stowage_card_loading || item_form_data.has_stowage_card"
                                         id="stowage_card"
                                         name="stowage_card"
-                                        placeholder="Código de la tarjeta de estiba asignada"
+                                        :placeholder="stowage_card_loading ? 'Cargando Tarjeta de estiba...' : 'Introduzca el código de la tarjeta de estiba asignada'"
                                         v-model="item_form_data.stowage_card">
                                 </div>
                             </div>
@@ -910,7 +1039,7 @@ export default {
                     <button type="button" class="btn btn-default ripple" data-dismiss="modal">Cancelar</button>
                     <button type="button" 
                     class="btn btn-primary btn-green ripple"
-                    :disabled="item_form_loading"
+                    :disabled="item_form_loading || stowage_card_loading"
                     v-on:click.stop="updateItem()">
                         <i class="mdi mdi-check-all" v-if="!item_form_loading"></i>
                         <i class="mdi mdi-loading mdi-spin" v-else></i>

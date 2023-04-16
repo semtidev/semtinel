@@ -107,7 +107,7 @@ export default {
                         class="nav-link"
                         :class="(app_name == 'admin' && page_active == 'warehouse') ? 'active' : ''">
                         <i class="mdi mdi-warehouse nav-icon"></i>
-                        <p>Pa&ntilde;oles</p>
+                        <p>Almacenes</p>
                     </router-link>
                 </li>
             </ul>

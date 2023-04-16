@@ -8,6 +8,7 @@ const LogisticsInventoryComponent = () => import('../components/logistics/Invent
 const LogisticsOutputComponent = () => import('../components/logistics/OutputComponent.vue');
 const LogisticsOutputsComponent = () => import('../components/logistics/OutputsComponent.vue');
 const LogisticsEntryDetailComponent = () => import('../components/logistics/EntryDetailComponent.vue');
+const LogisticsOutputDetailComponent = () => import('../components/logistics/OutputDetailComponent.vue');
 
 // ADMINISTRATOR
 const AdminComponent = () => import('../components/admin/HomeComponent.vue');
@@ -82,6 +83,12 @@ const routes = [
         path: '/semtinel/logistics/entry.detail/:entry',
         name: 'logistics.entry.detail',
         component: LogisticsEntryDetailComponent,
+        props: true
+    },
+    {
+        path: '/semtinel/logistics/output.detail/:output',
+        name: 'logistics.output.detail',
+        component: LogisticsOutputDetailComponent,
         props: true
     }
 ]

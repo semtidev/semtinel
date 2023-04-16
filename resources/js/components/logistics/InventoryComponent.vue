@@ -19,9 +19,12 @@ export default {
         products_loading: true,
         lastproducts: [],
         lastproducts_empty: false,
+        store_history: {},
         history: {},
+        history_filter: {},
         history_loading: true,
         history_empty: false,
+        history_description: '',
         history_product: {},
         history_product_loading: true,
         history_product_empty: false,
@@ -33,7 +36,7 @@ export default {
         projects: JSON.parse(localStorage.getItem('semtinel_projects')),
         pole: localStorage.getItem('stnel_logist_pole'),
         project: localStorage.getItem('stnel_logist_project'),
-        warehouses: JSON.parse(localStorage.getItem('semtinel_warehouses')),
+        warehouses: (localStorage.getItem('semtinel_warehouses').length > 0) ? JSON.parse(localStorage.getItem('semtinel_warehouses')) : '',
         products_categories: JSON.parse(localStorage.getItem('semtinel_products_categories')),
         filter_productcategory: 'all',
         filter_warehouse: 'all',
@@ -54,17 +57,22 @@ export default {
         },
         productcart: {
             id: 0,
+            oc: '',
             desc: '',
             um: '',
             quantity: '',
             price_unit: '',
-            price_total: ''
+            price_total: '',
+            warehouse: '',
+            stowage_card: ''
         },
         productcart_form_loading: false,
         productcart_quantity: 1,
-        productcart_error: false,
+        productcart_warehouse: '',
         productcart_form_okbtn_text: 'Aceptar',
+        productcart_warehouse_error: '',
         show_details: false,
+        cart_error: '',
         datatable_language: {
             "decimal": "",
             "emptyTable": "No hay información",
@@ -91,6 +99,39 @@ export default {
         period: function(val) {
             this.getLastProductsTable(val)
             this.getHistoryTimeline(val)
+        },
+        tabactive: function (val) {
+            let cmp = this
+            if (val == 1) {
+                if ($("#datatable-products").DataTable().destroy()) {
+                    setTimeout(() => {
+                        $("#datatable-products").DataTable({
+                            lengthMenu: [
+                                [10, 15, 25, 50, -1],
+                                [10, 15, 25, 50, "Todos"],
+                            ],
+                            pageLength: 10,
+                            order: [[0, 'asc']],
+                            "columnDefs": [{
+                                "targets": 'no-sort',
+                                "orderable": false,
+                                "order": []
+                            }],
+                            "columns": [
+                                { "width": "12%" },
+                                { "width": "12%" },
+                                null,
+                                { "width": "10%" },
+                                { "width": "10%" },
+                                { "width": "10%" },
+                                { "width": "10%" },
+                                { "width": "10%" }
+                            ],
+                            language: cmp.datatable_language
+                        });
+                    });
+                }
+            }
         }
     },
     components: {
@@ -112,20 +153,43 @@ export default {
         listReload: function () {
             //this.getEntriesTable(true)
         },
-        addCart: function (product) {
+        addCart: function (idx, product) {
             let cmp = this
+            cmp.cart_error = ''
+            cmp.productcart_warehouse_error = false
+            if (cmp.$root.cart_quantity == 0) {
+                cmp.$root.cart_warehouse = ''
+            }
+            if (cmp.$root.cart_warehouse != '') {
+                if (cmp.$root.cart_warehouse != product.warehouse_id) {
+                    cmp.productcart_warehouse_error = true
+                    cmp.$refs.addCartClose.click()
+                    return;
+                }
+            }
+            
             cmp.productcart = {
                 id: product.id,
+                oc: product.oc,
+                id_inventory: idx,
+                product_code: product.product_code,
                 description: product.description,
                 um: product.um,
                 quantity: 1,
+                available: product.available,
                 price_unit: parseFloat(product.price_unit).toFixed(2),
-                price_total: 1 * parseFloat(product.price_unit).toFixed(2)
+                price_total: 1 * parseFloat(product.price_unit).toFixed(2),
+                stowage_card: product.stowage_card
             }
             cmp.productcart_quantity = 1
+            cmp.productcart_warehouse = product.warehouse_id
         },
         processAddCart: function () {
             let cmp = this, exists = false, total
+            if (cmp.productcart_quantity > cmp.productcart.available) {
+                cmp.cart_error = 'La cantidad solicitada no puede exceder a la disponible.'
+                return;
+            }
             cmp.$root.cart_items.map(function(product, idx) {
                 if (product.id == cmp.productcart.id) {
                     cmp.$root.cart_items[idx].quantity = cmp.productcart_quantity
@@ -141,15 +205,21 @@ export default {
             if (!exists) {
                 cmp.$root.cart_items.push(cmp.productcart)
                 cmp.$root.cart_quantity++
-            }            
-            cmp.$refs.addCartClose.click() 
+            }
+            if (cmp.$root.cart_warehouse == '') {
+                cmp.$root.cart_warehouse = cmp.productcart_warehouse
+            }
+            cmp.$refs.addCartClose.click()
         },
         filterApply: function () {
             let cmp = this
             cmp.products_loading = true
             cmp.products = cmp.store_products
+            cmp.history = cmp.store_history
             cmp.filter_apply = false
-            cmp.products_filter = {}
+            cmp.products_filter = {},
+            cmp.history_filter = {},
+            cmp.history_loading = true
             // Filter products
             Object.keys(cmp.products).forEach(key => {
                 let idx = key, valid = true
@@ -188,9 +258,10 @@ export default {
                             "order": []
                         }],
                         "columns": [
-                            { "width": "15%" },
-                            { "width": "15%" },
+                            { "width": "12%" },
+                            { "width": "12%" },
                             null,
+                            { "width": "10%" },
                             { "width": "10%" },
                             { "width": "10%" },
                             { "width": "10%" },
@@ -201,15 +272,42 @@ export default {
                 });
             }
             cmp.products_loading = false
+            // Filter history
+            /*Object.keys(cmp.history).forEach(key => {
+                let idx = key, valid = true
+                if (cmp.filter_productcategory != 'all') {
+                    let history_item = []
+                    cmp.history[key].map(function(value, id) {
+                        if (value.categories.indexOf(cmp.filter_productcategory) !== -1)
+                        history_item.push(value)
+                    });                    
+                }
+                if (cmp.filter_warehouse != 'all') {
+                    cmp.history[key].map(function(value, id) {
+                        if (value.warehouse != cmp.filter_warehouse)
+                            cmp.history[key].splice(id, 1)
+                    });
+                }
+                if (valid) {
+                    cmp.history_filter[idx] = cmp.history[key]
+                }                    
+            })
+            if (Object.keys(cmp.history).length != Object.keys(cmp.history_filter).length) {
+                cmp.history = cmp.history_filter
+                cmp.filter_apply = true
+            }
+            cmp.history_loading = false*/
         },
         filterClear: function () {
             let cmp = this
             cmp.products_loading = true
+            //cmp.history_loading = true
             cmp.filter_productcategory = 'all'
             cmp.filter_warehouse = 'all'
             cmp.filter_oc = ''
             cmp.filter_product = ''
             cmp.products = cmp.store_products
+            //cmp.history = cmp.store_history
             cmp.filter_apply = false
             if ($("#datatable-products").DataTable().destroy()) {
                 setTimeout(() => {
@@ -226,9 +324,10 @@ export default {
                             "order": []
                         }],
                         "columns": [
-                            { "width": "15%" },
-                            { "width": "15%" },
+                            { "width": "12%" },
+                            { "width": "12%" },
                             null,
+                            { "width": "10%" },
                             { "width": "10%" },
                             { "width": "10%" },
                             { "width": "10%" },
@@ -239,6 +338,7 @@ export default {
                 });
             }
             cmp.products_loading = false
+            //cmp.history_loading = false
         },
         show: function (idx) {
             let cmp = this
@@ -251,17 +351,18 @@ export default {
                 um: cmp.products[idx].um,
                 quantity: cmp.products[idx].quantity,
                 warehouse_name: cmp.products[idx].warehouse_name,
-                warehouse_owner: cmp.products[idx].warehouse_name,
+                warehouse_owner: cmp.products[idx].warehouse_owner,
                 stowage_card: cmp.products[idx].stowage_card
             }
             cmp.show_details = true
         },
-        productHistory: function (entry, product) {
+        productHistory: function (oc, description) {
             let cmp = this, period = cmp.period
+            cmp.history_description = description
             if (cmp.tabactive == 1) {
                 period = 'all'
             }
-            this.getProductHistoryTimeline(entry, product, period);
+            this.getProductHistoryTimeline(oc, description, period);
         },
         async getLastProductsTable (period = 'today') {
             let cmp = this
@@ -302,11 +403,13 @@ export default {
             axios.post('http://localhost/semtinel/public/api/logistics/inventory/history', {
                     'pole' : cmp.pole,
                     'project': cmp.project,
-                    'period': cmp.period
+                    'period': cmp.period,
+                    'description': ''
                 }, {
                     headers: headers
                 }).then(function (response) {
                     if (response.data.success) {
+                        cmp.store_history = response.data.history
                         cmp.history = response.data.history
                         cmp.history_loading = false
                         cmp.history_empty = (Object.keys(response.data.history).length > 0) ? false : true
@@ -319,7 +422,7 @@ export default {
                     return;
                 })
         },
-        async getProductHistoryTimeline (entry, product, period) {
+        async getProductHistoryTimeline (oc, description, period) {
             let cmp = this
             cmp.history_product_loading = true
             let headers = {
@@ -327,10 +430,11 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            axios.post('http://localhost/semtinel/public/api/logistics/inventory/history/' + entry + '/' + product, {
+            axios.post('http://localhost/semtinel/public/api/logistics/inventory/history/' + oc, {
                     'pole' : cmp.pole,
                     'project': cmp.project,
-                    'period': period
+                    'period': period,
+                    'description': description
                 }, { 
                     headers: headers
                 }).then(function (response) {
@@ -385,9 +489,10 @@ export default {
                                 "order": []
                             }],
                             "columns": [
-                                { "width": "15%" },
-                                { "width": "15%" },
+                                { "width": "12%" },
+                                { "width": "12%" },
                                 null,
+                                { "width": "10%" },
                                 { "width": "10%" },
                                 { "width": "10%" },
                                 { "width": "10%" },
@@ -429,7 +534,8 @@ export default {
         axios.post('http://localhost/semtinel/public/api/logistics/inventory/history', {
                 'pole' : cmp.pole,
                 'project': cmp.project,
-                'period': cmp.period
+                'period': cmp.period,
+                'description': ''
             }, {
                 headers: headers
             }).then(function (response) {
@@ -451,7 +557,7 @@ export default {
 
 <template>
     <page-header 
-        :pagetitle="'Inventarios de productos en obra'"
+        :pagetitle="'Inventario de productos en Pañoles'"
         :breadcrumbs="false"
         :pole_project="true"
         :pole="pole_name"
@@ -562,7 +668,7 @@ export default {
                 </li>
             </ul>
             <div class="inventory-period float-end pr-1" v-if="tabactive == 2 || tabactive == 3">
-                <label for="inventory_period" class="float-left pt-2 text-right" style="width: auto;">Motrando:</label>
+                <label for="inventory_period" class="float-left pt-2 text-right" style="width: auto;">Mostrando:</label>
                 <select 
                     name="inventory_period" 
                     id="inventory_period" 
@@ -588,22 +694,23 @@ export default {
                     </div>
                 </div>
                 <!-- Products table -->
-                <table id="datatable-products" class="table table-striped" :class="products_loading ? 'hidden' : ''">
+                <table id="datatable-products" class="table table-striped w-100" :class="products_loading ? 'hidden' : ''">
                     <thead>
                     <tr>
-                        <th width="15%">Orden Compra</th>
-                        <th width="15%">Código</th>
+                        <th width="12%">Pa&ntilde;ol</th>
+                        <th width="12%">Orden Compra</th>
                         <th>Descripción</th>
                         <th width="10%" class="text-center">UM</th>
                         <th width="10%" class="text-center">Existencia</th>
+                        <th width="10%" class="text-center">Reservado</th>
                         <th width="10%" class="text-center">Disponible</th>
                         <th width="10%" class="text-right no-sort"></th>
                     </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(item, idx) in products" :key="item.id">
+                            <td>{{ item.warehouse_name }}</td>
                             <td>{{ item.oc }}</td>
-                            <td>{{ item.product_code }}</td>
                             <td>
                                 <a class="show-lnk" 
                                 href="javascript:void(0);"
@@ -616,7 +723,8 @@ export default {
                             </td>
                             <td class="text-center">{{ item.um }}</td>
                             <td class="text-center">{{ item.quantity }}</td>
-                            <td class="text-center">&nbsp;</td>
+                            <td class="text-center">{{ item.reserved }}</td>
+                            <td class="text-center">{{ item.available }}</td>
                             <td class="text-right">
                                 <a href="javascript:void(0);"
                                     class="btn-semti-tool"
@@ -624,7 +732,7 @@ export default {
                                     data-toggle="modal" 
                                     data-target="#modal-item-history"
                                     v-tooltip="'Historial de este producto'"
-                                    v-on:click="productHistory(item.id_receipt, item.id)">
+                                    v-on:click="productHistory(item.oc, item.description)">
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
                                 </a> &nbsp;
                                 <a href="javascript:void(0);"
@@ -633,7 +741,7 @@ export default {
                                     data-toggle="modal" 
                                     data-target="#modal-item-addcart"
                                     v-tooltip="'Agregar al carrito'"
-                                    v-on:click="addCart(item)">
+                                    v-on:click="addCart(idx, item)">
                                     <span class="mdi mdi-cart mdi-18px text-orange"></span>
                                 </a>
                             </td>
@@ -667,14 +775,15 @@ export default {
                         <h6>Ning&uacute;n Producto encontrado</h6>
                     </div>
                 </div>
-                <table class="table table-striped" :class="(lastproducts_loading || lastproducts_empty) ? 'hidden' : ''">
+                <table class="table table-striped table-responsive" :class="(lastproducts_loading || lastproducts_empty) ? 'hidden' : ''">
                     <thead>
                     <tr>
-                        <th width="15%">Orden Compra</th>
-                        <th width="15%">Código</th>
+                        <th width="12%">Orden Compra</th>
+                        <th width="12%">Código</th>
                         <th>Descripción</th>
                         <th width="10%" class="text-center">UM</th>
                         <th width="10%" class="text-center">Existencia</th>
+                        <th width="10%" class="text-center">Reservado</th>
                         <th width="10%" class="text-center">Disponible</th>
                         <th width="10%" class="text-right no-sort"></th>
                     </tr>
@@ -695,7 +804,8 @@ export default {
                             </td>
                             <td class="text-center">{{ item.um }}</td>
                             <td class="text-center">{{ item.quantity }}</td>
-                            <td class="text-center">&nbsp;</td>
+                            <td class="text-center">{{ item.reserved }}</td>
+                            <td class="text-center">{{ item.available }}</td>
                             <td class="text-right">
                                 <a href="javascript:void(0);"
                                     class="btn-semti-tool"
@@ -703,16 +813,17 @@ export default {
                                     data-toggle="modal" 
                                     data-target="#modal-item-history"
                                     v-tooltip="'Historial de este producto'"
-                                    v-on:click="productHistory(item.id_receipt, item.id)">
+                                    v-on:click="productHistory(item.oc, item.description)">
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
                                 </a> &nbsp;
                                 <a href="javascript:void(0);"
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
-                                    data-target="#modal-item-form"
-                                    v-tooltip="'Agregar al carrito'">
-                                    <span class="mdi mdi-cart mdi-18px text-danger"></span>
+                                    data-target="#modal-item-addcart"
+                                    v-tooltip="'Agregar al carrito'"
+                                    v-on:click="addCart(idx, item)">
+                                    <span class="mdi mdi-cart mdi-18px text-orange"></span>
                                 </a>
                             </td>
                         </tr>
@@ -820,6 +931,7 @@ export default {
                     <div class="row py-1">
                         <div class="col-12">
                             <timeline
+                                :description="history_description"
                                 :history="history_product"
                                 :history_loading="history_product_loading"
                                 :history_empty="history_product_empty">
@@ -847,13 +959,17 @@ export default {
                     </button>
                 </div>
                 <div class="modal-body px-4 rounded-bottom pb-2">
-                    <div class="row py-1">
+                    <div class="row pt-2 pb-4" v-if="productcart_warehouse_error">
+                        <div class="float-start text-danger" style="width: 70px"><i class="mdi mdi-alert-circle mdi-48px"></i></div>
+                        <div class="float-start form_error pt-3" style="width: 85%">No puede seleccionar un Producto de otro Pañol.<br>Por favor, revise los productos de su carrito.</div>
+                    </div>
+                    <div class="row py-1" v-if="!productcart_warehouse_error">
                         <div class="col-12 pb-2">
                             <span class="detail-title">Descripción</span>
                             <h6 class="detail-desc">{{ productcart.description }}</h6>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="!productcart_warehouse_error">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="productcart_um" class="detail-title mb-1">UM:</label>
@@ -870,7 +986,7 @@ export default {
                                 <label for="productcart_quantity" class="detail-title mb-1">Cantidad:</label>
                                 <input type="number" 
                                     class="form-control"
-                                    :class="productcart_error ? 'border-error' : ''"
+                                    :class="cart_error != '' ? 'border-error' : ''"
                                     id="productcart_quantity"
                                     name="productcart_quantity"
                                     step=".01"
@@ -889,6 +1005,11 @@ export default {
                                 <i class="mdi mdi-loading mdi-spin" v-else></i>
                                 {{ productcart_form_okbtn_text }}
                             </button>
+                        </div>
+                    </div>
+                    <div class="row py-2" v-if="cart_error != '' && !productcart_warehouse_error">
+                        <div class="col-12 text-center">
+                            <h6 class="form_error">{{ cart_error }}</h6>
                         </div>
                     </div>
                 </div>

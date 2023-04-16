@@ -59,7 +59,9 @@ export default {
 
             <!-- POLE & PROJECT -->
             <div v-if="pole_project">
-              <h6 class="text-right"><span>Polo:</span> {{ pole }}, <span>Proyecto:</span> {{ project }}</h6> 
+              <h6 class="text-right">
+                <span>Polo:</span> {{ pole }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Proyecto:</span> {{ project }}
+              </h6> 
             </div>
             <!-- \ BREADCRUMBS -->
         </div>
