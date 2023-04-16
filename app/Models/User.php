@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -29,6 +31,7 @@ class User extends Authenticatable implements LdapAuthenticatable
         'email',
         'username',
         'password',
+        'pole_id',
     ];
 
     /**
@@ -49,4 +52,29 @@ class User extends Authenticatable implements LdapAuthenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the pole that the user belong.
+     */
+    public function pole(): BelongsTo
+    {
+        return $this->belongsTo(SystPole::class, 'syst_pole_id');
+    }
+
+    /**
+     * The systems that belong to the user.
+     */
+    public function systems(): BelongsToMany
+    {
+        return $this->belongsToMany(SystSubsystem::class,'users_systems','user_id','system_id');
+    }
+
+     /**
+     * The projects that belong to the user.
+     */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(SystStructureProject::class, 'users_projects','user_id','project_id');
+    }
+    
 }

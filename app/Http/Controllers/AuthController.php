@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AuthController extends Controller
 {
@@ -123,5 +125,121 @@ class AuthController extends Controller
         session_destroy();
         
         return redirect(route('login'));
+    }
+
+    /**
+     * Create User
+     * @param Request $request
+     * @return User 
+     */
+    public function createUser(Request $request)
+    {
+        try {
+            //Validated
+            $validateUser = Validator::make($request->all(), 
+            [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required'
+            ]);
+
+            if($validateUser->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }
+
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+                'syst_pole_id' => $request->syst_pole_id
+            ]);
+            //le asigna roles a los usuarios
+            if(!empty($request->roles)){
+                $user->assignRole($request->roles);
+            }
+
+            //asignar proyectos en la relacion mucho a mucho
+            if(!empty($request->projects)){
+                $user->projects()->attach($request->projects);
+            }
+
+            //asignar sistemas en la relacion mucho a mucho
+            if(!empty($request->systems)){
+                $user->systems()->attach($request->systems);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Created Successfully',
+                'token' => $user->createToken('auth_token')->plainTextToken
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete user
+     * @param int $id
+     * @return User
+     */
+
+     public function destroyUser($id) {
+        $user='';
+        try {
+            // Delete user
+            $user = User::find(intval($id));
+            $user->projects()->detach();
+            $user->systems()->detach();
+            $user->delete();
+
+        } catch (Throwable $th) {
+            $response = array('success' => false, 'error' => $th->getMessage());
+            return response()->json($response, 500);
+        }
+
+        // Response
+        $response = array('success' => true,'user'=> $user);
+        return response()->json($response, 200);
+
+    }
+
+    /**
+     * Update User
+     * @param Request $request
+     * @return User
+     */
+    public function updateUser(Request $request){
+        $user = User::findOrFail(intval($request->id));
+        $data = [
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'username' => $request->username,            
+            'syst_pole_id' => $request->syst_pole_id
+        ];
+        //comprobar si se entr'o un nuevo password
+        if($request->password !== '') $data['password']= Hash::make($request->password);
+
+        $user->update($data);
+
+        //las realaiones mucho a mucho
+        $user->systems()->sync($request->systems);
+        $user->projects()->sync($request->projects);
+        $user->roles()->sync($request->roles);
+        // Response
+        $response = array('success' => true,'user'=> $user);
+        return response()->json($response, 200);
     }
 }

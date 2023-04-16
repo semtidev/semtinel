@@ -64,14 +64,14 @@
                                 <div class="form-group mt-4">
                                     <button type="button" class="form-control btn btn-primary px-3"
                                         :disabled="form_processing" @click="login('ldap')">
-                                        <i class="mdi mdi-microsoft-windows" v-if="!form_processing && !form_method != 'ldap'"></i>&nbsp;&nbsp;
                                         <i class="mdi mdi-loading mdi-spin" v-if="form_processing && form_method == 'ldap'"></i>&nbsp;&nbsp;
+                                        <i class="mdi mdi-microsoft-windows" v-else></i>&nbsp;&nbsp;
                                         @{{ login_windows }}
                                     </button>
                                     <button type="button" class="form-control btn btn-secondary px-3 mt-3"
                                         :disabled="form_processing" @click="login('auth')">
-                                        <i class="fas fa-street-view" v-if="!form_processing"></i>&nbsp;&nbsp;
                                         <i class="mdi mdi-loading mdi-spin" v-if="form_processing && form_method == 'auth'"></i>&nbsp;&nbsp;
+                                        <i class="fas fa-street-view" v-else></i>&nbsp;&nbsp;
                                         @{{ login_semtinel }}
                                     </button>
                                 </div>

@@ -13,6 +13,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\LogisticsReceiptItemOc;
 use App\Models\LogisticsReceiptItemDispatch;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Guid\Fields;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,71 @@ class AdminController extends Controller
     /////      GETTERS      //////
     //////////////////////////////
 
+    /**
+     * Get Users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getUsers()
+    {
+        $users     = array();
+        $qry_users = User::orderBy('first_name', 'ASC')->get();
+        foreach ($qry_users as $user) {
+            $users[] = array(
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'username' => $user->username,
+                'pole_id' => $user->syst_pole_id
+            );
+        }
+        return response()->json($users,200);
+    }
+
+    /**
+     * Get User Roles.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserRoles($id)
+    {
+        $roles = User::find($id)->roles;
+        return response()->json($roles,200);
+    }
+
+    /**
+     * Get User.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUser($id)
+    {
+        $user = User::find($id);
+        return response()->json($user,200);
+    }
+
+    /**
+     * Get User Systems.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserSystems($id)
+    {
+        $systems = User::find($id)->systems;
+        return response()->json($systems,200);
+    }
+    /**
+     * Get User Projects.
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getUserProjects($id)
+    {
+        $projects = User::find($id)->projects;
+        return response()->json($projects,200);
+    }
+    
     /**
      * Get Poles.
      *
@@ -62,11 +128,11 @@ class AdminController extends Controller
     public function getProjects()
     {
         $projects     = array();
-        $qry_projects = SystStructureProject::orderBy('id_pole', 'ASC')->get();
+        $qry_projects = SystStructureProject::orderBy('pole_id', 'ASC')->get();
         foreach ($qry_projects as $project) {
             $projects[] = array(
                 'id' => $project->id,
-                'id_pole' => $project->id_pole,
+                'pole_id' => $project->id_pole,
                 'name' => $project->name,
                 'abbr' => $project->abbr,
                 'active' => $project->active
@@ -76,22 +142,26 @@ class AdminController extends Controller
     }
 
     /**
+     * Get Projects by Pole id.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getProjectsByPole($id)
+    {
+        $projects = SystPole::find($id)->projects;
+        return response()->json($projects,200);
+    }
+
+
+    /**
      * Get Warehouses.
      *
      * @return \Illuminate\Http\Response
      */
-    public function getWarehouses($project = 0)
+    public function getWarehouses()
     {
-        $warehouses = array();
-        if ($project == 0) {
-            $qry_warehouses = SystWarehouse::orderBy('id_project', 'ASC')->orderBy('name', 'ASC')->get();
-        }
-        else {
-            $qry_warehouses = SystWarehouse::where('id_project', intval($project))
-                                            ->orderBy('id_project', 'ASC')
-                                            ->orderBy('name', 'ASC')
-                                            ->get();
-        }
+        $warehouses     = array();
+        $qry_warehouses = SystWarehouse::orderBy('id_project', 'ASC')->orderBy('name', 'ASC')->get();
         foreach ($qry_warehouses as $warehouse) {
             $warehouses[] = array(
                 'id' => $warehouse->id,
