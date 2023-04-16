@@ -22,6 +22,19 @@
     display: none !important;
 }
 
+.app_name {
+    margin-top: 200px !important;
+}
+.app-title {
+    font-family: 'roboto-medium';
+    font-size: 34px;
+    color: #22943C;
+}
+.app-subtitle {
+    font-family: 'roboto';
+    font-size: 20px;
+}
+
 .brand-text {
     font-family: 'roboto';
     text-shadow: rgb(28, 56, 1) 0 1px;
@@ -431,7 +444,7 @@ table.dataTable.no-footer {
     background-color: #4e5e6d !important;
 }
 .inventory-period {
-    width: 190px;
+    width: 200px;
 }
 
 

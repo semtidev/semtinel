@@ -14,10 +14,12 @@ class LogisticsReceipt extends Model
      * @var array
      */
     protected $fillable = [
+        'code',
         'origin', 
         'document_type', 
         'document_number', 
         'oc',
+        'output',
         'created_at',
         'updated_at',
         'created_by',
@@ -40,5 +42,9 @@ class LogisticsReceipt extends Model
 
     public function itemsDispatch () {
         return $this->hasMany('App\Models\LogisticsReceiptItemDispatch', 'id_receipt');
+    }
+
+    public function itemsTransfer () {
+        return $this->hasMany('App\Models\LogisticsReceiptItemTransfer', 'id_receipt');
     }
 }

@@ -13,146 +13,81 @@
     <link rel="stylesheet" href="public/themes/semtinel/vendor/fas-620/css/all.min.css">
     <!-- Material Design Icons -->
     <link rel="stylesheet" href="public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
-    <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="public/themes/adminlte320/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/login.js'])
-    
-    <!-- Theme style -->
-    <link rel="stylesheet" href="public/themes/adminlte320/dist/css/adminlte.min.css">
-
+    @vite(['resources/js/login.js'])
+    <link rel="stylesheet" href="public/themes/semtinel/vendor/bootstrap/bootstrap4.min.css">
     <!-- App style -->
     <link rel="stylesheet" href="public/themes/semtinel/css/login.css">
 
 </head>
-<body class="hold-transition login-page particle-network-animation">
-    <div id="app" style="position: absolute;">
-        <div class="container pr-0 h-100">
-            <div class="row pr-0 h-100">
-                <div class="col-12 pr-0 h-100 aligns-items-center justify-content-end">
-
-                    <div id="login">
-                        <div class="login-box float-end">
-                            <div class="login-logo">
-                                <a href="{{ route('app') }}"><b>Semtinel</b></a>
-                            </div>
-                            <!-- /.login-logo -->
-                            <div class="card p-2">
-                                <div class="card-body login-card-body">
-                                    <p class="login-box-icon text-center">
-                                        <img src="public/themes/semtinel/img/semtinel.png" alt="Login" width="72">
-                                    </p>
-                                    <p class="login-box-msg">Plataforma de Gestión Empresarial</p>
-
-                                    <h5 class="error text-center" 
-                                        v-show="error_txt != ''" 
-                                        v-html="error_txt">
-                                    </h5>
-                
-                                    <form id="login-form" method="POST" action="{{ route('login') }}">
-                                    @csrf
-                                    <div class="input-group mb-3">
-                                    <input id="username" name="username" type="text"  
-                                        class="form-control @error('username') is-invalid @enderror" 
-                                        v-model="auth.username" 
-                                        placeholder="Usuario" 
-                                        required autofocus>
-                                    <div class="input-group-append">
-                                        <div class="input-group-text">
-                                        <span class="fas fa-user"></span>
-                                        </div>
-                                    </div>
-                                    </div>
-                                    @error('username')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                    <div class="input-group mb-3">
-                                    <input id="password" name="password" type="password" 
-                                        class="form-control @error('password') is-invalid @enderror" 
-                                        v-model="auth.password"
-                                        placeholder="Contrase&ntilde;a" 
-                                        v-on:keyup.enter="login('ldap')"
-                                        required>
-                                    <div class="input-group-append">
-                                        <div class="input-group-text">
-                                        <span class="fas fa-lock"></span>
-                                        </div>
-                                    </div>
-                                    </div>
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                
-                                    <div class="text-center mb-3 mt-4">
-                                        <button type="button" class="btn btn-block btn-primary mb-2"
-                                            :disabled="form_processing" @click="login('ldap')">
-                                            <i class="mdi mdi-microsoft-windows mr-2"></i> @{{ login_windows }}
-                                        </button>
-                                        <button type="button" class="btn btn-block btn-secondary" 
-                                            :disabled="form_processing" @click="login('auth')">
-                                            <i class="fas fa-street-view mr-2"></i> @{{ login_semtinel }}
-                                        </button>
-                                    </div>
-                                    </form>
-                
-                                @if (Route::has('password.request'))
-                                <p class="mb-1">
-                                    <a href="{{ route('password.request') }}" class="primary">Olvid&eacute; mi contrase&ntilde;a</a>
-                                </p>
-                                @endif
-
-                                <p class="login-copyright text-center pt-4 pb-0 mb-0">
-                                    <span>Asociación Económica Internacional</span><br>
-                                    UCM - BBI
-                                </p>
-
-                                </div>
-                                <!-- /.login-card-body -->
-                            </div>
-                        </div>
-                        <!-- /.login-box -->
+<body class="img js-fullheight" style="background-image: url(public/themes/semtinel/img/login.png);">
+	<div id="login">
+        <section class="ftco-section" style="position: absolute;">
+            <div class="container h-100 aligns-items-center">
+                <div class="row h-100 justify-content-center">
+                    <div class="col-md-6 text-center h-100 mb-5">
+                        <h2 class="heading-section">
+                            <img src="public/themes/semtinel/img/logo-white.png" alt="">
+                            <span>Semtinel</span>
+                        </h2>
                     </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="login-wrap p-0">
+                            <h3 class="mb-4 text-center">Inicie Sesi&oacute;n para acceder</h3>
 
+                            <h5 class="error text-center" 
+                                v-show="error_txt != ''" 
+                                v-html="error_txt">
+                            </h5>
+
+                            <form id="login-form" method="POST" action="{{ route('login') }}">
+                                @csrf
+                                <div class="form-group">
+                                    <input type="text" 
+                                        class="form-control" 
+                                        placeholder="Usuario"
+                                        v-model="auth.username" 
+                                        required>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <input type="password" 
+                                        id="password-field" 
+                                        class="form-control" 
+                                        placeholder="Contrase&ntilde;a"
+                                        v-model="auth.password"
+                                        v-on:keyup.enter="login('auth')" 
+                                        required>
+                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                </div>
+                                <div class="form-group mt-4">
+                                    <button type="button" class="form-control btn btn-primary px-3"
+                                        :disabled="form_processing" @click="login('ldap')">
+                                        <i class="mdi mdi-microsoft-windows" v-if="!form_processing && !form_method != 'ldap'"></i>&nbsp;&nbsp;
+                                        <i class="mdi mdi-loading mdi-spin" v-if="form_processing && form_method == 'ldap'"></i>&nbsp;&nbsp;
+                                        @{{ login_windows }}
+                                    </button>
+                                    <button type="button" class="form-control btn btn-secondary px-3 mt-3"
+                                        :disabled="form_processing" @click="login('auth')">
+                                        <i class="fas fa-street-view" v-if="!form_processing"></i>&nbsp;&nbsp;
+                                        <i class="mdi mdi-loading mdi-spin" v-if="form_processing && form_method == 'auth'"></i>&nbsp;&nbsp;
+                                        @{{ login_semtinel }}
+                                    </button>
+                                </div>
+                            </form>
+                            <p class="w-100 text-center mt-5">&copy; A.E.I. UCM - BBI&nbsp;&nbsp;/&nbsp;&nbsp;Servicios Inform&aacute;ticos {{ date('Y') }}</p>          
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>        
+        </section>
     </div>
 
-    <div id="nodes-animation">
-        <canvas id="nodes"></canvas>
-    </div>
-
-<!-- jQuery -->
-<script src="public/themes/adminlte320/plugins/jquery/jquery.min.js"></script>
-<!-- AdminLTE App -->
-<script src="public/themes/adminlte320/dist/js/adminlte.min.js"></script>
-<!-- Nodes animation -->
-<script src="public/themes/semtinel/vendor/nodes/nodes.js"></script>
-<script type="text/javascript">
-var nodesjs = new NodesJs({
-    id: 'nodes',
-    width: window.innerWidth,
-    height: window.innerHeight,
-    particleSize: 2,
-    lineSize: 1,
-    particleColor: [255, 255, 255, 0.3],
-    lineColor: [255, 255, 255],
-    backgroundFrom: [10, 25, 100],
-    backgroundTo: [25, 50, 150],
-    backgroundDuration: 4000,
-    nobg: true,
-    number: window.hasOwnProperty('orientation') ? 30: 100,
-    speed: 10
-});
-window.onresize = function () {
-    nodesjs.setWidth(window.innerWidth);
-    nodesjs.setHeight(window.innerHeight);
-};
-</script>
+    <script src="public/themes/semtinel/vendor/bootstrap/jquery.min.js"></script>
+    <script src="public/themes/semtinel/vendor/bootstrap/popper.js"></script>
+    <script src="public/themes/semtinel/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="public/themes/semtinel/js/login.js"></script>
     
 </body>
 </html>

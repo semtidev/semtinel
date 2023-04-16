@@ -6,12 +6,16 @@ export default {
             default: () => {},
         },
         history_loading: {
-          type: Boolean,
-          default: true
+            type: Boolean,
+            default: true
         },
         history_empty: {
-          type: Boolean,
-          default: true
+            type: Boolean,
+            default: true
+        },
+        description: {
+            type: String,
+            default: ''
         }
     },
     methods: {
@@ -44,14 +48,21 @@ export default {
 </script>
 <template>
     <!-- The timeline -->
+    <!-- Description -->
+    <div class="row" v-if="description != ''">
+        <div class="col-12 pt-2 pb-3">
+            <h5>{{ description }}</h5>
+        </div>
+    </div>
+    
     <!-- loading -->
     <div class="row" :class="!history_loading ? 'hidden' : ''">
-        <div class="col-12 text-center py-5 loading-table">
+        <div class="col-12 text-center pt-2 pb-3 loading-table">
             <span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando historial...</span>
         </div>
     </div>
-    <div class="row mt-3" :class="(history_empty && !history_loading) ? '' : 'hidden'">
-        <div class="col-12 text-center empty-table">
+    <div class="row" :class="(history_empty && !history_loading) ? '' : 'hidden'">
+        <div class="col-12 text-center pt-2 pb-3 empty-table">
             <h6>Ning&uacute;na actividad encontrada en este periodo</h6>
         </div>
     </div>
@@ -60,10 +71,10 @@ export default {
       :class="history_loading ? 'hidden' : ''" 
       v-if="!history_empty">
         
-      <!-- timeline time label -->
+        <!-- timeline time label -->
         <template v-for="(item, idx) in history" :key="idx">
           <div class="time-label">
-              <span class="bg-success px-2"> {{ getDateTimeline(idx) }} </span>
+              <span class="bg-gradient-orange px-2 text-white"> {{ getDateTimeline(idx) }} </span>
           </div>
           <!-- /.timeline-label -->
           <!-- timeline item -->
@@ -211,7 +222,7 @@ export default {
             </div>
 
             <div v-if="node.node_type == 'product-add'">
-              <i class="mdi mdi-plus mdi-18px bg-warning"></i>
+              <i class="mdi mdi-plus mdi-18px bg-success"></i>
 
               <div class="timeline-item">
                 <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>

@@ -45,7 +45,7 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
           </li>
           <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ url('/') }}" class="nav-link align-middle">AEI UCM - BBI</a>
+            <a href="{{ url('/') }}" class="nav-link align-middle">Portal</a>
           </li>
           <li class="nav-item d-none d-sm-inline-block">
             <router-link 
@@ -227,10 +227,7 @@
                           </tbody>
                           <tfoot>
                             <tr>
-                              <td><strong>TOTAL</strong></td>
-                              <td></td>
-                              <td class="text-center"><strong>@{{ $root.cart_totals.quantity }}</strong></td>
-                              <td></td>
+                              <td colspan="4"><strong>TOTAL</strong></td>
                               <td class="text-right"><strong>$@{{ parseFloat($root.cart_totals.price_total).toFixed(2) }}</strong></td>
                               <td></td>
                             </tr>

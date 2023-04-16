@@ -41,7 +41,7 @@ export default {
     },
     created() {
         this.entry = JSON.parse(this.$route.params.entry)
-        this.pagetitle = this.entry['document_number']
+        this.pagetitle = this.entry['code']
         if (this.entry['type'] == 'oc')
             this.table_oc = true
         else
@@ -89,10 +89,10 @@ export default {
                 cmp.item_details = {
                     cod_product: cmp.entry['items'][idx].product_code,
                     oc: cmp.entry['items'][idx].oc,
-                    docnum: cmp.entry['items'][idx].docnum,
+                    docnum: (cmp.entry['origin'] != 'Transferencia de Pañol') ? cmp.entry['items'][idx].docnum : cmp.entry.document_number,
                     item_description: cmp.entry['items'][idx].item_description,
                     um: cmp.entry['items'][idx].um,
-                    product_quantity: cmp.entry['items'][idx].product_quantity,
+                    product_quantity: (cmp.entry['origin'] != 'Transferencia de Pañol') ? cmp.entry['items'][idx].product_quantity : cmp.entry['items'][idx].received_quantity,
                     received_quantity: cmp.entry['items'][idx].received_quantity,
                     stowage_card: cmp.entry['items'][idx].stowage_card,
                     price_unit: cmp.entry['items'][idx].price_unit,
@@ -171,7 +171,9 @@ export default {
                     'entry' : cmp.entry.id,
                     'user': cmp.session.id,
                     'pole': cmp.pole,
-                    'project': cmp.project
+                    'project': cmp.project,
+                    'transfer': cmp.entry.transfer,
+                    'code': cmp.entry.code
                 }, {
                     headers: headers
                 }).then(function (response) {
@@ -228,7 +230,7 @@ export default {
 
 <template>
     <page-header 
-        :pagetitle="'Detalle de la entrada ' + pagetitle"
+        :pagetitle="'Detalle de la entrada: ' + pagetitle"
         :breadcrumbs="true"
         :navbar="[
             {
@@ -259,14 +261,14 @@ export default {
                     class="btn btn-app system"
                     v-tooltip="'Generar documento PDF'"
                     v-on:click="docPdf(entry.id)">
-                  <i class="fas fa-file-pdf"></i> Exportar
+                  <i class="fas fa-file-pdf"></i> Documento
                 </a>
                 <a href="javascript:void(0);"
                     class="btn btn-app system"
                     data-toggle="modal" 
                     data-target="#modal-upload-form"
                     v-tooltip="'Adjuntar documento escaneado'"
-                    v-on:click="attachFile(entry.id, entry.document_number)">
+                    v-on:click="attachFile(entry.id, entry.code)">
                   <i class="fas fa-paperclip"></i> Adjuntar
                 </a>
                 <a href="javascript:void(0);" 
@@ -278,7 +280,7 @@ export default {
                 </a>
                 <a href="javascript:void(0);" 
                     class="btn btn-app danger"
-                    :class="(entry.confirm == 1) ? 'disabled' : ''"
+                    v-if="(entry.confirm != 1 && entry.transfer != 1)"
                     v-tooltip="'Cancelar entrada'"
                     v-on:click.stop="cancelEntry()">
                   <i class="fas" :class="(cancel_loading) ? 'fa-spinner fa-pulse' : 'fa-times'"></i> Cancelar
@@ -360,7 +362,8 @@ export default {
         <!-- /.row -->
 
         <!-- Table OC row -->
-        <div class="row pt-4" :class="(!table_oc) ? 'hidden' : ''">
+        <label class="pt-3 mb-0">LISTADO DE PRODUCTOS RECIBIDOS:</label>
+        <div class="row" :class="(!table_oc) ? 'hidden' : ''">
             <div class="col-12 table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -411,12 +414,14 @@ export default {
                         <th width="50" class="text-center no-sort">No.</th>
                         <th>Descripción</th>
                         <th width="100" class="text-center no-sort">UM</th>
-                        <th width="100" class="text-center no-sort">Ctdad Despachada</th>
+                        <th width="100" class="text-center no-sort"
+                            v-if="entry['origin'] != 'Transferencia de Pañol'">Ctdad Despachada</th>
                         <th width="100" class="text-center no-sort">Ctdad Recibida</th>
                         <th width="100" class="text-right no-sort">Precio Unitario</th>
                         <th width="130" class="text-right no-sort">Importe Total</th>
                         <th width="150" class="text-center no-sort">Tarjeta Estiba</th>
-                        <th width="300" class="no-sort">Comentario</th>
+                        <th width="300" class="no-sort"
+                            v-if="entry['origin'] != 'Transferencia de Pañol'">Comentario</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -433,12 +438,14 @@ export default {
                             </a>
                         </td>
                         <td class="text-center">{{ item['um'] }}</td>
-                        <td class="text-center">{{ item['product_quantity'] }}</td>
+                        <td class="text-center"
+                            v-if="entry['origin'] != 'Transferencia de Pañol'">{{ item['product_quantity'] }}</td>
                         <td :id="'item-' + (idx + 1) + '-received'" class="text-center">{{ item['received_quantity'] }}</td>
                         <td class="text-right">{{ item['price_unit'] }}</td>
                         <td :id="'item-' + (idx + 1) + '-pricetotal'" class="text-right">{{ item['price_total'] }}</td>
                         <td :id="'item-' + (idx + 1) + '-stowagecard'" class="text-center">{{ item['stowage_card'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-comment'">{{ item['comment'] }}</td>
+                        <td :id="'item-' + (idx + 1) + '-comment'"
+                            v-if="entry['origin'] != 'Transferencia de Pañol'">{{ item['comment'] }}</td>
                     </tr>
                     </tbody>
                 </table>

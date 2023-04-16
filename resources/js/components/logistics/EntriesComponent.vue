@@ -174,7 +174,7 @@ export default {
         <div class="card">
             <!-- card-header -->
             <div class="card-header">
-                <h3 class="card-title">Entradas de productos en obra</h3>
+                <h3 class="card-title">Entradas de mercanc&iacute;a en pa&ntilde;ol</h3>
                 <div class="card-tools">
                     <button type="button" 
                         class="btn btn-tool pr-2"
@@ -197,7 +197,7 @@ export default {
             <div class="card-body">
                 <div class="row" :class="loading ? '' : 'hidden'">
                     <div class="col-12 text-center py-5 loading-table">
-                        <span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando entradas de productos en obra...</span>
+                        <span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando entradas de mercanc&iacute;as en pa&ntilde;ol...</span>
                     </div>
                 </div>
                 <div class="row" :class="loading ? 'hidden' : ''">
@@ -206,7 +206,7 @@ export default {
                             <thead>
                             <tr>
                                 <th width="5%" class="text-center no-sort">No.</th>
-                                <th>Documento</th>
+                                <th>Entrada</th>
                                 <th width="15%">Origen</th>
                                 <th width="15%">Orden Compra</th>
                                 <th width="15%">Destino</th>
@@ -227,7 +227,7 @@ export default {
                                         href="javascript:void(0);"
                                         v-tooltip="'Click para Mostrar Detalles de esta Entrada'"
                                         v-on:click="entryDetail(entry)">
-                                        {{ entry.document_number }}
+                                        {{ entry.code }}
                                     </a>                                    
                                 </td>
                                 <td>{{ entry.origin }}</td>

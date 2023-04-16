@@ -58,6 +58,9 @@ class OdooAeiController extends Controller
                     'um' => $item->um,
                     'received_quantity' => 0,
                     'stowage_card' => '-',
+                    'warehouse' => '',
+                    'warehouse_name' => '',
+                    'warehouse_owner' => '',
                     'price_unit' => $item->price_unit,
                     'price_total' => 0,
                     'comment' => ''
@@ -111,6 +114,9 @@ class OdooAeiController extends Controller
                     'product_quantity' => $item->product_quantity,
                     'received_quantity' => 0,
                     'stowage_card' => '-',
+                    'warehouse' => '',
+                    'warehouse_name' => '',
+                    'warehouse_owner' => '',
                     'price_unit' => $item->price_unit,
                     'price_total' => 0,
                     'comment' => ''

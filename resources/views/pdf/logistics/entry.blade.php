@@ -1,6 +1,6 @@
 @extends('layouts.logistics.pdf_vertical')
 
-@section('title', 'Entrada de productos en obra')
+@section('title', 'Entrada')
 
 @section('content')
 
@@ -8,26 +8,34 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td class="pole" valign="bottom">
-            Entrada de Mercancía en Almac&eacute;n
+            Entrada de Mercanc&iacute;a en Pa&ntilde;ol
         </td>
-        <td width="50%" align="right">
-            <span class="doc-label">Obra:</span><br>
-            <span class="doc-value">{{ $project->name }}</span>
+        <td width="30%" align="right">
+            <span class="doc-label">No: </span>
+            <span class="doc-value">{{ $code }}</span>
+        </td>
+        <td width="30%" align="right">
+            <span class="doc-label">Fecha Operaci&oacute;n: </span>
+            <span class="doc-value">{{ $updated_at }}</span>
         </td>
     </tr>
 </table>
 {{--  ORIGIN  --}}
 <table width="100%" border="1" cellpadding="0" cellspacing="0" style="margin-top: 20px">
     <tr>
-        <td width="35%" class="table-params">
+        <td class="table-params">
+            <span class="doc-label">Obra:</span><br>
+            <span class="doc-value">{{ $project->name }}</span>
+        </td>
+        <td width="23%" class="table-params">
             <span class="doc-label">Origen:</span><br>
             <span class="doc-value">{{ $origin }}</span>
         </td>
-        <td width="33%" class="table-params">
+        <td width="23%" class="table-params">
             <span class="doc-label">No. Documento:</span><br>
             <span class="doc-value">{{ $document_number }}</span>
         </td>
-        <td width="32%" class="table-params">
+        <td width="23%" class="table-params">
             <span class="doc-label">Orden de Compra:</span><br>
             <span class="doc-value">{{ $oc }}</span>
         </td>
@@ -101,8 +109,25 @@
         </tr>
     @endforeach
 </table>
+{{--  COMMENT  --}}
+@if ($comment != null && $comment != '')
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 50px">
+    <tr>
+        <td class="table-cell">
+            <span class="doc-value">NOTA:</span>
+        </td>
+    </tr>    
+    <tr>
+        <td class="table-cell">
+            <span style="font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; color: rgb(57, 64, 75);">
+                {{ $comment }}
+            </span>
+        </td>
+    </tr>
+</table>
+@endif
 {{--  DESTIN  --}}
-<table width="100%" border="1" cellpadding="0" cellspacing="0" style="margin-top: 30px">
+<table width="100%" border="1" cellpadding="0" cellspacing="0" style="margin-top: 50px">
     <tr>
         <td width="35%" class="table-params">
             <span class="doc-label">Destino:</span><br>

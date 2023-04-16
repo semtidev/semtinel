@@ -377,7 +377,7 @@ export default {
         <div class="card card-default">
             <!-- card-header -->
             <div class="card-header">
-                <h3 class="card-title">Pa&ntilde;oles</h3>
+                <h3 class="card-title">Almacenes</h3>
                 <div class="card-tools">
                     <button type="button" 
                         class="btn btn-tool pl-0"

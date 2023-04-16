@@ -6,6 +6,8 @@
 
 import './bootstrap';
 import { createApp } from 'vue';
+import "jquery/dist/jquery.min.js";
+import $ from "jquery";
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
@@ -21,6 +23,7 @@ var login = createApp({
                 password: ""
             },
             form_processing: false,
+            form_method: 'auth',
             login_windows: "Iniciar con Windows",
             login_semtinel: "Iniciar con Semtinel", 
             error_txt: ""
@@ -39,6 +42,7 @@ var login = createApp({
             let cmp = this,
                 path = (method == 'auth') ? 'login/auth' : 'login/ldap';
             cmp.form_processing = true
+            cmp.form_method = method
             if (method == 'ldap') {
                 cmp.login_windows = "Validando usuario..."
             }
@@ -74,6 +78,15 @@ var login = createApp({
         },
     },
     mounted() {
-        sessionStorage.removeItem('semtinel')
+        sessionStorage.removeItem('semtinel');
+        $(".toggle-password").off().on("click", function () {
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+              input.attr("type", "text");
+            } else {
+              input.attr("type", "password");
+            }
+        });
     }
 }).mount('#login');

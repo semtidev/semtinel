@@ -31,8 +31,8 @@ const app = createApp({
             page_active: 'home',
             cart_items: [],
             cart_quantity: 0,
+            cart_warehouse: '',
             cart_totals: {
-                quantity: 0,
                 price_total: 0
             },
             session: JSON.parse(sessionStorage.getItem('semtinel'))
@@ -133,13 +133,12 @@ const app = createApp({
         calcTotalsCart: function () {
             let cmp = this
             if (cmp.cart_quantity == 0) {
+                cmp.cart_warehouse = ''
                 return;
             }
             // initialize quantities
-            cmp.cart_totals.quantity = 0
             cmp.cart_totals.price_total = 0
             cmp.cart_items.map(function(product) {
-                cmp.cart_totals.quantity += parseFloat(product.quantity)
                 cmp.cart_totals.price_total += parseFloat(product.price_total)
             });
         },
