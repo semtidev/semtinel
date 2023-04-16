@@ -47,7 +47,7 @@
             </a>
             <ul>
               <li><a href="logout">Cerrar Sesi&oacute;n</a></li>
-              <li><a href="admin">Adminstraci&oacute;n</a></li>
+              <li><a href="admin">Administraci&oacute;n</a></li>
             </ul>
           </li>
         </ul>

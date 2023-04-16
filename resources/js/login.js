@@ -38,9 +38,24 @@ var login = createApp({
         },
     },
     methods: {
+        validForm() {
+            let cmp = this
+            if (cmp.auth.username == null || cmp.auth.username == '') {
+                login.error_txt = "El campo Usuario es obligatorio."
+                return false
+            }
+            if (cmp.auth.password == null || cmp.auth.password == '') {
+                login.error_txt = "El campo Contraseña es obligatorio."
+                return false
+            }
+            return true
+        },
         async login(method){
             let cmp = this,
                 path = (method == 'auth') ? 'login/auth' : 'login/ldap';
+            if (!cmp.validForm()) {
+                return
+            }
             cmp.form_processing = true
             cmp.form_method = method
             if (method == 'ldap') {
