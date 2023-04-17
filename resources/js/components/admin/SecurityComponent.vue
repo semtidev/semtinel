@@ -404,7 +404,7 @@ export default {
                                             <tr>
                                                 <th width="50" class="text-center no-sort">No.</th>
                                                 <th>Nombre</th>
-                                                <th width="100" class="text-center no-sort">Permite</th>
+                                                <th width="130" class="text-center no-sort">Pertenece a</th>
                                             </tr>
                                             </thead>
                                             <tbody>

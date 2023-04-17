@@ -45,7 +45,7 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
           </li>
           <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ url('/') }}" class="nav-link align-middle">AEI UCM - BBI</a>
+            <a href="{{ url('/') }}" class="nav-link align-middle">Portal</a>
           </li>
           <li class="nav-item d-none d-sm-inline-block">
             <router-link 
@@ -55,6 +55,7 @@
               Semtinel Admin
             </router-link>
           </li>
+          <li><a class="nav-link" href="{{ url('/logistics') }}">Log&iacute;stica</a></li>
         </ul>
 
         <!-- Right navbar links -->

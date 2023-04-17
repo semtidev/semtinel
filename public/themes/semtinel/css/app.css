@@ -22,6 +22,10 @@
     display: none !important;
 }
 
+.mdi-72px {
+    font-size: 72px !important;
+}
+
 .app_name {
     margin-top: 200px !important;
 }

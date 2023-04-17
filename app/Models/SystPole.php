@@ -24,7 +24,7 @@ class SystPole extends Model
      */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class,'syst_pole_id');
+        return $this->hasMany(User::class,'id_pole');
     }
 
     /**
