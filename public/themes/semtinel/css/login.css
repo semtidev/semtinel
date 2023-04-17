@@ -19,7 +19,7 @@
     overflow: hidden; 
     width: 100%; 
     height: 100%; 
-    background-image: url(/semtinel/public/themes/semtinel/img/main-bg.jpg);
+    background-image: url(/themes/semtinel/img/main-bg.jpg);
     -webkit-background-size: 100% 100%; /* Safari 3.0 */
     -moz-background-size: 100% 100%; /* Gecko 1.9.2 (Firefox 3.6) */
     -o-background-size: 100% 100%; /* Opera 9.5 */

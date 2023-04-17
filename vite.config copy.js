@@ -3,15 +3,11 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
-    build: {
-        outDir: './public/build'
-    },
     plugins: [
         laravel({
             input: [
                 'resources/sass/app.scss',
                 'resources/js/app.js',
-                'resources/js/login.js',
             ],
             refresh: true,
         }),

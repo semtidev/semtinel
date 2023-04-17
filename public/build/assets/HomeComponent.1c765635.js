@@ -1,0 +1,1 @@
+import{o as e,e as o}from"./vue.esm-bundler.5523ad96.js";import{_ as n}from"./app.523dd8ec.js";const t={};function c(r,m){return e(),o("h2",null,"I'm Admin Home component")}const a=n(t,[["render",c]]);export{a as default};

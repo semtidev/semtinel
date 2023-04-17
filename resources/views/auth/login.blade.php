@@ -7,22 +7,21 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Semtinel') }}</title>
-    <link rel="shortcut icon" href="public/themes/semtinel/img/favicon.png" />
+    <link rel="shortcut icon" href="themes/semtinel/img/favicon.png" />
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="public/themes/semtinel/vendor/fas-620/css/all.min.css">
+    <link rel="stylesheet" href="themes/semtinel/vendor/fas-620/css/all.min.css">
     <!-- Material Design Icons -->
-    <link rel="stylesheet" href="public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="public/themes/adminlte320/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="themes/adminlte320/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/login.js'])
-    
+    @vite(['resources/sass/app.scss', 'resources/js/login.js'],'build')
     <!-- Theme style -->
-    <link rel="stylesheet" href="public/themes/adminlte320/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="themes/adminlte320/dist/css/adminlte.min.css">
 
     <!-- App style -->
-    <link rel="stylesheet" href="public/themes/semtinel/css/login.css">
+    <link rel="stylesheet" href="themes/semtinel/css/login.css">
 
 </head>
 <body class="hold-transition login-page particle-network-animation">
@@ -40,7 +39,7 @@
                             <div class="card p-2">
                                 <div class="card-body login-card-body">
                                     <p class="login-box-icon text-center">
-                                        <img src="public/themes/semtinel/img/semtinel.png" alt="Login" width="72">
+                                        <img src="themes/semtinel/img/semtinel.png" alt="Login" width="72">
                                     </p>
                                     <p class="login-box-msg">Plataforma de Gestión Empresarial</p>
 
@@ -127,11 +126,11 @@
     </div>
 
 <!-- jQuery -->
-<script src="public/themes/adminlte320/plugins/jquery/jquery.min.js"></script>
+<script src="themes/adminlte320/plugins/jquery/jquery.min.js"></script>
 <!-- AdminLTE App -->
-<script src="public/themes/adminlte320/dist/js/adminlte.min.js"></script>
+<script src="themes/adminlte320/dist/js/adminlte.min.js"></script>
 <!-- Nodes animation -->
-<script src="public/themes/semtinel/vendor/nodes/nodes.js"></script>
+<script src="themes/semtinel/vendor/nodes/nodes.js"></script>
 <script type="text/javascript">
 var nodesjs = new NodesJs({
     id: 'nodes',
