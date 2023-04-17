@@ -51,7 +51,7 @@ class AdminController extends Controller
                 'last_name' => $user->last_name,
                 'email' => $user->email,
                 'username' => $user->username,
-                'pole_id' => $user->syst_pole_id
+                'id_pole' => $user->id_pole
             );
         }
         return response()->json($users,200);
@@ -128,11 +128,11 @@ class AdminController extends Controller
     public function getProjects()
     {
         $projects     = array();
-        $qry_projects = SystStructureProject::orderBy('pole_id', 'ASC')->get();
+        $qry_projects = SystStructureProject::orderBy('id_pole', 'ASC')->get();
         foreach ($qry_projects as $project) {
             $projects[] = array(
                 'id' => $project->id,
-                'pole_id' => $project->id_pole,
+                'id_pole' => $project->id_pole,
                 'name' => $project->name,
                 'abbr' => $project->abbr,
                 'active' => $project->active

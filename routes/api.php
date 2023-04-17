@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('logistics/warehouse/{id}', [AdminController::class, "destroyWarehouse"])->name('api.admin.destroy.warehouse');
     // Logistics
     Route::get('logistics/entries/{pole}/{project}/{reload?}', [LogisticsController::class, "getEntries"])->name('logistics.api.get.entries');
-    Route::get('logistics/products_categories', [AdminController::class, "getProductsCategories"])->name('api.admin.get.productcategories');
+    Route::get('logistics/products_categories', [AdminController::class, "getProductsCategories"])->name('app.api.admin.get.productcategories');
     Route::post('logistics/entry/data', [OdooAeiController::class, "getEntryData"])->name('app.api.odoo.get.entry');
     Route::post('logistics/entry', [LogisticsController::class, "storeEntry"])->name('logistics.api.store.entry');
     Route::post('logistics/entry/item/stowage_card', [LogisticsController::class, "getStowageCard"])->name('logistics.api.get.stowage_card');

@@ -263,7 +263,7 @@ export default {
                     v-on:click="docPdf(entry.id)">
                   <i class="fas fa-file-pdf"></i> Documento
                 </a>
-                <a href="javascript:void(0);"
+                <a href="javascript:void(0);" v-if="('logistics.api.upload.entry' in $root.session.permissions)"
                     class="btn btn-app system"
                     data-toggle="modal" 
                     data-target="#modal-upload-form"

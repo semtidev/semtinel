@@ -34,7 +34,9 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link active" href="{{ url('/') }}">Portal</a></li>
+          @if (array_key_exists('Logística', $_SESSION['semtinel']['systems']))
           <li><a class="nav-link" href="{{ url('/logistics') }}">Log&iacute;stica</a></li>
+          @endif
           <li class="dropdown">
             <a href="javascript:void(0);">
               <span>
@@ -47,7 +49,9 @@
             </a>
             <ul>
               <li><a href="logout">Cerrar Sesi&oacute;n</a></li>
+              @can('app.web.admin')
               <li><a href="admin">Administraci&oacute;n</a></li>
+              @endcan
             </ul>
           </li>
         </ul>

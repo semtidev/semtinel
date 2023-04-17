@@ -68,15 +68,14 @@
               @endisset
             </a>
             <div class="dropdown-menu dropdown-menu-right" style="left: inherit; right: 0px;">
-              
               <a href="/semtinel/logout" class="dropdown-item">
-                <i class="mdi mdi-power-plug-off"></i>&nbsp;Desconectar
+                <i class="mdi mdi-power-plug-off"></i>&nbsp;Cerrar Sesi&oacute;n
               </a>
-
+              @can('app.web.admin')
               <a href="admin" class="dropdown-item">
-                <i class="mdi mdi-cog"></i>&nbsp;Administrador
+                <i class="mdi mdi-cog"></i>&nbsp;Administraci&oacute;n
               </a>
-              
+              @endcan
             </div>
           </li>
           

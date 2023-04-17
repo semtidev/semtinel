@@ -21,7 +21,7 @@ export default {
                 with font-awesome or any other icon font library -->
             
             <li class="nav-header">RECEPCI&Oacute;N</li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="('logistics.api.store.entry' in $root.session.permissions)">
                 <router-link 
                     to="/semtinel/logistics/entry" 
                     class="nav-link" 

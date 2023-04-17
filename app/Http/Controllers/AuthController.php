@@ -28,6 +28,8 @@ class AuthController extends Controller
             Auth::login($user);
             $token   = $user->createToken('auth_token')->plainTextToken;
             $client  = getIP();
+            $systems = $user->getSystems();
+            $permissions = $user->getPermissions();
             
             // Init session
             session_start();
@@ -36,7 +38,9 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
-                'client' => $client
+                'client' => $client,
+                'systems' => $systems,
+                'permissions' => $permissions
             );
             $_SESSION['semtinel'] = $session;
             $redirectTo = route('app');
@@ -45,7 +49,9 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user, 
-                'redirect' => $redirectTo
+                'redirect' => $redirectTo,
+                'systems' => $systems,
+                'permissions' => $permissions
             );
             return response()->json($response, 200);
         }
@@ -84,6 +90,8 @@ class AuthController extends Controller
             $user = Auth::guard('ldap')->getLastAttempted();           
             $token = $user->createToken('auth_token')->plainTextToken;
             $client  = getIP();
+            $systems = $user->getSystems();
+            $permissions = $user->getPermissions();
 
             // Init session
             session_start();
@@ -92,7 +100,9 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
-                'client' => $client
+                'client' => $client,
+                'systems' => $systems,
+                'permissions' => $permissions
             );
             $_SESSION['semtinel'] = $session;
             $redirectTo = route('app');
@@ -101,8 +111,10 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user, 
-                'redirect' => $redirectTo
-                 );
+                'redirect' => $redirectTo,
+                'systems' => $systems,
+                'permissions' => $permissions
+            );
             return response()->json($response, 200);
         }
     
@@ -158,7 +170,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
-                'syst_pole_id' => $request->syst_pole_id
+                'id_pole' => $request->syst_pole_id
             ]);
             //le asigna roles a los usuarios
             if(!empty($request->roles)){
@@ -226,8 +238,8 @@ class AuthController extends Controller
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'username' => $request->username,            
-            'syst_pole_id' => $request->syst_pole_id
+            'username' => $request->username,
+            'id_pole' => $request->syst_pole_id
         ];
         //comprobar si se entr'o un nuevo password
         if($request->password !== '') $data['password']= Hash::make($request->password);

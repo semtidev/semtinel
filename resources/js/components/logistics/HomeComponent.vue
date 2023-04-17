@@ -58,6 +58,7 @@ export default {
 
 <template>
     <div class="h-100 text-center app_name">
+        <div class="text-center"><i class="mdi mdi-truck-check mdi-72px text-success"></i></div>
         <div class="app-title">Semtinel - Logística</div>
         <div class="app-subtitle">Sistema de Gesti&oacute;n de Pa&ntilde;oles</div>
     </div>
