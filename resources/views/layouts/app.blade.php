@@ -11,7 +11,7 @@
     
   <!-- Vendor CSS Files -->
   <link href="public/themes/semtinel/vendor/aos/aos.css" rel="stylesheet">
-  <link href="public/themes/semtinel/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="public/themes/semtinel/vendor/bootstrap-lib/bootstrap.min.css" rel="stylesheet">
   <link href="public/themes/semtinel/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
@@ -69,7 +69,7 @@
 
   <!-- Vendor JS Files -->
   <script src="public/themes/semtinel/vendor/aos/aos.js"></script>
-  <script src="public/themes/semtinel/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="public/themes/semtinel/vendor/bootstrap-lib/bootstrap.bundle.min.js"></script>
 
   <!-- Template Main JS File -->
   <script src="public/themes/semtinel/js/main.js"></script>

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
     <!-- Scripts -->
     @vite(['resources/js/login.js'])
-    <link rel="stylesheet" href="public/themes/semtinel/vendor/bootstrap/bootstrap4.min.css">
+    <link rel="stylesheet" href="public/themes/semtinel/vendor/bootstrap-lib/bootstrap4.min.css">
     <!-- App style -->
     <link rel="stylesheet" href="public/themes/semtinel/css/login.css">
 
@@ -84,9 +84,9 @@
         </section>
     </div>
 
-    <script src="public/themes/semtinel/vendor/bootstrap/jquery.min.js"></script>
-    <script src="public/themes/semtinel/vendor/bootstrap/popper.js"></script>
-    <script src="public/themes/semtinel/vendor/bootstrap/bootstrap.min.js"></script>
+    <script src="public/themes/semtinel/vendor/bootstrap-lib/jquery.min.js"></script>
+    <script src="public/themes/semtinel/vendor/bootstrap-lib/popper.js"></script>
+    <script src="public/themes/semtinel/vendor/bootstrap-lib/bootstrap.min.js"></script>
     <script src="public/themes/semtinel/js/login.js"></script>
     
 </body>
