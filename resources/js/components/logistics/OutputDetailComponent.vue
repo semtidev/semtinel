@@ -237,7 +237,7 @@ export default {
                     v-on:click="docPdf(output.id)">
                   <i class="fas fa-file-pdf"></i> Documento
                 </a>
-                <a href="javascript:void(0);"
+                <a href="javascript:void(0);" v-if="('logistics.api.upload.output' in $root.session.permissions)"
                     class="btn btn-app system"
                     data-toggle="modal" 
                     data-target="#modal-upload-form"
@@ -246,7 +246,7 @@ export default {
                   <i class="fas fa-paperclip"></i> Adjuntar
                 </a>
                 <a href="javascript:void(0);" 
-                    v-if="output.type == 'Despacho a Obra'"
+                    v-if="(output.type == 'Despacho a Obra') && ('logistics.api.cofirm.output' in $root.session.permissions)"
                     class="btn btn-app success"
                     :class="(output.confirm == 1) ? 'disabled' : ''"
                     v-tooltip="'Confirmar salida'"
@@ -255,7 +255,7 @@ export default {
                 </a>
                 <a href="javascript:void(0);" 
                     class="btn btn-app danger"
-                    v-if="(output.confirm != 1)"
+                    v-if="(output.confirm != 1) && (session.id == output.created_by || ('Responsable de Especialidad' in $root.session.roles && output.warehouse in session.warehouses))"
                     v-tooltip="'Cancelar salida'"
                     v-on:click.stop="cancelOutput()">
                   <i class="fas" :class="(cancel_loading) ? 'fa-spinner fa-pulse' : 'fa-times'"></i> Cancelar

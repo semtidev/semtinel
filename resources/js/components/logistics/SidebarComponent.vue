@@ -50,7 +50,7 @@ export default {
                 </router-link>
             </li>
             <li class="nav-header">DESPACHO</li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="('logistics.api.store.output' in $root.session.permissions)">
                 <router-link 
                     to="/semtinel/logistics/output" 
                     class="nav-link" 
@@ -68,6 +68,7 @@ export default {
                     <p class="text">Todas las Salidas</p>
                 </router-link>
             </li>
+            <!--
             <li class="nav-header">NOTIFICACIONES</li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
@@ -86,7 +87,7 @@ export default {
                     <i class="nav-icon far fa-circle text-info"></i>
                     <p>Informatión</p>
                 </a>
-            </li>
+            </li>-->
         </ul>
     </nav>
 </template>

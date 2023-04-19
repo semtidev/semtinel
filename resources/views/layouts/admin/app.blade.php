@@ -139,7 +139,7 @@
   <!-- jQuery -->
   <script src="public/themes/adminlte320/plugins/jquery/jquery.min.js"></script>
   <!-- Bootstrap 4 -->
-  <script src="public/themes/adminlte320/plugins/bootstrap-lib/js/bootstrap.bundle.min.js"></script>
+  <script src="public/themes/adminlte320/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- Select2 Plugin -->
   <script src="public/themes/adminlte320/plugins/select2/js/select2.full.min.js"></script>
   <!-- AdminLTE App -->

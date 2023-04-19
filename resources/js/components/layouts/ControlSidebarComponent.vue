@@ -2,8 +2,9 @@
 export default {    
     data: function () {
         return {
-            store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-            store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+            //store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
+            //store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+            session: JSON.parse(sessionStorage.getItem('semtinel')),
             pole: '',
             pole_name: '',
             projects: [],
@@ -23,7 +24,7 @@ export default {
             cmp.pole = pole_abbr
             cmp.pole_name = pole_name
             // Set projects and select the first
-            cmp.store_projects.map(function(value, key) {
+            cmp.session.projects.map(function(value, key) {
                 if (value.id_pole == pole_id)
                     projects.push(value)
             })
@@ -44,9 +45,9 @@ export default {
     },
     created() {
         // Asign pole
-        this.pole = this.store_poles[0]['abbr']
+        this.pole = this.session.poles[0]['abbr']
         // Asign proyects and select first
-        this.changePole(this.store_poles[0]['id'], this.store_poles[0]['abbr'], this.store_poles[0]['name'])
+        this.changePole(this.session.poles[0]['id'], this.session.poles[0]['abbr'], this.session.poles[0]['name'])
     }
 }
 </script>
@@ -63,7 +64,7 @@ export default {
               size="1" 
               class="form-control mb-2"
               v-tooltip="'Polo ' + pole_name">
-              <template v-for="(option, index) in store_poles" :key="index">
+              <template v-for="(option, index) in session.poles" :key="index">
                   <option 
                       v-if="option['name'] != 'Todos'"
                       :value="option['abbr']"                      

@@ -271,7 +271,7 @@ export default {
                     v-on:click="attachFile(entry.id, entry.code)">
                   <i class="fas fa-paperclip"></i> Adjuntar
                 </a>
-                <a href="javascript:void(0);" 
+                <a href="javascript:void(0);" v-if="('logistics.api.cofirm.entry' in $root.session.permissions)"
                     class="btn btn-app success"
                     :class="(entry.confirm == 1) ? 'disabled' : ''"
                     v-tooltip="'Confirmar entrada'"
@@ -279,8 +279,8 @@ export default {
                   <i class="fas" :class="(confirm_loading) ? 'fa-spinner fa-pulse' : 'fa-check'"></i> {{ confirm_text }}
                 </a>
                 <a href="javascript:void(0);" 
+                    v-if="(entry.confirm != 1 && entry.transfer != 1) && (session.id == entry.created_by || ('Responsable de Especialidad' in $root.session.roles && entry.warehouse in session.warehouses))" 
                     class="btn btn-app danger"
-                    v-if="(entry.confirm != 1 && entry.transfer != 1)"
                     v-tooltip="'Cancelar entrada'"
                     v-on:click.stop="cancelEntry()">
                   <i class="fas" :class="(cancel_loading) ? 'fa-spinner fa-pulse' : 'fa-times'"></i> Cancelar
