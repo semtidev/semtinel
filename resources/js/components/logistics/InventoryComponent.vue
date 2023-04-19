@@ -32,11 +32,11 @@ export default {
         filter_apply: false,
         lastproducts_loading: true,
         session: JSON.parse(sessionStorage.getItem('semtinel')),
-        poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-        projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+        //poles: JSON.parse(localStorage.getItem('semtinel_poles')),
+        //projects: JSON.parse(localStorage.getItem('semtinel_projects')),
         pole: localStorage.getItem('stnel_logist_pole'),
         project: localStorage.getItem('stnel_logist_project'),
-        warehouses: (localStorage.getItem('semtinel_warehouses').length > 0) ? JSON.parse(localStorage.getItem('semtinel_warehouses')) : '',
+        warehouses: (localStorage.getItem('stnel_warehouses').length > 0) ? JSON.parse(localStorage.getItem('stnel_warehouses')) : '',
         products_categories: JSON.parse(localStorage.getItem('semtinel_products_categories')),
         filter_productcategory: 'all',
         filter_warehouse: 'all',
@@ -140,11 +140,11 @@ export default {
     },
     created() {
         let cmp = this
-        cmp.poles.map(function(value, key) {
+        cmp.session.poles.map(function(value, key) {
             if (value.abbr == cmp.pole)
                 cmp.pole_name = value.name
         });
-        cmp.projects.map(function(value, key) {
+        cmp.session.projects.map(function(value, key) {
             if (value.id == cmp.project)
                 cmp.project_name = value.name
         });
@@ -736,6 +736,7 @@ export default {
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
                                 </a> &nbsp;
                                 <a href="javascript:void(0);"
+                                    v-if="item.warehouse_id in session.warehouses"
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
@@ -744,6 +745,7 @@ export default {
                                     v-on:click="addCart(idx, item)">
                                     <span class="mdi mdi-cart mdi-18px text-orange"></span>
                                 </a>
+                                <span class="px-2" v-else>&nbsp;&nbsp;&nbsp;</span>
                             </td>
                         </tr>
                     </tbody>
@@ -817,6 +819,7 @@ export default {
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
                                 </a> &nbsp;
                                 <a href="javascript:void(0);"
+                                    v-if="item.warehouse_id in session.warehouses"
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
@@ -825,6 +828,7 @@ export default {
                                     v-on:click="addCart(idx, item)">
                                     <span class="mdi mdi-cart mdi-18px text-orange"></span>
                                 </a>
+                                <span class="px-2" v-else>&nbsp;&nbsp;&nbsp;</span>
                             </td>
                         </tr>
                     </tbody>

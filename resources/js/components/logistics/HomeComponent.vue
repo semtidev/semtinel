@@ -19,7 +19,7 @@ export default {
     async created() {
         let cmp = this
         // Clear warehouse store
-        localStorage.setItem('semtinel_warehouses', '')
+        localStorage.setItem('stnel_warehouses', '')
         // ---------------------------
         //   Create app local stores
         // ---------------------------
@@ -35,7 +35,7 @@ export default {
             .then((response) => response.json())
             .then((data) => {
                 // Warehouses store
-                localStorage.setItem('semtinel_warehouses', JSON.stringify(data))
+                localStorage.setItem('stnel_warehouses', JSON.stringify(data))
             });
         await fetch("http://localhost/semtinel/api/logistics/products_categories", {
                 method: 'GET',

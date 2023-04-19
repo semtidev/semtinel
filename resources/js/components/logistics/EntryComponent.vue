@@ -8,9 +8,9 @@ import $ from "jquery";
 export default {
     data: function () {
       return {
-        store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-        store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
-        store_warehouses: JSON.parse(localStorage.getItem('semtinel_warehouses')),
+        //store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
+        //store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+        //store_warehouses: JSON.parse(localStorage.getItem('semtinel_warehouses')),
         pole: localStorage.getItem('stnel_logist_pole'),
         pole_name: '',
         project: localStorage.getItem('stnel_logist_project'),
@@ -116,11 +116,11 @@ export default {
     },
     created() {
         let cmp = this
-        cmp.store_poles.map(function(value, key) {
+        cmp.session.poles.map(function(value, key) {
             if (value.abbr == cmp.pole)
                 cmp.pole_name = value.name
         });
-        cmp.store_projects.map(function(value, key) {
+        cmp.session.projects.map(function(value, key) {
             if (value.id == cmp.project)
                 cmp.project_name = value.name
         });
@@ -177,7 +177,7 @@ export default {
             // Set pole
             cmp.destiny_data.pole = pole_abbr
             // Set projects and select the first
-            cmp.store_projects.map(function(value, key) {
+            cmp.session.projects.map(function(value, key) {
                 if (value.id_pole == pole_id)
                     projects.push(value)
             })
@@ -186,10 +186,16 @@ export default {
             // Set warehouses and select the first
             cmp.destiny_data.warehouse = ''
             if (cmp.destiny_data.project != '') {
-                cmp.store_warehouses.map(function(value, key) {
-                    if (value.id_project == cmp.destiny_data.project)
-                        warehouses.push(value)
-                })
+                let object_warehouses = cmp.session.warehouses
+                for (let key in object_warehouses) {
+                    if (object_warehouses[key].id_project == cmp.destiny_data.project)
+                        warehouses.push({
+                            id: key,
+                            id_project: object_warehouses[key].id_project,
+                            name: object_warehouses[key].name,
+                            owner: object_warehouses[key].owner
+                        })               
+                }
             }
             cmp.warehouses = warehouses
             cmp.destiny_data.warehouse = (warehouses.length > 0) ? warehouses[0]['id'] : ''
@@ -202,10 +208,16 @@ export default {
             cmp.destiny_data.project = project_id
             // Set warehouses and select the first
             cmp.destiny_data.warehouse = ''
-            cmp.store_warehouses.map(function(value, key) {
-                if (value.id_project == project_id)
-                    warehouses.push(value)
-            })
+            let object_warehouses = cmp.session.warehouses
+            for (let key in object_warehouses) {
+                if (object_warehouses[key].id_project == project_id)
+                    warehouses.push({
+                        id: key,
+                        id_project: object_warehouses[key].id_project,
+                        name: object_warehouses[key].name,
+                        owner: object_warehouses[key].owner
+                    })
+            }
             cmp.warehouses = warehouses
             cmp.destiny_data.warehouse = (warehouses.length > 0) ? warehouses[0]['id'] : ''
             cmp.destiny_data.warehouse_name = (warehouses.length > 0) ? warehouses[0]['name'] : ''
@@ -545,9 +557,9 @@ export default {
             window.document.location.href = 'http://localhost/semtinel/login'
         }
         // Asign pole
-        this.destiny_data.pole = this.store_poles[0]['abbr']
+        this.destiny_data.pole = this.session.poles[0]['abbr']
         // Asign proyects and select first
-        this.changePole(this.store_poles[0]['id'], this.store_poles[0]['abbr'])
+        this.changePole(this.session.poles[0]['id'], this.session.poles[0]['abbr'])
         // Asign first warehouse as destin
         //this.destiny_data.warehouse = this.warehouses[0].id
     }

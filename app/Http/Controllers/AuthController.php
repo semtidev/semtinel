@@ -30,6 +30,10 @@ class AuthController extends Controller
             $client  = getIP();
             $systems = $user->getSystems();
             $permissions = $user->getPermissions();
+            $warehouses = $user->getWarehouses();
+            $roles = $user->getRoles();
+            $poles = $user->getPoles();
+            $projects = $user->getProjects();
             
             // Init session
             session_start();
@@ -40,7 +44,11 @@ class AuthController extends Controller
                 'user' => $user,
                 'client' => $client,
                 'systems' => $systems,
-                'permissions' => $permissions
+                'permissions' => $permissions,
+                'warehouses' => $warehouses,
+                'roles' => $roles,
+                'poles' => $poles,
+                'projects' => $projects
             );
             $_SESSION['semtinel'] = $session;
             $redirectTo = route('app');
@@ -51,7 +59,11 @@ class AuthController extends Controller
                 'user' => $user, 
                 'redirect' => $redirectTo,
                 'systems' => $systems,
-                'permissions' => $permissions
+                'permissions' => $permissions,
+                'warehouses' => $warehouses,
+                'roles' => $roles,
+                'poles' => $poles,
+                'projects' => $projects
             );
             return response()->json($response, 200);
         }
@@ -92,6 +104,10 @@ class AuthController extends Controller
             $client  = getIP();
             $systems = $user->getSystems();
             $permissions = $user->getPermissions();
+            $warehouses = $user->getWarehouses();
+            $roles = $user->getRoles();
+            $poles = $user->getPoles();
+            $projects = $user->getProjects();
 
             // Init session
             session_start();
@@ -102,7 +118,11 @@ class AuthController extends Controller
                 'user' => $user,
                 'client' => $client,
                 'systems' => $systems,
-                'permissions' => $permissions
+                'permissions' => $permissions,
+                'warehouses' => $warehouses,
+                'roles' => $roles,
+                'poles' => $poles,
+                'projects' => $projects
             );
             $_SESSION['semtinel'] = $session;
             $redirectTo = route('app');
@@ -113,7 +133,11 @@ class AuthController extends Controller
                 'user' => $user, 
                 'redirect' => $redirectTo,
                 'systems' => $systems,
-                'permissions' => $permissions
+                'permissions' => $permissions,
+                'warehouses' => $warehouses,
+                'roles' => $roles,
+                'poles' => $poles,
+                'projects' => $projects
             );
             return response()->json($response, 200);
         }

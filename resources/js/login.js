@@ -76,7 +76,11 @@ var login = createApp({
                         last_name: response.data.user.last_name,
                         access_token: response.data.access_token,
                         systems: response.data.systems,
-                        permissions: response.data.permissions
+                        permissions: response.data.permissions,
+                        warehouses: response.data.warehouses,
+                        roles: response.data.roles,
+                        poles: response.data.poles,
+                        projects: response.data.projects
                     }
                     sessionStorage.setItem('semtinel', JSON.stringify(user))
                     window.document.location.href = response.data.redirect

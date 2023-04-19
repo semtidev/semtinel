@@ -39,7 +39,7 @@ const app = createApp({
         };
     },
     async created() {
-        let cmp = this
+        /*let cmp = this
         // ---------------------------
         //   Create app local stores
         // ---------------------------
@@ -56,8 +56,8 @@ const app = createApp({
             .then((data) => {
                 // Poles store
                 localStorage.setItem('semtinel_poles', JSON.stringify(data))
-            });
-        await fetch("http://localhost/semtinel/api/projects", {
+            });*/
+        /*await fetch("http://localhost/semtinel/api/projects", {
                 method: 'GET',
                 headers: headers
             })
@@ -65,7 +65,7 @@ const app = createApp({
             .then((data) => {
                 // Projects store
                 localStorage.setItem('semtinel_projects', JSON.stringify(data))
-            });
+            });*/
     },
     mounted() {
         // Start bootstrap tooltips

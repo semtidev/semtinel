@@ -10,9 +10,9 @@ import TreeselectEopComponent from '../common/TreeselectEopComponent.vue';
 export default {
     data: function () {
       return {
-        store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-        store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
-        store_warehouses: (localStorage.getItem('semtinel_warehouses') != '') ? JSON.parse(localStorage.getItem('semtinel_warehouses')) : null,
+        //store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
+        //store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+        //store_warehouses: (localStorage.getItem('semtinel_warehouses') != '') ? JSON.parse(localStorage.getItem('semtinel_warehouses')) : null,
         pole: localStorage.getItem('stnel_logist_pole'),
         pole_name: '',
         project: localStorage.getItem('stnel_logist_project'),
@@ -49,11 +49,11 @@ export default {
     },
     async created() {
         let cmp = this
-        cmp.store_poles.map(function(value, key) {
+        cmp.session.poles.map(function(value, key) {
             if (value.abbr == cmp.pole)
                 cmp.pole_name = value.name
         });
-        cmp.store_projects.map(function(value, key) {
+        cmp.session.projects.map(function(value, key) {
             if (value.id == cmp.project)
                 cmp.project_name = value.name
         });
@@ -165,18 +165,19 @@ export default {
             window.document.location.href = 'http://localhost/semtinel/login'
         }
         // Asign warehouse
-        cmp.store_warehouses.map(function(value, key) {
-            if (value.id == cmp.$root.cart_warehouse) {
+        let object_warehouses = cmp.session.warehouses
+        for (let key in object_warehouses) {
+            if (key == cmp.$root.cart_warehouse) {
                 cmp.output_warehouse = cmp.$root.cart_warehouse
-                cmp.output_warehouse_name = value.name
-                cmp.output_warehouse_owner = value.owner
+                cmp.output_warehouse_name = object_warehouses[key].name
+                cmp.output_warehouse_owner = object_warehouses[key].owner
                 cmp.warehouse_id = cmp.$root.cart_warehouse
-                cmp.warehouse_name = value.name
-                cmp.warehouse_owner = value.owner
+                cmp.warehouse_name = object_warehouses[key].name
+                cmp.warehouse_owner = object_warehouses[key].owner
+                // Asign destin warehouse default
+                cmp.changeWarehouseDestin(key, value.owner)
             }
-        });
-        // Asign destin warehouse default
-        cmp.changeWarehouseDestin(cmp.store_warehouses[0]['id'], this.store_warehouses[0]['owner'])
+        }     
     }
 }
 </script>
