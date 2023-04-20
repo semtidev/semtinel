@@ -1,0 +1,221 @@
+{
+  "public/themes/semtinel/img/icon-pdf2.png": {
+    "file": "assets/icon-pdf2.d34bc667.png",
+    "src": "public/themes/semtinel/img/icon-pdf2.png"
+  },
+  "public/themes/semtinel/img/icon-png.png": {
+    "file": "assets/icon-png.5fc2f06f.png",
+    "src": "public/themes/semtinel/img/icon-png.png"
+  },
+  "public/themes/semtinel/img/icon-jpg.png": {
+    "file": "assets/icon-jpg.f56bc536.png",
+    "src": "public/themes/semtinel/img/icon-jpg.png"
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app.7c3c19f8.js",
+    "src": "resources/sass/app.scss",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app.affc77e9.js",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js"
+    ],
+    "dynamicImports": [
+      "resources/js/components/logistics/HomeComponent.vue",
+      "resources/js/components/logistics/EntryComponent.vue",
+      "resources/js/components/logistics/EntriesComponent.vue",
+      "resources/js/components/logistics/InventoryComponent.vue",
+      "resources/js/components/logistics/OutputComponent.vue",
+      "resources/js/components/logistics/OutputsComponent.vue",
+      "resources/js/components/logistics/EntryDetailComponent.vue",
+      "resources/js/components/logistics/OutputDetailComponent.vue",
+      "resources/js/components/admin/HomeComponent.vue",
+      "resources/js/components/admin/SystemsComponent.vue",
+      "resources/js/components/admin/UsersComponent.vue",
+      "resources/js/components/admin/RolesComponent.vue",
+      "resources/js/components/admin/SecurityComponent.vue",
+      "resources/js/components/admin/WarehousesComponent.vue"
+    ]
+  },
+  "resources/js/login.js": {
+    "file": "assets/login.a4c24167.js",
+    "src": "resources/js/login.js",
+    "isEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js"
+    ]
+  },
+  "_vue.esm-bundler.7d6bf7a6.js": {
+    "file": "assets/vue.esm-bundler.7d6bf7a6.js"
+  },
+  "_jquery.9b0ba2d7.js": {
+    "file": "assets/jquery.9b0ba2d7.js",
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js"
+    ]
+  },
+  "resources/js/components/logistics/HomeComponent.vue": {
+    "file": "assets/HomeComponent.bf6b50b9.js",
+    "src": "resources/js/components/logistics/HomeComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/logistics/EntryComponent.vue": {
+    "file": "assets/EntryComponent.a5f58366.js",
+    "src": "resources/js/components/logistics/EntryComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "_jquery.dataTables.min.5c722aa7.js",
+      "resources/js/app.js"
+    ]
+  },
+  "_jquery.dataTables.min.5c722aa7.js": {
+    "file": "assets/jquery.dataTables.min.5c722aa7.js",
+    "imports": [
+      "_jquery.9b0ba2d7.js"
+    ]
+  },
+  "resources/js/components/logistics/EntriesComponent.vue": {
+    "file": "assets/EntriesComponent.743fd461.js",
+    "src": "resources/js/components/logistics/EntriesComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "_jquery.dataTables.min.5c722aa7.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/logistics/InventoryComponent.vue": {
+    "file": "assets/InventoryComponent.05595de4.js",
+    "src": "resources/js/components/logistics/InventoryComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "_jquery.dataTables.min.5c722aa7.js",
+      "resources/js/app.js",
+      "_icon-jpg.b5720497.js"
+    ]
+  },
+  "_icon-jpg.b5720497.js": {
+    "file": "assets/icon-jpg.b5720497.js",
+    "assets": [
+      "assets/icon-pdf2.d34bc667.png",
+      "assets/icon-png.5fc2f06f.png",
+      "assets/icon-jpg.f56bc536.png"
+    ]
+  },
+  "resources/js/components/logistics/OutputComponent.vue": {
+    "file": "assets/OutputComponent.53a40c65.js",
+    "src": "resources/js/components/logistics/OutputComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "_jquery.dataTables.min.5c722aa7.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/logistics/OutputsComponent.vue": {
+    "file": "assets/OutputsComponent.a0bd2e8a.js",
+    "src": "resources/js/components/logistics/OutputsComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "_jquery.dataTables.min.5c722aa7.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/logistics/EntryDetailComponent.vue": {
+    "file": "assets/EntryDetailComponent.c7819c8e.js",
+    "src": "resources/js/components/logistics/EntryDetailComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_icon-jpg.b5720497.js"
+    ]
+  },
+  "resources/js/components/logistics/OutputDetailComponent.vue": {
+    "file": "assets/OutputDetailComponent.e18a1b13.js",
+    "src": "resources/js/components/logistics/OutputDetailComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_icon-jpg.b5720497.js"
+    ]
+  },
+  "resources/js/components/admin/HomeComponent.vue": {
+    "file": "assets/HomeComponent.a0d33092.js",
+    "src": "resources/js/components/admin/HomeComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/admin/SystemsComponent.vue": {
+    "file": "assets/SystemsComponent.1c3cf7d8.js",
+    "src": "resources/js/components/admin/SystemsComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "_jquery.9b0ba2d7.js",
+      "_jquery.dataTables.min.5c722aa7.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/admin/UsersComponent.vue": {
+    "file": "assets/UsersComponent.fbbcb5cb.js",
+    "src": "resources/js/components/admin/UsersComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/admin/RolesComponent.vue": {
+    "file": "assets/RolesComponent.2eea9d79.js",
+    "src": "resources/js/components/admin/RolesComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/admin/SecurityComponent.vue": {
+    "file": "assets/SecurityComponent.4e220e95.js",
+    "src": "resources/js/components/admin/SecurityComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "resources/js/app.js"
+    ]
+  },
+  "resources/js/components/admin/WarehousesComponent.vue": {
+    "file": "assets/WarehousesComponent.d0a14484.js",
+    "src": "resources/js/components/admin/WarehousesComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.7d6bf7a6.js",
+      "resources/js/app.js"
+    ]
+  },
+  "style.css": {
+    "file": "assets/style.f4543a3f.css",
+    "src": "style.css"
+  }
+}

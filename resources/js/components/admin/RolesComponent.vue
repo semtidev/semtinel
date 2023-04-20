@@ -66,7 +66,7 @@ export default {
             }
             cmp.roles_loading = true
             // Load roles
-            fetch("http://localhost/semtinel/api/admin/roles", {
+            fetch("http://localhost/semtinel/public/api/admin/roles", {
                     method: 'GET',
                     headers: headers
                 })
@@ -111,7 +111,7 @@ export default {
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + cmp.session.access_token
                 }
-                fetch("http://localhost/semtinel/api/admin/role/permissions/0", {
+                fetch("http://localhost/semtinel/public/api/admin/role/permissions/0", {
                         method: 'GET',
                         headers: headers
                     })
@@ -140,7 +140,7 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            fetch("http://localhost/semtinel/api/admin/role/permissions/" + id, {
+            fetch("http://localhost/semtinel/public/api/admin/role/permissions/" + id, {
                     method: 'GET',
                     headers: headers
                 })
@@ -170,7 +170,7 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            await axios.post('http://localhost/semtinel/api/admin/role',{
+            await axios.post('http://localhost/semtinel/public/api/admin/role',{
                     'id' : cmp.form_data.id,
                     'name': cmp.form_data.name,
                     'permissions': this.role_permissions
@@ -213,7 +213,7 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            await axios.delete('http://localhost/semtinel/api/admin/role/' + cmp.delete_id, {
+            await axios.delete('http://localhost/semtinel/public/api/admin/role/' + cmp.delete_id, {
                     headers: headers
                 }, {}).then(function (response) {
                     if (response.data.success) {
@@ -245,7 +245,7 @@ export default {
         // Verify login active
         if (!JSON.parse(sessionStorage.getItem('semtinel')).access_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         // Load init data
         this.getItemsTable()

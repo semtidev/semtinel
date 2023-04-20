@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/sass/app.scss',
                 'resources/js/app.js',
+                'resources/js/login.js',
             ],
             refresh: true,
         }),
@@ -24,5 +25,9 @@ export default defineConfig({
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js',
         },
+    },
+    build: {
+        minify: false,
+        cssCodeSplit: false
     },
 });

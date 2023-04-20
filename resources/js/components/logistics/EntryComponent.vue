@@ -531,7 +531,7 @@ export default {
                         if (parseInt(response.data.entry) > 0) {
                             window.open('http://localhost/semtinel/public/api/logistics/pdf/entry/' + response.data.entry, '_blank', 'noreferrer')
                         }                        
-                        cmp.$router.push('/semtinel/logistics/entries')
+                        cmp.$router.push('/semtinel/public/logistics/entries')
                     }
                     else {
                         // Hide modal
@@ -554,7 +554,7 @@ export default {
         // Verify login active
         if (!JSON.parse(sessionStorage.getItem('semtinel')).access_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         // Asign pole
         this.destiny_data.pole = this.session.poles[0]['abbr']
@@ -953,7 +953,7 @@ export default {
             <!-- card-footer -->
             <div class="card-footer" style="background-color: #DEF4DB; border-top: 0;">
                 <router-link 
-                    to="/semtinel/logistics" 
+                    to="/semtinel/public/logistics" 
                     class="btn btn-default">
                     Cancelar
                 </router-link>

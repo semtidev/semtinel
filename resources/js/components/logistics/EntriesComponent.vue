@@ -15,7 +15,7 @@ export default {
     },
     methods: {
         newEntry: function () {
-            this.$router.push('/semtinel/logistics/entry')
+            this.$router.push('/semtinel/public/logistics/entry')
         },
         listReload: function () {
             this.getEntriesTable(true)
@@ -26,7 +26,7 @@ export default {
                 params: { 
                     entry: JSON.stringify(entry)
                 }
-            }) //'/semtinel/logistics/entry.detail'
+            }) //'/semtinel/public/logistics/entry.detail'
         },
         async getEntriesTable (reload = false) {
             let cmp = this,
@@ -105,7 +105,7 @@ export default {
         // Verify login active
         if (!JSON.parse(sessionStorage.getItem('semtinel')).access_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         let pole = localStorage.getItem('stnel_logist_pole'),
             project = localStorage.getItem('stnel_logist_project'),

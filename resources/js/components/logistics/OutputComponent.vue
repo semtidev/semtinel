@@ -62,7 +62,7 @@ export default {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + cmp.session.access_token
         }
-        await fetch("http://localhost/semtinel/api/eop/" + cmp.project, {
+        await fetch("http://localhost/semtinel/public/api/eop/" + cmp.project, {
                 method: 'GET',
                 headers: headers
             })
@@ -138,7 +138,7 @@ export default {
                         cmp.$root.cart_items = []
                         cmp.$root.cart_quantity = 0
                         cmp.cart_warehouse = ''                  
-                        cmp.$router.push('/semtinel/logistics/outputs')
+                        cmp.$router.push('/semtinel/public/logistics/outputs')
                     }
                     else {
                         // Hide modal
@@ -162,7 +162,7 @@ export default {
         // Verify login active
         if (!JSON.parse(sessionStorage.getItem('semtinel')).access_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         // Asign warehouse
         let object_warehouses = cmp.session.warehouses
@@ -448,7 +448,7 @@ export default {
             <!-- card-footer -->
             <div class="card-footer" style="background-color: #DEF4DB; border-top: 0;">
                 <router-link 
-                    to="/semtinel/logistics" 
+                    to="/semtinel/public/logistics" 
                     class="btn btn-default">
                     Cancelar
                 </router-link>

@@ -186,7 +186,7 @@ export default {
                     if (response.data.success) {
                         cmp.cancel_loading = false
                         toastr.success('La Salida fue Cancelada con éxito.')
-                        cmp.$router.push('/semtinel/logistics/outputs')
+                        cmp.$router.push('/semtinel/public/logistics/outputs')
                     }
                     else {
                         cmp.cancel_loading = false
@@ -209,7 +209,7 @@ export default {
         :navbar="[
             {
                 page: 'Salidas',
-                link: '/semtinel/logistics/outputs',
+                link: '/semtinel/public/logistics/outputs',
                 tooltip: 'Click para regresar al listado de Salidas',
                 active: false
             },

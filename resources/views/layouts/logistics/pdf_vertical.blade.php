@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ config('app.name') }} - @yield('title')</title>
-        <link rel="shortcut icon" href="public/themes/semtinel/img/favicon.png" />
+        <link rel="shortcut icon" href="themes/semtinel/img/favicon.png" />
         <style>
             @page { margin: 110px 30px 150px 30px; }
             header {

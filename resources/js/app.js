@@ -39,33 +39,7 @@ const app = createApp({
         };
     },
     async created() {
-        /*let cmp = this
-        // ---------------------------
-        //   Create app local stores
-        // ---------------------------
-        let headers = {
-            'User-Agent': 'testing/1.0',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + cmp.session.access_token
-        }
-        await fetch("http://localhost/semtinel/api/poles", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Poles store
-                localStorage.setItem('semtinel_poles', JSON.stringify(data))
-            });*/
-        /*await fetch("http://localhost/semtinel/api/projects", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Projects store
-                localStorage.setItem('semtinel_projects', JSON.stringify(data))
-            });*/
+        
     },
     mounted() {
         // Start bootstrap tooltips
@@ -124,11 +98,11 @@ const app = createApp({
 
         goToInventory: function () {
             this.$refs.CartClose.click()
-            this.$router.push('/semtinel/logistics/inventory')
+            this.$router.push('/semtinel/public/logistics/inventory')
         },
         goToOutput: function () {
             this.$refs.CartClose.click()
-            this.$router.push('/semtinel/logistics/output')
+            this.$router.push('/semtinel/public/logistics/output')
         },
         calcTotalsCart: function () {
             let cmp = this

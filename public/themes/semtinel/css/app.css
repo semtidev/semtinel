@@ -399,6 +399,7 @@ form .info {
     padding-top: 10px !important;
 }
 .dataTables_wrapper .dataTables_info {
+    float: left !important;
     padding-top: 15px !important;
     font-size: 14px !important;
     color: #4c6070 !important;
@@ -408,6 +409,9 @@ form .info {
 }
 .dataTables_wrapper select {
     font-family: 'roboto' !important;
+}
+.dataTables_length {
+    float: left !important;
 }
 .loading-table {
     color: #6d727a !important;

@@ -20,73 +20,73 @@ const AdminWarehousesComponent = () => import('../components/admin/WarehousesCom
 
 const routes = [
     {
-        path: '/semtinel/admin',
+        path: '/semtinel/public/admin',
         name: 'admin.home',
         component: AdminComponent
     },
     {
-        path: '/semtinel/admin/systems',
+        path: '/semtinel/public/admin/systems',
         name: 'admin.systems',
         component: AdminSystemsComponent
     },
     {
-        path: '/semtinel/admin/users',
+        path: '/semtinel/public/admin/users',
         name: 'admin.users',
         component: AdminUsersComponent
     },
     {
-        path: '/semtinel/admin/roles',
+        path: '/semtinel/public/admin/roles',
         name: 'admin.roles',
         component: AdminRolesComponent
     },
     {
-        path: '/semtinel/admin/security',
+        path: '/semtinel/public/admin/security',
         name: 'admin.security',
         component: AdminSecurityComponent
     },
     {
-        path: '/semtinel/admin/warehouses',
+        path: '/semtinel/public/admin/warehouses',
         name: 'admin.warehouses',
         component: AdminWarehousesComponent
     },
     {
-        path: '/semtinel/logistics',
+        path: '/semtinel/public/logistics',
         name: 'logistics.home',
         component: LogisticsHomeComponent
     },
     {
-        path: '/semtinel/logistics/entry',
+        path: '/semtinel/public/logistics/entry',
         name: 'logistics.entry',
         component: LogisticsEntryComponent
     },
     {
-        path: '/semtinel/logistics/entries',
+        path: '/semtinel/public/logistics/entries',
         name: 'logistics.entries',
         component: LogisticsEntriesComponent
     },
     {
-        path: '/semtinel/logistics/inventory',
+        path: '/semtinel/public/logistics/inventory',
         name: 'logistics.inventory',
         component: LogisticsInventoryComponent
     },
     {
-        path: '/semtinel/logistics/output',
+        path: '/semtinel/public/logistics/output',
         name: 'logistics.output',
         component: LogisticsOutputComponent
     },
     {
-        path: '/semtinel/logistics/outputs',
+        path: '/semtinel/public/logistics/outputs',
         name: 'logistics.outputs',
         component: LogisticsOutputsComponent
     },
     {
-        path: '/semtinel/logistics/entry.detail/:entry',
+        path: '/semtinel/public/logistics/entry.detail/:entry',
         name: 'logistics.entry.detail',
         component: LogisticsEntryDetailComponent,
         props: true
     },
     {
-        path: '/semtinel/logistics/output.detail/:output',
+        path: '/semtinel/public/logistics/output.detail/:output',
         name: 'logistics.output.detail',
         component: LogisticsOutputDetailComponent,
         props: true
