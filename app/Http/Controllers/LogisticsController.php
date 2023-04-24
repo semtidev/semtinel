@@ -98,6 +98,21 @@ class LogisticsController extends Controller
                     $docum_number = $entry->output;
                 }
 
+                // Get OC
+                $oc = '- Ninguna -';
+                if ($is_oc && $entry->oc != '' && $entry->oc != null) {
+                    $oc = $entry->oc;
+                }
+                else {
+                    $oc_list = array();
+                    foreach ($items as $product) {
+                        if (!in_array($product->oc, $oc_list)) {
+                            $oc_list[] = $product->oc;
+                        }
+                    }
+                    $oc = implode($oc_list);
+                }
+
                 // Get attach type
                 $attach_type = '';
                 if ($entry->attach_path != '' && $entry->attach_path != null) {
@@ -121,7 +136,7 @@ class LogisticsController extends Controller
                     'origin' => $entry->origin,
                     'document_type' => ($entry->document_type != null && $entry->document_type != '') ? $entry->document_type : 'Factura',
                     'document_number' => $docum_number,
-                    'oc' => ($entry->oc != null && $entry->oc != '') ? $entry->oc : '- Ninguna -',
+                    'oc' => $oc,
                     'created_at' => $created_at,
                     'updated_at' => $updated_at,
                     'created_by' => $entry->created_by,
@@ -259,7 +274,7 @@ class LogisticsController extends Controller
                 $entry->save();
                 // Set code
                 $project = SystStructureProject::find(intval($fields['destin']['project']));
-                $code = 'IN-' . $project->abbr . '-' . $entry->id;
+                $code = 'ENT-' . $project->abbr . '-' . $entry->id;
                 $entry->code = $code;
                 $entry->save();
 
@@ -311,7 +326,7 @@ class LogisticsController extends Controller
                 $entry->save();
                 // Set code
                 $project = SystStructureProject::find(intval($fields['destin']['project']));
-                $code = 'IN-' . $project->abbr . '-' . $entry->id;
+                $code = 'ENT-' . $project->abbr . '-' . $entry->id;
                 $entry->code = $code;
                 $entry->save();
 
@@ -368,7 +383,7 @@ class LogisticsController extends Controller
      * @param  int  $entry
      * @return \Illuminate\Http\Response
      */
-    public function getEntryPDF($id)
+    public function getEntryPDF($id, $watermark = null)
     {
         $items = array();
         $is_oc = true;
@@ -404,6 +419,21 @@ class LogisticsController extends Controller
         $warehouse_name  = $warehouse->name;
         $warehouse_owner = $warehouse->owner;
 
+        // Get OC
+        $oc = '- Ninguna -';
+        if ($is_oc && $entry->oc != '' && $entry->oc != null) {
+            $oc = $entry->oc;
+        }
+        else {
+            $oc_list = array();
+            foreach ($items as $product) {
+                if (!in_array($product->oc, $oc_list)) {
+                    $oc_list[] = $product->oc;
+                }
+            }
+            $oc = implode($oc_list);
+        }
+
         // document_number
         $docum_number = ($is_oc) ? $entry->document_number : $project->abbr . '/OUT/' . $entry->document_number;
         
@@ -413,7 +443,7 @@ class LogisticsController extends Controller
             'origin' => $entry->origin,
             'document_type' => ($entry->document_type != '' || $entry->document_type != null) ? $entry->document_type : '-',
             'document_number' => $docum_number,
-            'oc' => ($entry->oc != '' || $entry->oc != null) ? $entry->oc : '-',
+            'oc' => $oc,
             'created_at' => $created_at,
             'updated_at' => $updated_at,
             'created_by' => $entry->created_by,
@@ -429,6 +459,23 @@ class LogisticsController extends Controller
         
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('pdf.logistics.entry', $data);
+
+        if ($watermark != null && $watermark != '') {
+            $pdf->setPaper('L');
+            $pdf->output();
+            $canvas = $pdf->getDomPDF()->getCanvas();
+
+            $height = $canvas->get_height();
+            $width = $canvas->get_width();
+
+            $canvas->set_opacity(.2,"Multiply");
+
+            $canvas->set_opacity(.2);
+
+            $canvas->page_text($width/5, $height/2, $watermark, null,
+            90, array(0,0,0),2,2,-30);
+        }
+
         return $pdf->download($entry->code . '.pdf');
     }
 
@@ -615,7 +662,18 @@ class LogisticsController extends Controller
                 foreach ($items as $product) {
 
                     // Create product ID
-                    $product_id = ($type == 'oc') ? 'oc.' . $product->odoo_id_order . '.' . $product->odoo_id_order_line . '.' . $entry->warehouse_id : 'dispatch.' . $product->odoo_id_stock_picking . '.' . $product->odoo_id_stock_move . '.' . $entry->warehouse_id;
+                    if ($type == 'oc') {
+                        $product_id = 'oc.' . $product->odoo_id_order . '.' . $product->odoo_id_order_line . '.' . $entry->warehouse_id;
+                    }
+                    else {
+                        if (!$is_transfer) {
+                            $product_id = 'dispatch.' . $product->odoo_id_stock_picking . '.' . $product->odoo_id_stock_move . '.' . $entry->warehouse_id;
+                        }
+                        else {
+                            $arr_inventory = explode('.', $product->id_inventory);
+                            $product_id = $arr_inventory[0] . '.' . $arr_inventory[1] . '.' . $arr_inventory[2] . '.' . $entry->warehouse_id;
+                        }
+                    }
 
                     if (isset($products[$product_id])) {
                         if ($entry->confirm == 1) {
@@ -653,10 +711,11 @@ class LogisticsController extends Controller
                     // Check transfer
                     $quantity_transfer = 0;
                     if (!array_key_exists($key, $transfers)) {
-                        if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
+                        if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'transfer')->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
                             $quantity_transfer = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
                                                     ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
                                                     ->where('logistics_output_items.id_inventory', $key)
+                                                    ->where('logistics_outputs.type', 'transfer')
                                                     ->where('logistics_outputs.status', '<>', 'cancelada')
                                                     ->first()->quantity_transfer;
                             $quantity -= $quantity_transfer;
@@ -916,11 +975,12 @@ class LogisticsController extends Controller
                 $hour_arr = explode(':', $arr_created[1]);
                 $hour = $hour_arr[0] . ':' . $hour_arr[1];
                 
-                // History entry type
+                // History Entry type
                 if (strpos($log->action, 'entry') !== false) {
                     $entry = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
                                     ->select(
                                         'logistics_receipts.id',
+                                        'logistics_receipts.code',
                                         'logistics_receipts.origin',
                                         'logistics_receipts.document_number',
                                         'logistics_receipts.oc',
@@ -947,7 +1007,7 @@ class LogisticsController extends Controller
                         $is_oc = false;
                     }
                     if (LogisticsReceiptItemTransfer::where('id_receipt', $entry->id)->exists()) {
-                        $items = $entry->itemsTransfer;
+                        $entry_items = $entry->itemsTransfer;
                         $is_oc = false;
                     }
 
@@ -975,6 +1035,21 @@ class LogisticsController extends Controller
                     // user
                     $log_user = $log->getUser;
 
+                    // Get OC
+                    $entry_oc = '- Ninguna -';
+                    if ($is_oc && $entry->oc != '' && $entry->oc != null) {
+                        $entry_oc = $entry->oc;
+                    }
+                    else {
+                        $oc_list = array();
+                        foreach ($entry_items as $product) {
+                            if (!in_array($product->oc, $oc_list)) {
+                                $oc_list[] = $product->oc;
+                            }
+                        }
+                        $entry_oc = implode($oc_list);
+                    }
+
                     if ($oc == null && $descript == '') {
                         
                         // Entry created
@@ -982,9 +1057,10 @@ class LogisticsController extends Controller
                             $history[$date][] = array(
                                 'node_type' => $log->action,
                                 'id' => $entry->id,
+                                'code' => $entry->code,
                                 'origin' => $entry->origin,
                                 'document_number' => $docum_number,
-                                'oc' => ($entry->oc != null && $entry->oc != '') ? $entry->oc : '- Ninguna -',
+                                'oc' => $oc,
                                 'warehouse_owner' => $entry->warehouse_owner,
                                 'status' => $entry->status,
                                 'attach_path' => $entry->attach_path,
@@ -1003,6 +1079,7 @@ class LogisticsController extends Controller
                             $history[$date][] = array(
                                 'node_type' => $log->action,
                                 'id' => $entry->id,
+                                'code' => $entry->code,
                                 'document_number' => $docum_number,
                                 'attach_path' => $entry->attach_path,
                                 'cancel_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
@@ -1018,13 +1095,15 @@ class LogisticsController extends Controller
                             $history[$date][] = array(
                                 'node_type' => $log->action,
                                 'id' => $entry->id,
+                                'code' => $entry->code,
                                 'document_number' => $docum_number,
                                 'attach_path' => $entry->attach_path,
                                 'confirm_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
                                 'confirm_by_email' => $log_user->email,
                                 'hour' => $hour,
                                 'categories' => $categories,
-                                'warehouse' => $warehouse
+                                'warehouse' => $warehouse,
+                                'warehouse_name' => $entry->warehouse_name
                             );
                         }
 
@@ -1035,6 +1114,7 @@ class LogisticsController extends Controller
                             $history[$date][] = array(
                                 'node_type' => $log->action,
                                 'id' => $entry->id,
+                                'code' => $entry->code,
                                 'document_number' => $docum_number,
                                 'attach_path' => $entry->attach_path,
                                 'attach_type' => $attach_type,
@@ -1055,9 +1135,11 @@ class LogisticsController extends Controller
                                     $history[$date][] = array(
                                         'node_type' => 'product-add',
                                         'id' => $item->id,
+                                        'code' => $entry->code,
                                         'id_receipt' => $item->id_receipt,
+                                        'attach_path' => $entry->attach_path,
                                         'origin' => $entry->origin,
-                                        'oc' => $entry->oc,
+                                        'oc' => $oc,
                                         'document_number' => $docum_number,
                                         'um' => $item->um,
                                         'received_quantity' => $item->received_quantity,
@@ -1068,6 +1150,161 @@ class LogisticsController extends Controller
                                         'hour' => $hour,
                                         'categories' => $categories,
                                         'warehouse' => $warehouse
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // History Output type
+                if (strpos($log->action, 'output') !== false) {
+                    $output = LogisticsOutput::leftJoin(
+                                        'syst_warehouses', 
+                                        'syst_warehouses.id', 
+                                        'logistics_outputs.warehouse'
+                                    )
+                                    ->select(
+                                        'logistics_outputs.id',
+                                        'logistics_outputs.code',
+                                        'logistics_outputs.created_at',
+                                        'logistics_outputs.created_by',
+                                        'logistics_outputs.warehouse',
+                                        'logistics_outputs.warehouse_owner',
+                                        'logistics_outputs.status',
+                                        'logistics_outputs.attach_path',
+                                        'logistics_outputs.confirm',
+                                        'logistics_outputs.cancel',
+                                        'logistics_outputs.cancel_by',
+                                        'logistics_outputs.type',
+                                        'logistics_outputs.work_object',
+                                        'logistics_outputs.destin_warehouse',
+                                        'logistics_outputs.authorized',
+                                        'logistics_outputs.authorizing',
+                                        'syst_warehouses.name as warehouse_name',
+                                    )
+                                    ->where('logistics_outputs.id', $log->entity_id)
+                                    ->first();
+                    $output_items = array();
+                    $output_items = $output->Items;
+
+                    // project
+                    $project = $log->getProject;
+
+                    // EOP
+                    $destin = '';
+                    if ($output->type == 'towork') {
+                        $eop = SystStructureEop::find(intval($output->work_object));
+                        if ($eop->parent != 0) {
+                            $parent = SystStructureEop::find($eop->parent)->description;
+                            $destin = $parent . ' / ' . $eop->description;
+                        }
+                        else {
+                            $destin = $eop->description;
+                        }
+                    }
+                    else {
+                        $warehouse = SystWarehouse::find(intval($output->destin_warehouse));
+                        $destin = $warehouse->name;
+                    }
+
+                    // user
+                    $log_user = $log->getUser;
+
+                    if ($oc == null && $descript == '') {
+                        
+                        // Output created
+                        if ($log->action == 'create-output') {
+                            $history[$date][] = array(
+                                'node_type' => $log->action,
+                                'id' => $output->id,
+                                'code' => $output->code,
+                                'status' => ucfirst($output->status),
+                                'attach_path' => $output->attach_path,
+                                'confirm' => ($output->confirm == 1) ? 'SI' : 'NO',
+                                'warehouse_name' => $output->warehouse_name,
+                                'warehouse_owner' => $output->warehouse_owner,
+                                'authorized' => $output->authorized,
+                                'authorizing' => $output->authorizing,
+                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                'created_by_email' => $log_user->email,
+                                'hour' => $hour,
+                                'destin' => $destin
+                            );
+                        }                    
+                        
+                        // Output canceled
+                        if ($log->action == 'cancel-output') {
+                            $history[$date][] = array(
+                                'node_type' => $log->action,
+                                'id' => $output->id,
+                                'code' => $output->code,
+                                'attach_path' => $output->attach_path,
+                                'warehouse_name' => $output->warehouse_name,
+                                'cancel_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                'cancel_by_email' => $log_user->email,
+                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                'hour' => $hour,
+                                'destin' => $destin
+                            );
+                        }
+
+                        // Output confirm
+                        if ($log->action == 'confirm-output') {
+                            $history[$date][] = array(
+                                'node_type' => $log->action,
+                                'id' => $output->id,
+                                'code' => $output->code,
+                                'attach_path' => $output->attach_path,
+                                'warehouse_name' => $output->warehouse_name,
+                                'attach_path' => $output->attach_path,
+                                'confirm_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                'confirm_by_email' => $log_user->email,
+                                'hour' => $hour,
+                                'destin' => $destin
+                            );
+                        }
+
+                        // Output attach
+                        if ($log->action == 'attach-output') {
+                            $filename_arr = explode('.', $output->attach_path);
+                            $attach_type = $filename_arr[1];
+                            $history[$date][] = array(
+                                'node_type' => $log->action,
+                                'id' => $output->id,
+                                'code' => $output->code,
+                                'warehouse_name' => $output->warehouse_name,
+                                'attach_path' => $output->attach_path,
+                                'attach_type' => $attach_type,
+                                'attach_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                'attach_by_email' => $log_user->email,
+                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                'hour' => $hour,
+                                'destin' => $destin
+                            );
+                        }
+                    }
+                    else {
+                        // Get output items
+                        if ($log->action == 'confirm-output') {                            
+                            foreach ($output_items as $item) {
+                                if ($item->oc == $oc && $item->item_description == $descript) {
+                                    $history[$date][] = array(
+                                        'node_type' => 'product-output',
+                                        'id' => $item->id,
+                                        'id_output' => $output->id,
+                                        'attach_path' => $output->attach_path,
+                                        'um' => $item->um,
+                                        'quantity' => $item->quantity,
+                                        'authorizing' => $output->authorizing,
+                                        'warehouse_name' => $entry->warehouse_name,
+                                        'warehouse_owner' => $entry->warehouse_owner,
+                                        'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                        'created_by_email' => $log_user->email,
+                                        'hour' => $hour,
+                                        'destin' => $destin
                                     );
                                 }
                             }
@@ -1120,7 +1357,7 @@ class LogisticsController extends Controller
                 $output->save();
 
                 // Register code
-                $output->code = 'OUT-' . $project->abbr . '-' .  $output->id;
+                $output->code = 'SAL-' . $project->abbr . '-' .  $output->id;
                 $output->save();
 
             }
@@ -1446,7 +1683,7 @@ class LogisticsController extends Controller
      * @param  int  $output
      * @return \Illuminate\Http\Response
      */
-    public function getOutputPDF($id)
+    public function getOutputPDF($id, $watermark = null)
     {
         $items = array();
         $is_oc = true;
@@ -1513,6 +1750,23 @@ class LogisticsController extends Controller
         
         $pdf = app('dompdf.wrapper');
         $pdf->loadView('pdf.logistics.output', $data);
+
+        if ($watermark != null && $watermark != '') {
+            $pdf->setPaper('L');
+            $pdf->output();
+            $canvas = $pdf->getDomPDF()->getCanvas();
+
+            $height = $canvas->get_height();
+            $width = $canvas->get_width();
+
+            $canvas->set_opacity(.2,"Multiply");
+
+            $canvas->set_opacity(.2);
+
+            $canvas->page_text($width/5, $height/2, $watermark, null,
+            90, array(0,0,0),2,2,-30);
+        }
+        
         return $pdf->download($output->code . '.pdf');
     }
 

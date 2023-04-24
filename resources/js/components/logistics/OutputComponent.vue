@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
+import PageHeader from "../layouts/HeaderComponent.vue";
 
 import TreeselectEopComponent from '../common/TreeselectEopComponent.vue';
 
@@ -72,7 +73,8 @@ export default {
             });
     },
     components: {
-        'treeselect': TreeselectEopComponent
+        'treeselect': TreeselectEopComponent,
+        'page-header': PageHeader
     },
     methods: {
         goToInventory: function () {
@@ -175,7 +177,7 @@ export default {
                 cmp.warehouse_name = object_warehouses[key].name
                 cmp.warehouse_owner = object_warehouses[key].owner
                 // Asign destin warehouse default
-                cmp.changeWarehouseDestin(key, value.owner)
+                cmp.changeWarehouseDestin(key, object_warehouses[key].owner)
             }
         }     
     }
@@ -183,6 +185,9 @@ export default {
 </script>
 
 <template>
+    <page-header 
+        :pagetitle="'Nueva Salida de mercancía de pañol'">
+    </page-header>
     <div class="container-fluid px-0">
         <!-- Data Search card -->
         <div class="card card-default">

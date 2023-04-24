@@ -37,11 +37,16 @@ export default {
         date_arr = date.split('-');
         return parseInt(date_arr[2]) + " " + months[parseInt(date_arr[1])] + " " + date_arr[0]; 
       },
-      openScanner: function (path) {
-          window.open('http://localhost/semtinel/storage/app/public/' + path, '_blank', 'noreferrer')
+      openScanner: function (path, type, id, status) {
+        if (path == null || path == '') {
+            this.docPdf(type, id, status)
+        }
+        else {
+            window.open('http://localhost/semtinel/storage/app/public/' + path, '_blank', 'noreferrer')
+        }
       },
-      docPdf: function(entry) {
-          window.open('http://localhost/semtinel/public/api/logistics/pdf/entry/' + entry, '_blank', 'noreferrer')
+      docPdf: function(type, id, status) {
+            window.open('http://localhost/semtinel/public/api/logistics/pdf/'+type+'/' + id + '/' + status, '_blank', 'noreferrer')
       },
     }
 };
@@ -74,13 +79,15 @@ export default {
         <!-- timeline time label -->
         <template v-for="(item, idx) in history" :key="idx">
           <div class="time-label">
-              <span class="bg-gradient-orange px-2 text-white"> {{ getDateTimeline(idx) }} </span>
+              <span class="bg-lightblue px-2 text-white"> {{ getDateTimeline(idx) }} </span>
           </div>
           <!-- /.timeline-label -->
           <!-- timeline item -->
           <template v-for="(node, node_idx) in item" :key="node_idx">
+            
+            <!-- CREATED ENTRY  -->
             <div v-if="node.node_type == 'create-entry'">
-              <i class="mdi mdi-truck-check mdi-18px bg-primary"></i>
+              <i class="mdi mdi-truck-check mdi-18px bg-navy"></i>
 
               <div class="timeline-item">
                 <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
@@ -88,8 +95,8 @@ export default {
                 <h3 class="timeline-header timeline-gray-light" v-if="node.attach_path != null && node.attach_path != ''">
                     <strong>Entrada Creada</strong> desde el documento <a 
                                                 href="javascript:void(0);" 
-                                                v-on:click.stop="openScanner(node.attach_path)">
-                                                {{ node.document_number }}
+                                                v-on:click.stop="openScanner(node.attach_path, 'entry', node.id, 'Creada')">
+                                                {{ node.code }}
                                                 </a> por <strong><a 
                                                                     :href="'mailto:' + node.created_by_email">
                                                                     {{ node.created_by_name }}</a></strong>
@@ -97,7 +104,7 @@ export default {
                 <h3 class="timeline-header timeline-gray-light" v-else>
                     <strong>Entrada Creada</strong>  desde el documento <a 
                                                 href="javascript:void(0);" 
-                                                v-on:click.stop="docPdf(node.id)">{{ node.document_number }}
+                                                v-on:click.stop="docPdf('entry', node.id, 'Creada')">{{ node.code }}
                                                 </a> por <strong><a 
                                                                     :href="'mailto:' + node.created_by_email">
                                                                     {{ node.created_by_name }}</a></strong>
@@ -144,7 +151,77 @@ export default {
                 </div>
               </div>
             </div>
+            <!-- / CREATED ENTRY  -->
 
+            <!-- CREATED OUTPUT  -->
+            <div v-if="node.node_type == 'create-output'">
+              <i class="mdi mdi-cart-arrow-right mdi-18px bg-orange"></i>
+
+              <div class="timeline-item">
+                <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
+
+                <h3 class="timeline-header timeline-gray-light" v-if="node.attach_path != null && node.attach_path != ''">
+                    <strong>Salida Creada</strong> desde el documento <a 
+                                                href="javascript:void(0);" 
+                                                v-on:click.stop="openScanner(node.attach_path, 'output', node.id, 'Creada')">
+                                                {{ node.code }}
+                                                </a> por <strong><a 
+                                                                    :href="'mailto:' + node.created_by_email">
+                                                                    {{ node.created_by_name }}</a></strong>
+                </h3>
+                <h3 class="timeline-header timeline-gray-light" v-else>
+                    <strong>Salida Creada</strong>  desde el documento <a 
+                                                href="javascript:void(0);" 
+                                                v-on:click.stop="docPdf('output', node.id, 'Creada')">{{ node.code }}
+                                                </a> por <strong><a 
+                                                                    :href="'mailto:' + node.created_by_email">
+                                                                    {{ node.created_by_name }}</a></strong>
+                </h3>
+
+                <div class="timeline-body timeline-gray-light p-3">
+                    <!-- info row -->
+                    <div class="row invoice-info">
+                        <div class="col-sm-3 invoice-col">
+                            <div class="form-group">
+                                <label class="mb-1">Origen</label>
+                                <h6 class="p-0"><strong>{{ node.warehouse_name }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Responsable</label>
+                                <h6 class="p-0"><strong>{{ node.warehouse_owner }}</strong></h6>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-3 invoice-col">
+                            <div class="form-group">
+                                <label class="mb-1">Destino</label>
+                                <h6 class="p-0"><strong>{{ node.destin }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Autoriza</label>
+                                <h6 class="p-0"><strong>{{ node.authorizing }}</strong></h6>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-3 invoice-col">
+                            <div class="form-group">
+                                <label class="mb-1">Tipo</label><br>
+                                <h6 class="p-0"><strong>{{ node.type }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Confirmada</label><br>
+                                <h6 class="p-0"><strong>{{ node.confirm }}</strong></h6>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+              </div>
+            </div>
+            <!-- / CREATED OUTPUT  -->
+
+            <!-- CANCEL ENTRY  -->
             <div v-if="node.node_type == 'cancel-entry'">
               <i class="fas fa-trash-alt bg-danger"></i>
 
@@ -152,43 +229,91 @@ export default {
                   <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
 
                   <h3 class="timeline-header timeline-gray-light border-0">
-                      <strong>Entrada Cancelada</strong> No. <a 
+                      <strong>Entrada Cancelada</strong> 
+                        No. <a href="javascript:void(0);" 
+                                v-if="node.attach_path != null && node.attach_path != ''"
+                                v-on:click.stop="openScanner(node.attach_path, 'entry', node.id, 'Cancelada')">
+                                    {{ node.code }}
+                            </a>
+                            <strong v-else>{{ node.code }}</strong> por <strong>
+                                        <a :href="'mailto:' + node.cancel_by_email">
+                                            {{ node.cancel_by_name }}
+                                        </a></strong>
+                  </h3>
+              </div>
+            </div>
+            <!-- / CANCEL ENTRY  -->
+
+            <!-- CANCEL OUTPUT  -->
+            <div v-if="node.node_type == 'cancel-output'">
+              <i class="fas fa-trash-alt bg-danger"></i>
+
+              <div class="timeline-item">
+                  <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
+
+                  <h3 class="timeline-header timeline-gray-light border-0">
+                      <strong>Salida Cancelada</strong> No. <a 
                                                   href="javascript:void(0);" 
-                                                  v-on:click.stop="openScanner(node.attach_path)">{{ node.document_number }}
+                                                  v-on:click.stop="openScanner(node.attach_path, 'output', node.id, 'Cancelada')">{{ node.code }}
                                                   </a> por <strong><a 
                                                                     :href="'mailto:' + node.cancel_by_email">
                                                                     {{ node.cancel_by_name }}</a></strong>
                   </h3>
               </div>
             </div>
+            <!-- / CANCEL OUTPUT  -->
 
+            <!-- CONFIRM ENTRY  -->
             <div v-if="node.node_type == 'confirm-entry'">
               <i class="fas fa-check bg-success"></i>
-
               <div class="timeline-item">
                   <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
 
                   <h3 class="timeline-header timeline-gray-light border-0">
-                      <strong>Entrada Confirmada</strong> No. <a 
-                                                  href="javascript:void(0);" 
-                                                  v-on:click.stop="openScanner(node.attach_path)">{{ node.document_number }}
-                                                  </a> por <strong><a 
-                                                                    :href="'mailto:' + node.confirm_by_email">
-                                                                    {{ node.confirm_by_name }}</a></strong>
+                      <strong>Entrada Confirmada</strong> 
+                        No. <a href="javascript:void(0);" 
+                                v-on:click.stop="openScanner(node.attach_path, 'entry', node.id, 'Confirmada')">
+                                {{ node.code }}
+                            </a> por <strong>
+                                <a :href="'mailto:' + node.confirm_by_email">
+                                    {{ node.confirm_by_name }}</a></strong> 
+                                        con destino <strong>{{ node.warehouse_name }}</strong>
                   </h3>
               </div>
             </div>
+            <!-- / CONFIRM ENTRY  -->
 
-            <div v-if="node.node_type == 'attach-entry'">
-              <i class="fas fa-paperclip bg-purple"></i>
-
+            <!-- CONFIRM OUTPUT  -->
+            <div v-if="node.node_type == 'confirm-output'">
+              <i class="fas fa-check bg-success"></i>
               <div class="timeline-item">
                   <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
 
                   <h3 class="timeline-header timeline-gray-light border-0">
-                      <strong>Archivo adjuntado</strong> a la Entrada <strong>{{ node.document_number }}</strong> por <strong><a 
-                                                                    :href="'mailto:' + node.attach_by_email">
-                                                                    {{ node.attach_by_name }}</a></strong>
+                      <strong>Salida Confirmada</strong> 
+                        No. <a href="javascript:void(0);" 
+                                v-on:click.stop="openScanner(node.attach_path, 'output', node.id, 'Confirmada')">
+                                {{ node.code }}
+                            </a> desde el origen <strong>{{ node.warehouse_name }}</strong> por <strong>
+                                <a :href="'mailto:' + node.confirm_by_email">
+                                    {{ node.confirm_by_name }}</a></strong> 
+                                        con destino <strong>{{ node.destin }}</strong>
+                  </h3>
+              </div>
+            </div>
+            <!-- / CONFIRM ENTRY  -->
+
+            <!-- ATTACH ENTRY  -->
+            <div v-if="node.node_type == 'attach-entry'">
+              <i class="fas fa-paperclip bg-purple"></i>
+              <div class="timeline-item">
+                  <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
+
+                  <h3 class="timeline-header timeline-gray-light border-0">
+                      <strong>Archivo adjuntado</strong> a la Entrada 
+                        <strong>{{ node.code }}</strong> por <strong>
+                            <a :href="'mailto:' + node.attach_by_email">
+                                {{ node.attach_by_name }}</a></strong>
                   </h3>
 
                   <div class="timeline-body timeline-gray-light px-3 pb-0">
@@ -199,17 +324,17 @@ export default {
                                 <label class="mb-1">Click para Abrir</label><br>
                                 <a href="javascript:void(0);" 
                                     v-if="node.attach_path != '' && node.attach_path != null && node.attach_type == 'pdf'"
-                                    v-on:click.stop="openScanner(node.attach_path)">
+                                    v-on:click.stop="openScanner(node.attach_path, 'entry', node.id, 'Adjunto')">
                                     <img src="../../../../public/themes/semtinel/img/icon-pdf2.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                                 </a>
                                 <a href="javascript:void(0);" 
                                     v-else-if="node.attach_path != '' && node.attach_path != null && node.attach_type == 'png'"
-                                    v-on:click.stop="openScanner(node.attach_path)">
+                                    v-on:click.stop="openScanner(node.attach_path, 'entry', node.id, 'Adjunto')">
                                     <img src="../../../../public/themes/semtinel/img/icon-png.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                                 </a>
                                 <a href="javascript:void(0);" 
                                     v-else-if="node.attach_path != '' && node.attach_path != null && (node.attach_type == 'jpg' || node.attach_type == 'jpeg')"
-                                    v-on:click.stop="openScanner(node.attach_path)">
+                                    v-on:click.stop="openScanner(node.attach_path, 'entry', node.id, 'Adjunto')">
                                     <img src="../../../../public/themes/semtinel/img/icon-jpg.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                                 </a>
                             </div>
@@ -220,7 +345,53 @@ export default {
                 </div>
               </div>
             </div>
+            <!-- / ATTACH ENTRY  -->
 
+            <!-- ATTACH OUTPUT  -->
+            <div v-if="node.node_type == 'attach-output'">
+              <i class="fas fa-paperclip bg-purple"></i>
+              <div class="timeline-item">
+                  <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
+
+                  <h3 class="timeline-header timeline-gray-light border-0">
+                      <strong>Archivo adjuntado</strong> a la Salida 
+                        <strong>{{ node.code }}</strong> por <strong>
+                            <a :href="'mailto:' + node.attach_by_email">
+                                {{ node.attach_by_name }}</a></strong>
+                  </h3>
+
+                  <div class="timeline-body timeline-gray-light px-3 pb-0">
+                    <!-- info row -->
+                    <div class="row invoice-info">
+                        <div class="col-12 invoice-col">
+                            <div class="form-group" >
+                                <label class="mb-1">Click para Abrir</label><br>
+                                <a href="javascript:void(0);" 
+                                    v-if="node.attach_path != '' && node.attach_path != null && node.attach_type == 'pdf'"
+                                    v-on:click.stop="openScanner(node.attach_path, 'output', node.id, 'Adjunto')">
+                                    <img src="../../../../public/themes/semtinel/img/icon-pdf2.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                                </a>
+                                <a href="javascript:void(0);" 
+                                    v-else-if="node.attach_path != '' && node.attach_path != null && node.attach_type == 'png'"
+                                    v-on:click.stop="openScanner(node.attach_path, 'output', node.id, 'Adjunto')">
+                                    <img src="../../../../public/themes/semtinel/img/icon-png.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                                </a>
+                                <a href="javascript:void(0);" 
+                                    v-else-if="node.attach_path != '' && node.attach_path != null && (node.attach_type == 'jpg' || node.attach_type == 'jpeg')"
+                                    v-on:click.stop="openScanner(node.attach_path, 'output', node.id, 'Adjunto')">
+                                    <img src="../../../../public/themes/semtinel/img/icon-jpg.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+              </div>
+            </div>
+            <!-- / ATTACH OUTPUT  -->
+
+            <!-- ADD PRODUCT TO INVENTORY  -->
             <div v-if="node.node_type == 'product-add'">
               <i class="mdi mdi-plus mdi-18px bg-success"></i>
 
@@ -230,8 +401,8 @@ export default {
                 <h3 class="timeline-header timeline-gray-light" v-if="node.attach_path != null && node.attach_path != ''">
                     <strong>Recepc&oacute;n del Producto</strong> en la Entrada <a 
                                                 href="javascript:void(0);" 
-                                                v-on:click.stop="openScanner(node.attach_path)">
-                                                {{ node.document_number }}
+                                                v-on:click.stop="openScanner(node.attach_path, 'entry', node.id_receipt, '')">
+                                                {{ node.code }}
                                                 </a> por <strong><a 
                                                                     :href="'mailto:' + node.created_by_email">
                                                                     {{ node.created_by_name }}</a></strong>
@@ -239,7 +410,7 @@ export default {
                 <h3 class="timeline-header timeline-gray-light" v-else>
                     <strong>Recepci&oacute;n del Producto</strong> en la Entrada <a 
                                                 href="javascript:void(0);" 
-                                                v-on:click.stop="docPdf(node.id)">{{ node.document_number }}
+                                                v-on:click.stop="docPdf('entry', node.id_receipt, 'Confirmada')">{{ node.code }}
                                                 </a> por <strong><a 
                                                                     :href="'mailto:' + node.created_by_email">
                                                                     {{ node.created_by_name }}</a></strong>
@@ -283,6 +454,72 @@ export default {
                 </div>
               </div>
             </div>
+            <!-- / ADD PRODUCT TO INVENTORY  -->
+
+            <!-- OUTPUT PRODUCT FROM INVENTORY  -->
+            <div v-if="node.node_type == 'product-output'">
+              <i class="mdi mdi-minus mdi-18px bg-danger"></i>
+
+              <div class="timeline-item">
+                <span class="time"><i class="far fa-clock"></i> {{ node.hour }}</span>
+
+                <h3 class="timeline-header timeline-gray-light" v-if="node.attach_path != null && node.attach_path != ''">
+                    <strong>Movimiento del Producto</strong> en la Salida <a 
+                                                href="javascript:void(0);" 
+                                                v-on:click.stop="openScanner(node.attach_path, 'entry', node.id_output, '')">
+                                                {{ node.code }}
+                                                </a> por <strong><a 
+                                                                    :href="'mailto:' + node.created_by_email">
+                                                                    {{ node.created_by_name }}</a></strong>
+                </h3>
+                <h3 class="timeline-header timeline-gray-light" v-else>
+                    <strong>Movimiento del Producto</strong> en la Salida <a 
+                                                href="javascript:void(0);" 
+                                                v-on:click.stop="docPdf('output', node.id_output, 'Confirmada')">{{ node.code }}
+                                                </a> por <strong><a 
+                                                                    :href="'mailto:' + node.created_by_email">
+                                                                    {{ node.created_by_name }}</a></strong>
+                </h3>
+
+                <div class="timeline-body timeline-gray-light p-3">
+                    <!-- info row -->
+                    <div class="row invoice-info">
+                        <div class="col-sm-6 invoice-col">
+                            <div class="form-group">
+                                <label class="mb-1">Origen</label>
+                                <h6 class="p-0"><strong>{{ node.warehouse_name }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Responsable</label>
+                                <h6 class="p-0"><strong>{{ node.warehouse_owner }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Unidad Medida</label><br>
+                                <h6 class="p-0"><strong>{{ node.um }}</strong></h6>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-6 invoice-col">
+                            <div class="form-group">
+                                <label class="mb-1">Destino</label>
+                                <h6 class="p-0"><strong>{{ node.destin }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Autoriza</label>
+                                <h6 class="p-0"><strong>{{ node.authorizing }}</strong></h6>
+                            </div>
+                            <div class="form-group">
+                                <label class="mb-1">Cantidad</label><br>
+                                <h6 class="p-0"><strong>{{ node.quantity }}</strong></h6>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+              </div>
+            </div>
+            <!-- / OUTPUT PRODUCT FROM INVENTORY  -->
 
           </template>
           <!-- END timeline item -->

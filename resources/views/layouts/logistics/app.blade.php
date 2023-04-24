@@ -151,10 +151,19 @@
 
       <footer class="main-footer">
         <div class="float-right d-none d-sm-block">
-          Plataforma de Gesti&oacute;n Empresarial <b>Semtinel - Logística</b> v1.0
+          Plataforma de Gesti&oacute;n Corporativa <b>Semtinel - Logística</b> v1.0
         </div>
         Copyright &copy; {{ date('Y') }} <b>A.E.I. UCM</b> - <b>BBI</b>. Servicios Informáticos.
       </footer>
+
+      <a id="back-to-top" 
+        href="#" 
+        class="btn btn-secondary back-to-top" 
+        role="button" 
+        aria-label="Scroll to top" 
+        style="display: none;">
+          <i class="fas fa-chevron-up"></i>
+      </a>
 
       <!-- Control Sidebar -->
       <aside class="control-sidebar control-sidebar-dark">

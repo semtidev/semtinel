@@ -81,5 +81,5 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // PDF routes
-Route::get('logistics/pdf/entry/{id}', [LogisticsController::class, "getEntryPDF"])->name('logistics.api.pdf.entry');
-Route::get('logistics/pdf/output/{id}', [LogisticsController::class, "getOutputPDF"])->name('logistics.api.pdf.output');
+Route::get('logistics/pdf/entry/{id}/{watermark?}', [LogisticsController::class, "getEntryPDF"])->name('logistics.api.pdf.entry');
+Route::get('logistics/pdf/output/{id}/{watermark?}', [LogisticsController::class, "getOutputPDF"])->name('logistics.api.pdf.output');

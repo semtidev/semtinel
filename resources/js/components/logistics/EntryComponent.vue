@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
+import PageHeader from "../layouts/HeaderComponent.vue";
 
 export default {
     data: function () {
@@ -113,6 +114,9 @@ export default {
             else
                 this.entry_okbtn_text = 'Aceptar'
         }
+    },
+    components: {
+        'page-header': PageHeader
     },
     created() {
         let cmp = this
@@ -567,6 +571,9 @@ export default {
 </script>
 
 <template>
+    <page-header 
+        :pagetitle="'Nueva Entrada de mercancía en pañol'">
+    </page-header>
     <div class="container-fluid px-0">
         <!-- Data Search card -->
         <div class="card card-default">
@@ -696,7 +703,9 @@ export default {
             <!-- card-header -->
             <div class="card-header">
                 <h3 class="card-title float-left">Renglones Solicitados</h3>
-                <span class="float-left ml-2 align-middle" style="margin-top: 2px;">({{ items_selected }} Recibidos en obra)</span>
+                <span class="float-left ml-2 align-middle" style="margin-top: 2px; font-size: 15px;">
+                    <strong>[</strong> {{ items_selected }} Recibido(s) en obra <strong>]</strong>
+                </span>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -1163,7 +1172,7 @@ export default {
                 <div class="float-start" style="width: 70px"><i class="mdi mdi-chat-question mdi-48px"></i></div>
                 <div class="float-start pt-3" style="width: 85%">
                     <p>
-                        Se registrará una nueva Entrada desde "<strong>{{ origin_data.origin }}</strong>" del documento No. "<strong>{{ origin_data.docnum_value }}</strong>", con la recepción de "<strong>{{ items_selected }} Renglones</strong>" en envío de mercancia a la obra, hacia el destino "<strong>{{ destiny_data.warehouse_name }}</strong>".<br>¿Confirma que desea realizar esta operación?
+                        Se registrará una nueva Entrada desde "<strong>{{ origin_data.origin }}</strong>" del documento No. "<strong>{{ origin_data.docnum_value }}</strong>", con la recepción de "<strong>{{ items_selected }} Item(s)</strong>" en envío de mercancia a obra, hacia el destino "<strong>{{ destiny_data.warehouse_name }}</strong>".<br>¿Confirma que desea realizar esta operación?
                     </p>
                 </div>
             </div>
@@ -1177,6 +1186,7 @@ export default {
             <button type="button" 
                 class="btn ripple"
                 :class="entry_error != '' ? 'btn-secondary' : 'btn-primary'"
+                :disabled="entry_loading"
                 v-on:click.stop="processEntry()">
                 <i class="mdi mdi-check-all" v-if="!entry_loading"></i>&nbsp;{{ entry_okbtn_text }}
             </button>

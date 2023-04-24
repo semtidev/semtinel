@@ -557,99 +557,12 @@ export default {
 
 <template>
     <page-header 
-        :pagetitle="'Inventario de productos en Pañoles'"
+        :pagetitle="'Inventario de productos en pañoles'"
         :breadcrumbs="false"
         :pole_project="true"
         :pole="pole_name"
         :project="project_name">
     </page-header>
-
-    <div class="card card-default filters-panel" v-if="tabactive == 1">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-filter" :class="(filter_apply) ? 'text-danger' : ''"></i>&nbsp;Filtros
-                <small v-if="filter_apply">(<i>Filtro aplicado</i>)</small>
-            </h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" 
-                    v-tooltip="'Click para aplicar los filtros a la tabla'"
-                    v-on:click="filterApply()">
-                    Aplicar Filtros
-                </button>
-                <button type="button" class="btn btn-tool" 
-                    v-tooltip="'Click para quitar los filtros aplicados a la tabla'"
-                    v-on:click="filterClear()">
-                    Limpiar Filtros
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" 
-                    v-tooltip="'Contraer/Expandir'">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="filter_category">Categoría</label>
-                        <select 
-                            class="form-control" 
-                            id="filter_category"
-                            v-model="filter_productcategory">
-                            <option value="all">- Todas -</option>
-                            <template v-for="(option, index) in products_categories" :key="index">
-                                <option
-                                    :value="index">
-                                    {{ option }}
-                                </option>
-                            </template>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="filter_warehouse">Pa&ntilde;ol</label>
-                        <select 
-                            id="filter_warehouse" 
-                            size="1" 
-                            class="form-control"
-                            v-model="filter_warehouse">
-                            <option value="all">- Todos -</option>
-                            <template v-for="(option, index) in warehouses" :key="index">
-                                <option
-                                    :value="option['id']">
-                                    {{ option['name'] }}
-                                </option>
-                            </template>
-                        </select> 
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="filter_oc">Orden Compra</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="filter_oc" 
-                            placeholder="Orden de compra"
-                            v-model="filter_oc">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="filter_product">Código Producto</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="filter_product" 
-                            placeholder="Código de producto"
-                            v-model="filter_product">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <div class="card">
         <div class="card-header p-2">
@@ -687,6 +600,93 @@ export default {
             
             <div class="tab-pane active" id="products">
                 
+                <div class="card card-default filters-panel mb-4" v-if="tabactive == 1">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-filter" :class="(filter_apply) ? 'text-danger' : ''"></i>&nbsp;Filtros
+                            <small v-if="filter_apply">(<i>Filtro aplicado</i>)</small>
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" 
+                                v-tooltip="'Click para aplicar los filtros a la tabla'"
+                                v-on:click="filterApply()">
+                                Aplicar Filtros
+                            </button>
+                            <button type="button" class="btn btn-tool" 
+                                v-tooltip="'Click para quitar los filtros aplicados a la tabla'"
+                                v-on:click="filterClear()">
+                                Limpiar Filtros
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" 
+                                v-tooltip="'Contraer/Expandir'">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filter_category">Categoría</label>
+                                    <select 
+                                        class="form-control" 
+                                        id="filter_category"
+                                        v-model="filter_productcategory">
+                                        <option value="all">- Todas -</option>
+                                        <template v-for="(option, index) in products_categories" :key="index">
+                                            <option
+                                                :value="index">
+                                                {{ option }}
+                                            </option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filter_warehouse">Pa&ntilde;ol</label>
+                                    <select 
+                                        id="filter_warehouse" 
+                                        size="1" 
+                                        class="form-control"
+                                        v-model="filter_warehouse">
+                                        <option value="all">- Todos -</option>
+                                        <template v-for="(option, index) in warehouses" :key="index">
+                                            <option
+                                                :value="option['id']">
+                                                {{ option['name'] }}
+                                            </option>
+                                        </template>
+                                    </select> 
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filter_oc">Orden Compra</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="filter_oc" 
+                                        placeholder="Orden de compra"
+                                        v-model="filter_oc">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filter_product">Código Producto</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="filter_product" 
+                                        placeholder="Código de producto"
+                                        v-model="filter_product">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- loading -->
                 <div class="row" :class="!products_loading ? 'hidden' : ''">
                     <div class="col-12 text-center py-5 loading-table">

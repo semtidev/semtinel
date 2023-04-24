@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
+import PageHeader from "../layouts/HeaderComponent.vue";
 
 export default {
     data: function () {
@@ -100,6 +101,9 @@ export default {
                     });
         }
     },
+    components: {
+        'page-header': PageHeader
+    },
     mounted() {
         let cmp = this
         // Verify login active
@@ -169,12 +173,15 @@ export default {
 </script>
 
 <template>
+    <page-header 
+        :pagetitle="'Listado de Entradas de mercancía'">
+    </page-header>
     <div class="container-fluid px-0">
         <!-- card -->
         <div class="card">
             <!-- card-header -->
             <div class="card-header">
-                <h3 class="card-title">Entradas de mercanc&iacute;a en pa&ntilde;ol</h3>
+                <h3 class="card-title">Entradas de mercanc&iacute;a</h3>
                 <div class="card-tools">
                     <button type="button" 
                         class="btn btn-tool pr-2"
@@ -197,7 +204,7 @@ export default {
             <div class="card-body">
                 <div class="row" :class="loading ? '' : 'hidden'">
                     <div class="col-12 text-center py-5 loading-table">
-                        <span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando entradas de mercanc&iacute;as en pa&ntilde;ol...</span>
+                        <span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando entradas...</span>
                     </div>
                 </div>
                 <div class="row" :class="loading ? 'hidden' : ''">

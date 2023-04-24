@@ -363,7 +363,7 @@ export default {
 
         <!-- Table OC row -->
         <label class="pt-3 mb-0">LISTADO DE PRODUCTOS RECIBIDOS:</label>
-        <div class="row" :class="(!table_oc) ? 'hidden' : ''">
+        <div class="row pt-3" :class="(!table_oc) ? 'hidden' : ''">
             <div class="col-12 table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -406,7 +406,7 @@ export default {
         <!-- /.row -->
         
         <!-- Table picking row -->
-        <div class="row pt-4" :class="(table_oc) ? 'hidden' : ''">
+        <div class="row pt-3" :class="(table_oc) ? 'hidden' : ''">
             <div class="col-12 table-responsive">
                 <table class="table table-striped">
                     <thead>
