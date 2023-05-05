@@ -503,6 +503,7 @@ export default {
             <button type="button" 
                 v-if="output_error == ''"
                 class="btn ripple btn-primary"
+                :disabled="output_loading"
                 v-on:click.stop="processOutput()">
                 <i class="mdi mdi-check-all" v-if="!output_loading"></i>&nbsp;{{ output_okbtn_text }}
             </button>

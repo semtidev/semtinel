@@ -3,13 +3,13 @@
     "file": "assets/icon-pdf2.d34bc667.png",
     "src": "public/themes/semtinel/img/icon-pdf2.png"
   },
-  "public/themes/semtinel/img/icon-jpg.png": {
-    "file": "assets/icon-jpg.f56bc536.png",
-    "src": "public/themes/semtinel/img/icon-jpg.png"
-  },
   "public/themes/semtinel/img/icon-png.png": {
     "file": "assets/icon-png.5fc2f06f.png",
     "src": "public/themes/semtinel/img/icon-png.png"
+  },
+  "public/themes/semtinel/img/icon-jpg.png": {
+    "file": "assets/icon-jpg.f56bc536.png",
+    "src": "public/themes/semtinel/img/icon-jpg.png"
   },
   "resources/sass/app.scss": {
     "file": "assets/app.7c3c19f8.js",
@@ -17,7 +17,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app.d5560dd0.js",
+    "file": "assets/app.cab0b5fe.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
@@ -59,7 +59,7 @@
     ]
   },
   "resources/js/components/logistics/HomeComponent.vue": {
-    "file": "assets/HomeComponent.e062945e.js",
+    "file": "assets/HomeComponent.bffdc6e9.js",
     "src": "resources/js/components/logistics/HomeComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -69,7 +69,7 @@
     ]
   },
   "resources/js/components/logistics/EntryComponent.vue": {
-    "file": "assets/EntryComponent.561abb49.js",
+    "file": "assets/EntryComponent.70d5d60d.js",
     "src": "resources/js/components/logistics/EntryComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -86,7 +86,7 @@
     ]
   },
   "resources/js/components/logistics/EntriesComponent.vue": {
-    "file": "assets/EntriesComponent.fadf5b73.js",
+    "file": "assets/EntriesComponent.efde59b7.js",
     "src": "resources/js/components/logistics/EntriesComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -97,7 +97,7 @@
     ]
   },
   "resources/js/components/logistics/InventoryComponent.vue": {
-    "file": "assets/InventoryComponent.c2308401.js",
+    "file": "assets/InventoryComponent.aa8c27ee.js",
     "src": "resources/js/components/logistics/InventoryComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -117,7 +117,7 @@
     ]
   },
   "resources/js/components/logistics/OutputComponent.vue": {
-    "file": "assets/OutputComponent.3d128c8d.js",
+    "file": "assets/OutputComponent.fba9f970.js",
     "src": "resources/js/components/logistics/OutputComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -128,7 +128,7 @@
     ]
   },
   "resources/js/components/logistics/OutputsComponent.vue": {
-    "file": "assets/OutputsComponent.917d60c0.js",
+    "file": "assets/OutputsComponent.faf9355a.js",
     "src": "resources/js/components/logistics/OutputsComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -139,7 +139,7 @@
     ]
   },
   "resources/js/components/logistics/EntryDetailComponent.vue": {
-    "file": "assets/EntryDetailComponent.67eb1313.js",
+    "file": "assets/EntryDetailComponent.b51fcb35.js",
     "src": "resources/js/components/logistics/EntryDetailComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -149,7 +149,7 @@
     ]
   },
   "resources/js/components/logistics/OutputDetailComponent.vue": {
-    "file": "assets/OutputDetailComponent.0bcb4430.js",
+    "file": "assets/OutputDetailComponent.16d02401.js",
     "src": "resources/js/components/logistics/OutputDetailComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -159,7 +159,7 @@
     ]
   },
   "resources/js/components/admin/HomeComponent.vue": {
-    "file": "assets/HomeComponent.b4370c18.js",
+    "file": "assets/HomeComponent.80858d34.js",
     "src": "resources/js/components/admin/HomeComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -168,7 +168,7 @@
     ]
   },
   "resources/js/components/admin/SystemsComponent.vue": {
-    "file": "assets/SystemsComponent.9db5f0c9.js",
+    "file": "assets/SystemsComponent.411e27b4.js",
     "src": "resources/js/components/admin/SystemsComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -179,7 +179,7 @@
     ]
   },
   "resources/js/components/admin/UsersComponent.vue": {
-    "file": "assets/UsersComponent.61c81a14.js",
+    "file": "assets/UsersComponent.410a7c07.js",
     "src": "resources/js/components/admin/UsersComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -188,7 +188,7 @@
     ]
   },
   "resources/js/components/admin/RolesComponent.vue": {
-    "file": "assets/RolesComponent.c3ef9c73.js",
+    "file": "assets/RolesComponent.a805028e.js",
     "src": "resources/js/components/admin/RolesComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -197,7 +197,7 @@
     ]
   },
   "resources/js/components/admin/SecurityComponent.vue": {
-    "file": "assets/SecurityComponent.7c644a3a.js",
+    "file": "assets/SecurityComponent.35fe841e.js",
     "src": "resources/js/components/admin/SecurityComponent.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -206,7 +206,7 @@
     ]
   },
   "resources/js/components/admin/WarehousesComponent.vue": {
-    "file": "assets/WarehousesComponent.5fb2c7ee.js",
+    "file": "assets/WarehousesComponent.961bdf5f.js",
     "src": "resources/js/components/admin/WarehousesComponent.vue",
     "isDynamicEntry": true,
     "imports": [

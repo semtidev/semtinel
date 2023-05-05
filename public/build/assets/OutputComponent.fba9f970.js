@@ -1,5 +1,5 @@
 import { Q as getAugmentedNamespace, R as vue_esmBundler, S as getDefaultExportFromCjs, h as resolveComponent, o as openBlock, c as createBlock, b as createElementBlock, q as createVNode, i as createBaseVNode, J as withDirectives, N as vModelText, T as vShow, L as withModifiers, F as Fragment, I as renderList, v as toDisplayString, P as vModelRadio, j as createCommentVNode, m as withCtx, H as createTextVNode, G as createStaticVNode, K as resolveDirective } from "./vue.esm-bundler.ecfa1491.js";
-import { _ as _export_sfc, P as PageHeader } from "./app.d5560dd0.js";
+import { _ as _export_sfc, P as PageHeader } from "./app.cab0b5fe.js";
 import "./jquery.8baacbdb.js";
 import "./jquery.dataTables.min.70653878.js";
 var vue3Treeselect_common = { exports: {} };
@@ -6042,7 +6042,8 @@ const _hoisted_91 = /* @__PURE__ */ createBaseVNode("button", {
   class: "btn btn-default",
   "data-dismiss": "modal"
 }, "Cancelar", -1);
-const _hoisted_92 = {
+const _hoisted_92 = ["disabled"];
+const _hoisted_93 = {
   key: 0,
   class: "mdi mdi-check-all"
 };
@@ -6337,11 +6338,12 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               key: 1,
               type: "button",
               class: "btn ripple btn-primary",
+              disabled: _ctx.output_loading,
               onClick: _cache[14] || (_cache[14] = withModifiers(($event) => $options.processOutput(), ["stop"]))
             }, [
-              !_ctx.output_loading ? (openBlock(), createElementBlock("i", _hoisted_92)) : createCommentVNode("", true),
+              !_ctx.output_loading ? (openBlock(), createElementBlock("i", _hoisted_93)) : createCommentVNode("", true),
               createTextVNode("\xA0" + toDisplayString(_ctx.output_okbtn_text), 1)
-            ])) : createCommentVNode("", true)
+            ], 8, _hoisted_92)) : createCommentVNode("", true)
           ])
         ])
       ])

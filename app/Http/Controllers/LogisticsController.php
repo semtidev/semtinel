@@ -707,7 +707,7 @@ class LogisticsController extends Controller
                 }
 
                 foreach ($products as $key => $value) {
-                    $quantity = $value['quantity'];
+                    $quantity  = $value['quantity'];
                     // Check transfer
                     $quantity_transfer = 0;
                     if (!array_key_exists($key, $transfers)) {
@@ -722,8 +722,19 @@ class LogisticsController extends Controller
                             $transfers[$key] = $value['output'];
                         }
                     }
+                    // Check quantity
+                    if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'towork')->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
+                        $quantity_towork = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
+                                                ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
+                                                ->where('logistics_output_items.id_inventory', $key)
+                                                ->where('logistics_outputs.type', 'towork')
+                                                ->where('logistics_outputs.status', '<>', 'cancelada')
+                                                ->first()->quantity_transfer;
+                        $quantity -= $quantity_towork;
+                    }
                     $quantity = number_format($quantity, 2, '.', ' ');
                     // Get reserved
+                    $reserved  = 0;
                     $reserved = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
                                     ->select(DB::raw('sum(logistics_output_items.quantity) as reserved'))
                                     ->where('logistics_outputs.status', 'creada')

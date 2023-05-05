@@ -31,6 +31,8 @@
   <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/dist/css/adminlte.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/plugins/toastr/toastr.min.css">
+  <!-- Vue3 Treeselect -->
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/vue3-treeselect/vue3-treeselect.css">
   <!-- App style-->
   <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/css/app.css">
 

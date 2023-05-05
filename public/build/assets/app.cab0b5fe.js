@@ -4567,20 +4567,20 @@ function extractChangingRecords(to, from) {
   }
   return [leavingRecords, updatingRecords, enteringRecords];
 }
-const LogisticsHomeComponent = () => __vitePreload(() => import("./HomeComponent.e062945e.js"), true ? ["assets/HomeComponent.e062945e.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js"] : void 0);
-const LogisticsEntryComponent = () => __vitePreload(() => import("./EntryComponent.561abb49.js"), true ? ["assets/EntryComponent.561abb49.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsEntriesComponent = () => __vitePreload(() => import("./EntriesComponent.fadf5b73.js"), true ? ["assets/EntriesComponent.fadf5b73.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsInventoryComponent = () => __vitePreload(() => import("./InventoryComponent.c2308401.js"), true ? ["assets/InventoryComponent.c2308401.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js","assets/icon-jpg.b5720497.js"] : void 0);
-const LogisticsOutputComponent = () => __vitePreload(() => import("./OutputComponent.3d128c8d.js"), true ? ["assets/OutputComponent.3d128c8d.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsOutputsComponent = () => __vitePreload(() => import("./OutputsComponent.917d60c0.js"), true ? ["assets/OutputsComponent.917d60c0.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsEntryDetailComponent = () => __vitePreload(() => import("./EntryDetailComponent.67eb1313.js"), true ? ["assets/EntryDetailComponent.67eb1313.js","assets/vue.esm-bundler.ecfa1491.js","assets/icon-jpg.b5720497.js"] : void 0);
-const LogisticsOutputDetailComponent = () => __vitePreload(() => import("./OutputDetailComponent.0bcb4430.js"), true ? ["assets/OutputDetailComponent.0bcb4430.js","assets/vue.esm-bundler.ecfa1491.js","assets/icon-jpg.b5720497.js"] : void 0);
-const AdminComponent = () => __vitePreload(() => import("./HomeComponent.b4370c18.js"), true ? ["assets/HomeComponent.b4370c18.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminSystemsComponent = () => __vitePreload(() => import("./SystemsComponent.9db5f0c9.js"), true ? ["assets/SystemsComponent.9db5f0c9.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const AdminUsersComponent = () => __vitePreload(() => import("./UsersComponent.61c81a14.js"), true ? ["assets/UsersComponent.61c81a14.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminRolesComponent = () => __vitePreload(() => import("./RolesComponent.c3ef9c73.js"), true ? ["assets/RolesComponent.c3ef9c73.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminSecurityComponent = () => __vitePreload(() => import("./SecurityComponent.7c644a3a.js"), true ? ["assets/SecurityComponent.7c644a3a.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminWarehousesComponent = () => __vitePreload(() => import("./WarehousesComponent.5fb2c7ee.js"), true ? ["assets/WarehousesComponent.5fb2c7ee.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
+const LogisticsHomeComponent = () => __vitePreload(() => import("./HomeComponent.bffdc6e9.js"), true ? ["assets/HomeComponent.bffdc6e9.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js"] : void 0);
+const LogisticsEntryComponent = () => __vitePreload(() => import("./EntryComponent.70d5d60d.js"), true ? ["assets/EntryComponent.70d5d60d.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
+const LogisticsEntriesComponent = () => __vitePreload(() => import("./EntriesComponent.efde59b7.js"), true ? ["assets/EntriesComponent.efde59b7.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
+const LogisticsInventoryComponent = () => __vitePreload(() => import("./InventoryComponent.aa8c27ee.js"), true ? ["assets/InventoryComponent.aa8c27ee.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js","assets/icon-jpg.b5720497.js"] : void 0);
+const LogisticsOutputComponent = () => __vitePreload(() => import("./OutputComponent.fba9f970.js"), true ? ["assets/OutputComponent.fba9f970.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
+const LogisticsOutputsComponent = () => __vitePreload(() => import("./OutputsComponent.faf9355a.js"), true ? ["assets/OutputsComponent.faf9355a.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
+const LogisticsEntryDetailComponent = () => __vitePreload(() => import("./EntryDetailComponent.b51fcb35.js"), true ? ["assets/EntryDetailComponent.b51fcb35.js","assets/vue.esm-bundler.ecfa1491.js","assets/icon-jpg.b5720497.js"] : void 0);
+const LogisticsOutputDetailComponent = () => __vitePreload(() => import("./OutputDetailComponent.16d02401.js"), true ? ["assets/OutputDetailComponent.16d02401.js","assets/vue.esm-bundler.ecfa1491.js","assets/icon-jpg.b5720497.js"] : void 0);
+const AdminComponent = () => __vitePreload(() => import("./HomeComponent.80858d34.js"), true ? ["assets/HomeComponent.80858d34.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
+const AdminSystemsComponent = () => __vitePreload(() => import("./SystemsComponent.411e27b4.js"), true ? ["assets/SystemsComponent.411e27b4.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
+const AdminUsersComponent = () => __vitePreload(() => import("./UsersComponent.410a7c07.js"), true ? ["assets/UsersComponent.410a7c07.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
+const AdminRolesComponent = () => __vitePreload(() => import("./RolesComponent.a805028e.js"), true ? ["assets/RolesComponent.a805028e.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
+const AdminSecurityComponent = () => __vitePreload(() => import("./SecurityComponent.35fe841e.js"), true ? ["assets/SecurityComponent.35fe841e.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
+const AdminWarehousesComponent = () => __vitePreload(() => import("./WarehousesComponent.961bdf5f.js"), true ? ["assets/WarehousesComponent.961bdf5f.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
 const routes = [
   {
     path: "/semtinel/public/admin",

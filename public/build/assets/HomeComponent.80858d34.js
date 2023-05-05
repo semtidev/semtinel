@@ -1,5 +1,5 @@
 import { o as openBlock, b as createElementBlock, i as createBaseVNode } from "./vue.esm-bundler.ecfa1491.js";
-import { _ as _export_sfc } from "./app.d5560dd0.js";
+import { _ as _export_sfc } from "./app.cab0b5fe.js";
 const _sfc_main = {};
 const _hoisted_1 = { class: "h-100 text-center app_name" };
 const _hoisted_2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-center" }, [
