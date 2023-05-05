@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         openScanner: function (path) {
-            window.open('http://localhost/semtinel/storage/app/public/' + path, '_blank', 'noreferrer')
+            window.open('http://localhost/semtinel/public/storage/app/public/' + path, '_blank', 'noreferrer')
         },
         docPdf: function(entry) {
             window.open('http://localhost/semtinel/public/api/logistics/pdf/entry/' + entry, '_blank', 'noreferrer')
@@ -212,7 +212,7 @@ export default {
                     if (response.data.success) {
                         cmp.cancel_loading = false
                         toastr.success('La Entrada fue Cancelada con éxito.')
-                        cmp.$router.push('/semtinel/logistics/entries')
+                        cmp.$router.push('/semtinel/public/logistics/entries')
                     }
                     else {
                         cmp.cancel_loading = false
@@ -235,7 +235,7 @@ export default {
         :navbar="[
             {
                 page: 'Entradas',
-                link: '/semtinel/logistics/entries',
+                link: '/semtinel/public/logistics/entries',
                 tooltip: 'Click para regresar al listado de Entradas',
                 active: false
             },

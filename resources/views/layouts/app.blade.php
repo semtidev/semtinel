@@ -7,15 +7,15 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>{{ config('app.name', 'Semtinel') }}</title>
-  <link rel="shortcut icon" href="public/themes/semtinel/img/favicon.png" />
+  <link rel="shortcut icon" href="themes/semtinel/img/favicon.png" />
     
   <!-- Vendor CSS Files -->
-  <link href="public/themes/semtinel/vendor/aos/aos.css" rel="stylesheet">
-  <link href="public/themes/semtinel/vendor/bootstrap-lib/bootstrap.min.css" rel="stylesheet">
-  <link href="public/themes/semtinel/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="themes/semtinel/vendor/aos/aos.css" rel="stylesheet">
+  <link href="themes/semtinel/vendor/bootstrap-lib/bootstrap.min.css" rel="stylesheet">
+  <link href="themes/semtinel/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="public/themes/semtinel/css/style.css" rel="stylesheet">
+  <link href="themes/semtinel/css/style.css" rel="stylesheet">
 
   @yield('level_css')
 
@@ -27,7 +27,7 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center">
-        <img src="public/themes/semtinel/img/logo-white.png" alt="">
+        <img src="themes/semtinel/img/logo-white.png" alt="">
         <span>Semtinel</span>
       </a>
 
@@ -68,11 +68,11 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
-  <script src="public/themes/semtinel/vendor/aos/aos.js"></script>
-  <script src="public/themes/semtinel/vendor/bootstrap-lib/bootstrap.bundle.min.js"></script>
+  <script src="themes/semtinel/vendor/aos/aos.js"></script>
+  <script src="themes/semtinel/vendor/bootstrap-lib/bootstrap.bundle.min.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="public/themes/semtinel/js/main.js"></script>
+  <script src="themes/semtinel/js/main.js"></script>
 
   @yield('level_js')
 

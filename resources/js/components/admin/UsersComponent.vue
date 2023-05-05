@@ -372,7 +372,7 @@ export default {
         const bearer_token = JSON.parse(sessionStorage.getItem('semtinel')).access_token
         if (!bearer_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         // Load init data
         // A not reactive variable

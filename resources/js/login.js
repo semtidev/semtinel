@@ -8,6 +8,7 @@ import './bootstrap';
 import { createApp } from 'vue';
 import "jquery/dist/jquery.min.js";
 import $ from "jquery";
+import { mime } from 'mime'
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
@@ -110,4 +111,6 @@ var login = createApp({
             }
         });
     }
-}).mount('#login');
+});
+login.use(mime);
+login.mount('#login');

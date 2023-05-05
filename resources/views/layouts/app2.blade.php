@@ -17,7 +17,7 @@
   <!-- Material Design Icons -->
   <link rel="stylesheet" href="public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
   <!-- Floating Vue -->
-  <link rel="stylesheet" href="node_modules/floating-vue/dist/style.css">
+  <link rel="stylesheet" href="/semtinel/node_modules/floating-vue/dist/style.css">
   <!-- adminlte-->
   <link rel="stylesheet" href="public/themes/adminlte320/dist/css/adminlte.min.css">
   <!-- Toastr -->

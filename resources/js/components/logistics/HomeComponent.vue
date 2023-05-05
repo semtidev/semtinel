@@ -28,7 +28,7 @@ export default {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + cmp.session.access_token
         }
-        await fetch("http://localhost/semtinel/api/logistics/warehouses/" + cmp.project, {
+        await fetch("http://localhost/semtinel/public/api/logistics/warehouses/" + cmp.project, {
                 method: 'GET',
                 headers: headers
             })
@@ -37,7 +37,7 @@ export default {
                 // Warehouses store
                 localStorage.setItem('stnel_warehouses', JSON.stringify(data))
             });
-        await fetch("http://localhost/semtinel/api/logistics/products_categories", {
+        await fetch("http://localhost/semtinel/public/api/logistics/products_categories", {
                 method: 'GET',
                 headers: headers
             })

@@ -103,9 +103,9 @@ export default {
         tabactive: function (val) {
             let cmp = this
             if (val == 1) {
-                if ($("#datatable-products").DataTable().destroy()) {
+                if ($("#dt_products").DataTable().destroy()) {
                     setTimeout(() => {
-                        $("#datatable-products").DataTable({
+                        $("#dt_products").DataTable({
                             lengthMenu: [
                                 [10, 15, 25, 50, -1],
                                 [10, 15, 25, 50, "Todos"],
@@ -243,9 +243,9 @@ export default {
                 cmp.products = cmp.products_filter
                 cmp.filter_apply = true
             }
-            if ($("#datatable-products").DataTable().destroy()) {
+            if ($("#dt_products").DataTable().destroy()) {
                 setTimeout(() => {
-                    $("#datatable-products").DataTable({
+                    $("#dt_products").DataTable({
                         lengthMenu: [
                             [10, 15, 25, 50, -1],
                             [10, 15, 25, 50, "Todos"],
@@ -309,9 +309,9 @@ export default {
             cmp.products = cmp.store_products
             //cmp.history = cmp.store_history
             cmp.filter_apply = false
-            if ($("#datatable-products").DataTable().destroy()) {
+            if ($("#dt_products").DataTable().destroy()) {
                 setTimeout(() => {
-                    $("#datatable-products").DataTable({
+                    $("#dt_products").DataTable({
                         lengthMenu: [
                             [10, 15, 25, 50, -1],
                             [10, 15, 25, 50, "Todos"],
@@ -457,7 +457,7 @@ export default {
         // Verify login active
         if (!JSON.parse(sessionStorage.getItem('semtinel')).access_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         let headers = {
                 'User-Agent': 'testing/1.0',
@@ -475,7 +475,7 @@ export default {
                     cmp.products = response.data.products
                     cmp.products_loading = false
                     setTimeout(() => {
-                        $("#datatable-products").DataTable({
+                        $("#dt_products").DataTable({
                             retrieve: true,
                             lengthMenu: [
                                 [10, 15, 25, 50, -1],
@@ -694,7 +694,7 @@ export default {
                     </div>
                 </div>
                 <!-- Products table -->
-                <table id="datatable-products" class="table table-striped w-100" :class="products_loading ? 'hidden' : ''">
+                <table id="dt_products" class="table table-striped w-100" :class="products_loading ? 'hidden' : ''">
                     <thead>
                     <tr>
                         <th width="12%">Pa&ntilde;ol</th>

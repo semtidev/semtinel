@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{ config('app.name') }} - @yield('title')</title>
-        <link rel="shortcut icon" href="public/themes/semtinel/img/favicon.png" />
+        <link rel="shortcut icon" href="themes/semtinel/img/favicon.png" />
         <style>
             @page { margin: 110px 30px 150px 30px; }
             header {
@@ -99,7 +99,7 @@
                         <div class="pole">Polo {{ $pole['name'] }}</div>
                     </td>
                     <td align="right" valign="top">
-                        <img src="{{ public_path('/themes/semtinel/img/pdf-header.jpg') }}"/>
+                        <img src="http://localhost/semtinel/public/themes/semtinel/img/pdf-header.jpg"/>
                     </td>
                 </tr>
                 <tr><td class="row-spacer" colspan="3">&nbsp;</td></tr>

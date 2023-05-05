@@ -62,10 +62,6 @@ a:active, a:focus {
     border: none;
 }
 
-[class*="sidebar-dark-"] .nav-treeview > .nav-item > .nav-link.active:hover {
-    color: #343a40 !important;
-}
-
 .navbar-badge {
     padding: 2px 3px !important;
     font-family: 'Courier New', Courier, monospace !important;
@@ -176,7 +172,7 @@ a:active, a:focus {
 .card-title {
     margin: 5px auto !important;
     font-family: 'roboto-medium';
-    font-size: 16px !important;
+    font-size: 18px !important;
 }
 .card {
     box-shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.1) !important;
@@ -403,6 +399,7 @@ form .info {
     padding-top: 10px !important;
 }
 .dataTables_wrapper .dataTables_info {
+    float: left !important;
     padding-top: 15px !important;
     font-size: 14px !important;
     color: #4c6070 !important;
@@ -410,17 +407,27 @@ form .info {
 .dataTables_wrapper label {
     font-size: 15px !important;
 }
-.dataTables_wrapper select {
+.dataTables_wrapper select, .dataTables_wrapper input {
     font-family: 'roboto' !important;
+    width: 100%;
+    height: 32px;
+    padding: .375rem .75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    box-shadow: inset 0 0 0 transparent;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
-.dataTables_wrapper .dataTables_length select {
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    padding: 5px;
-    background-color: transparent;
-    padding: 6px 4px !important;
-    margin: auto 5px !important; 
-  }
+.dataTables_wrapper select {
+    margin: auto 5px !important;
+}
+.dataTables_length {
+    float: left !important;
+}
 .loading-table {
     color: #6d727a !important;
 }
@@ -455,9 +462,13 @@ table.dataTable.no-footer {
 }
 .badge-warning {
     background-color: #ff7332 !important;
+    color: #fff;
+    font-weight: 500 !important;
 }
 .badge-dark {
     background-color: #4e5e6d !important;
+    color: #fff;
+    font-weight: 500 !important;
 }
 .inventory-period {
     width: 200px;
@@ -649,12 +660,6 @@ table.dataTable.no-footer {
 .timeline .bg-gray-light {
     background-color: #eef0f3 !important;
 }
-.timeline .bg-navy {
-    background-color: #05396d !important;
-}
-.timeline .bg-orange, .timeline .bg-orange > a {
-    color: #fff !important;
-}
 .timeline > div > .timeline-item {
     box-shadow: 0 0 1px rgba(0,0,0,.125),0 1px 3px rgba(0,0,0,.2) !important;
 }
@@ -700,9 +705,3 @@ table.dataTable.no-footer {
     color: #697986 !important;
 }
 
-.back-to-top {
-    position: fixed;
-    bottom: 40px;
-    right: 25px;
-    display: none;
-}

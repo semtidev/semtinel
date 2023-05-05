@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         newOutput: function () {
-            this.$router.push('/semtinel/logistics/output')
+            this.$router.push('/semtinel/public/logistics/output')
         },
         listReload: function () {
             this.getOutputsTable(true)
@@ -114,7 +114,7 @@ export default {
         // Verify login active
         if (!JSON.parse(sessionStorage.getItem('semtinel')).access_token) {
             sessionStorage.clear()
-            window.document.location.href = 'http://localhost/semtinel/login'
+            window.document.location.href = 'http://localhost/semtinel/public/login'
         }
         let pole = localStorage.getItem('stnel_logist_pole'),
             project = localStorage.getItem('stnel_logist_project'),

@@ -124,11 +124,11 @@ const app = createApp({
 
         goToInventory: function () {
             this.$refs.CartClose.click()
-            this.$router.push('/semtinel/logistics/inventory')
+            this.$router.push('/semtinel/public/logistics/inventory')
         },
         goToOutput: function () {
             this.$refs.CartClose.click()
-            this.$router.push('/semtinel/logistics/output')
+            this.$router.push('/semtinel/public/logistics/output')
         },
         calcTotalsCart: function () {
             let cmp = this

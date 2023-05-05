@@ -33,7 +33,7 @@ export default {
             <ul class="nav nav-treeview">
                 <li class="nav-item">
                     <router-link 
-                        to="/semtinel/admin/systems" 
+                        to="/semtinel/public/admin/systems" 
                         class="nav-link"
                         :class="(app_name == 'admin' && page_active == 'systems') ? 'active' : ''">
                         <i class="nav-icon mdi mdi-application-brackets-outline"></i>
@@ -42,7 +42,7 @@ export default {
                 </li>
                 <li class="nav-item">
                     <router-link 
-                        to="/semtinel/admin/users" 
+                        to="/semtinel/public/admin/users" 
                         class="nav-link"
                         :class="(app_name == 'admin' && page_active == 'users') ? 'active' : ''">
                         <i class="nav-icon mdi mdi-account-multiple"></i>
@@ -51,7 +51,7 @@ export default {
                 </li>
                 <li class="nav-item">
                     <router-link 
-                        to="/semtinel/admin/roles" 
+                        to="/semtinel/public/admin/roles" 
                         class="nav-link"
                         :class="(app_name == 'admin' && page_active == 'roles') ? 'active' : ''">
                         <i class="nav-icon mdi mdi-badge-account-horizontal"></i>
@@ -60,7 +60,7 @@ export default {
                 </li>
                 <li class="nav-item">
                     <router-link 
-                        to="/semtinel/admin/security" 
+                        to="/semtinel/public/admin/security" 
                         class="nav-link"
                         :class="(app_name == 'admin' && page_active == 'security') ? 'active' : ''">
                         <i class="nav-icon mdi mdi-account-key"></i>
@@ -103,7 +103,7 @@ export default {
             <ul class="nav nav-treeview">
                 <li class="nav-item">
                     <router-link 
-                        to="/semtinel/admin/warehouses" 
+                        to="/semtinel/public/admin/warehouses" 
                         class="nav-link"
                         :class="(app_name == 'admin' && page_active == 'warehouse') ? 'active' : ''">
                         <i class="mdi mdi-warehouse nav-icon"></i>

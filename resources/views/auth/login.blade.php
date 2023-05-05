@@ -7,27 +7,27 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Semtinel') }}</title>
-    <link rel="shortcut icon" href="public/themes/semtinel/img/favicon.png" />
+    <link rel="shortcut icon" href="themes/semtinel/img/favicon.png" />
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="public/themes/semtinel/vendor/fas-620/css/all.min.css">
+    <link rel="stylesheet" href="themes/semtinel/vendor/fas-620/css/all.min.css">
     <!-- Material Design Icons -->
-    <link rel="stylesheet" href="public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
     <!-- Scripts -->
     @vite(['resources/js/login.js'])
-    <link rel="stylesheet" href="public/themes/semtinel/vendor/bootstrap-lib/bootstrap4.min.css">
+    <link rel="stylesheet" href="themes/semtinel/vendor/bootstrap-lib/bootstrap4.min.css">
     <!-- App style -->
-    <link rel="stylesheet" href="public/themes/semtinel/css/login.css">
+    <link rel="stylesheet" href="themes/semtinel/css/login.css">
 
 </head>
-<body class="img js-fullheight" style="background-image: url(public/themes/semtinel/img/login.png);">
+<body class="img js-fullheight" style="background-image: url(themes/semtinel/img/login.png);">
 	<div id="login">
         <section class="ftco-section" style="position: absolute;">
             <div class="container h-100 aligns-items-center">
                 <div class="row h-100 justify-content-center">
                     <div class="col-md-6 text-center h-100 mb-5">
                         <h2 class="heading-section">
-                            <img src="public/themes/semtinel/img/logo-white.png" alt="">
+                            <img src="themes/semtinel/img/logo-white.png" alt="">
                             <span>Semtinel</span>
                         </h2>
                     </div>
@@ -84,10 +84,10 @@
         </section>
     </div>
 
-    <script src="public/themes/semtinel/vendor/bootstrap-lib/jquery.min.js"></script>
-    <script src="public/themes/semtinel/vendor/bootstrap-lib/popper.js"></script>
-    <script src="public/themes/semtinel/vendor/bootstrap-lib/bootstrap.min.js"></script>
-    <script src="public/themes/semtinel/js/login.js"></script>
+    <script src="themes/semtinel/vendor/bootstrap-lib/jquery.min.js"></script>
+    <script src="themes/semtinel/vendor/bootstrap-lib/popper.js"></script>
+    <script src="themes/semtinel/vendor/bootstrap-lib/bootstrap.min.js"></script>
+    <script src="themes/semtinel/js/login.js"></script>
     
 </body>
 </html>

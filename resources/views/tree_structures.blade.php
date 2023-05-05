@@ -3,7 +3,7 @@
 @inject('treestructure', 'App\Services\TreeService')
 
 @section('level_css')
-<link rel="stylesheet" href="{{ asset('themes/semtinel/css/tree.css') }}">
+<link rel="stylesheet" href="{{ asset('semtinel/css/tree.css') }}">
 @endsection
 
 @section('content-header')
@@ -195,5 +195,5 @@
     });
   });
 </script>
-<script src="{{ asset('themes/semtinel/js/tree.js') }}"></script>
+<script src="{{ asset('semtinel/js/tree.js') }}"></script>
 @endsection

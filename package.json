@@ -21,6 +21,7 @@
         "datatables.net-dt": "^1.13.1",
         "floating-vue": "^2.0.0-beta.20",
         "jquery": "^3.6.3",
+        "mime": "^3.0.0",
         "vue": "^3.2.45",
         "vue-loader": "^17.0.1",
         "vue-router": "^4.1.6",

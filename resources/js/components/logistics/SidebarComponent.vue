@@ -23,7 +23,7 @@ export default {
             <li class="nav-header">RECEPCI&Oacute;N</li>
             <li class="nav-item" v-if="('logistics.api.store.entry' in $root.session.permissions)">
                 <router-link 
-                    to="/semtinel/logistics/entry" 
+                    to="/semtinel/public/logistics/entry" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'entry') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-truck-check-outline"></i>
@@ -32,7 +32,7 @@ export default {
             </li>
             <li class="nav-item">
                 <router-link 
-                    to="/semtinel/logistics/entries" 
+                    to="/semtinel/public/logistics/entries" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'entries') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-format-list-bulleted-square"></i>
@@ -42,7 +42,7 @@ export default {
             <li class="nav-header">INVENTARIOS</li>
             <li class="nav-item">
                 <router-link 
-                    to="/semtinel/logistics/inventory" 
+                    to="/semtinel/public/logistics/inventory" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'inventory') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-inbox-full"></i>
@@ -52,7 +52,7 @@ export default {
             <li class="nav-header">DESPACHO</li>
             <li class="nav-item" v-if="('logistics.api.store.output' in $root.session.permissions)">
                 <router-link 
-                    to="/semtinel/logistics/output" 
+                    to="/semtinel/public/logistics/output" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'output') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-cart-arrow-right"></i>
@@ -61,7 +61,7 @@ export default {
             </li>
             <li class="nav-item">
                 <router-link 
-                    to="/semtinel/logistics/outputs" 
+                    to="/semtinel/public/logistics/outputs" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'outputs') ? 'active' : ''">
                     <i class="nav-icon mdi mdi-format-list-bulleted-square"></i>
