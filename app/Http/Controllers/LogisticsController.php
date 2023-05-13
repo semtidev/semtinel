@@ -705,59 +705,62 @@ class LogisticsController extends Controller
                         );
                     }
                 }
+            }
 
-                foreach ($products as $key => $value) {
-                    $quantity  = $value['quantity'];
-                    // Check transfer
-                    $quantity_transfer = 0;
-                    if (!array_key_exists($key, $transfers)) {
-                        if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'transfer')->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
-                            $quantity_transfer = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                                                    ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
-                                                    ->where('logistics_output_items.id_inventory', $key)
-                                                    ->where('logistics_outputs.type', 'transfer')
-                                                    ->where('logistics_outputs.status', '<>', 'cancelada')
-                                                    ->first()->quantity_transfer;
-                            $quantity -= $quantity_transfer;
-                            $transfers[$key] = $value['output'];
-                        }
-                    }
-                    // Check quantity
-                    if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'towork')->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
-                        $quantity_towork = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
+            // Verify Transfer, Quantity, Reserve, Available
+
+            foreach ($products as $key => $value) {
+                $quantity  = $value['quantity'];
+                // Check transfer
+                $quantity_transfer = 0;
+                if (!array_key_exists($key, $transfers)) {
+                    if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'transfer')->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
+                        $quantity_transfer = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
                                                 ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
                                                 ->where('logistics_output_items.id_inventory', $key)
-                                                ->where('logistics_outputs.type', 'towork')
+                                                ->where('logistics_outputs.type', 'transfer')
                                                 ->where('logistics_outputs.status', '<>', 'cancelada')
                                                 ->first()->quantity_transfer;
-                        $quantity -= $quantity_towork;
+                        $quantity -= $quantity_transfer;
+                        $transfers[$key] = $value['output'];
                     }
-                    $quantity = number_format($quantity, 2, '.', ' ');
-                    // Get reserved
-                    $reserved  = 0;
-                    $reserved = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                                    ->select(DB::raw('sum(logistics_output_items.quantity) as reserved'))
-                                    ->where('logistics_outputs.status', 'creada')
-                                    ->where('logistics_output_items.id_inventory', $key)
-                                    ->first()->reserved;
-                    $reserved = number_format($reserved, 2, '.', ' ');
-                    // Get available
-                    $rest_inventory = 0;
-                    if (!array_key_exists($key, $transfers)) {
-                        $rest_inventory = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                                        ->select(DB::raw('sum(logistics_output_items.quantity) as rest_inventory'))
-                                        ->where('logistics_outputs.status', 'confirmada')
-                                        ->where('logistics_output_items.id_inventory', $key)
-                                        ->first()->rest_inventory;
-                    }
-                    $available = floatval($value['quantity']) - floatval($rest_inventory) - floatval($reserved);                        
-                    $available = number_format($available, 2, '.', ' ');
-
-                    $products[$key]['quantity']  = $quantity;
-                    $products[$key]['reserved']  = $reserved;
-                    $products[$key]['available'] = $available;
                 }
+                // Check quantity
+                if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'towork')->where('logistics_outputs.status', 'confirmada')->exists()) {
+                    $quantity_towork = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
+                            ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
+                            ->where('logistics_output_items.id_inventory', $key)
+                            ->where('logistics_outputs.type', 'towork')
+                            ->where('logistics_outputs.status', 'confirmada')
+                            ->first()->quantity_transfer;
+                    $quantity -= $quantity_towork;
+                }
+                $quantity = number_format($quantity, 2, '.', ' ');
+                // Get reserved
+                $reserved  = 0;
+                $reserved = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
+                                ->select(DB::raw('sum(logistics_output_items.quantity) as reserved'))
+                                ->where('logistics_outputs.status', 'creada')
+                                ->where('logistics_output_items.id_inventory', $key)
+                                ->first()->reserved;
+                $reserved = number_format($reserved, 2, '.', ' ');
+                // Get available
+                $rest_inventory = 0;
+                if (!array_key_exists($key, $transfers)) {
+                    $rest_inventory = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
+                                    ->select(DB::raw('sum(logistics_output_items.quantity) as rest_inventory'))
+                                    ->where('logistics_outputs.status', 'confirmada')
+                                    ->where('logistics_output_items.id_inventory', $key)
+                                    ->first()->rest_inventory;
+                }
+                $available = floatval($value['quantity']) - floatval($rest_inventory) - floatval($reserved);
+                $available = number_format($available, 2, '.', ' ');
+
+                $products[$key]['quantity']  = $quantity;
+                $products[$key]['reserved']  = $reserved;
+                $products[$key]['available'] = $available;
             }
+
         } catch (Throwable $th) {
             $response = array('success' => false, 'error' => $th->getMessage());
             return response()->json($response, 200);

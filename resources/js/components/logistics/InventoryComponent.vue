@@ -726,7 +726,7 @@ export default {
                             <td class="text-center">{{ item.reserved }}</td>
                             <td class="text-center">{{ item.available }}</td>
                             <td class="text-right">
-                                <a href="javascript:void(0);"
+                                <!--<a href="javascript:void(0);"
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
@@ -734,7 +734,7 @@ export default {
                                     v-tooltip="'Historial de este producto'"
                                     v-on:click="productHistory(item.oc, item.description)">
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
-                                </a> &nbsp;
+                                </a> &nbsp;-->
                                 <a href="javascript:void(0);"
                                     v-if="item.warehouse_id in session.warehouses"
                                     class="btn-semti-tool"
@@ -809,7 +809,7 @@ export default {
                             <td class="text-center">{{ item.reserved }}</td>
                             <td class="text-center">{{ item.available }}</td>
                             <td class="text-right">
-                                <a href="javascript:void(0);"
+                                <!--<a href="javascript:void(0);"
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
@@ -817,7 +817,7 @@ export default {
                                     v-tooltip="'Historial de este producto'"
                                     v-on:click="productHistory(item.oc, item.description)">
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
-                                </a> &nbsp;
+                                </a> &nbsp;-->
                                 <a href="javascript:void(0);"
                                     v-if="item.warehouse_id in session.warehouses"
                                     class="btn-semti-tool"

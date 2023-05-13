@@ -140,7 +140,7 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            fetch("http://localhost/public/api/admin/role/permissions/" + id, {
+            fetch("http://localhost/semtinel/public/api/admin/role/permissions/" + id, {
                     method: 'GET',
                     headers: headers
                 })
@@ -170,7 +170,7 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            await axios.post('http://localhost/semtinel/api/admin/role',{
+            await axios.post('http://localhost/semtinel/public/api/admin/role',{
                     'id' : cmp.form_data.id,
                     'name': cmp.form_data.name,
                     'permissions': this.role_permissions

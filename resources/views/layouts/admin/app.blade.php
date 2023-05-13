@@ -7,26 +7,26 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>{{ config('app.name', 'Semtinel') }} - Admin</title>
-  <link rel="shortcut icon" href="themes/semtinel/img/favicon.png" />
+  <link rel="shortcut icon" href="http://localhost/semtinel/public/themes/semtinel/img/favicon.png" />
   
   <!-- Scripts -->
   @vite(['resources/sass/app.scss', 'resources/js/app.js'])
   
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="themes/semtinel/vendor/fas-620/css/all.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/fas-620/css/all.min.css">
   <!-- Material Design Icons -->
-  <link rel="stylesheet" href="themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
   <!-- Select2 Plugin -->
-  <link rel="stylesheet" href="themes/adminlte320/plugins/select2/css/select2.min.css">
-  <link rel="stylesheet" href="themes/adminlte320/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Floating Vue -->
-  <link rel="stylesheet" href="/semtinel/node_modules/floating-vue/dist/style.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/node_modules/floating-vue/dist/style.css">
   <!-- adminlte-->
-  <link rel="stylesheet" href="themes/adminlte320/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/dist/css/adminlte.min.css">
   <!-- Toastr -->
-  <link rel="stylesheet" href="themes/adminlte320/plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/plugins/toastr/toastr.min.css">
   <!-- App style-->
-  <link rel="stylesheet" href="themes/semtinel/css/app.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/css/app.css">
 
   @yield('level_css')
 
@@ -89,7 +89,7 @@
       <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{{ url('/') }}" class="brand-link">
-          <img src="semtinel/img/semtinel.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-1">
+          <img src="http://localhost/semtinel/public/themes/semtinel/img/semtinel.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-1">
           <span class="brand-text font-weight-light">Semtinel</span>&nbsp;<span class="logo-app-version">v1.0</span>
         </a>
 
@@ -137,18 +137,18 @@
   </div>
 
   <!-- jQuery -->
-  <script src="themes/adminlte320/plugins/jquery/jquery.min.js"></script>
+  <script src="http://localhost/semtinel/public/themes/adminlte320/plugins/jquery/jquery.min.js"></script>
   <!-- Bootstrap 4 -->
-  <script src="themes/adminlte320/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="http://localhost/semtinel/public/themes/adminlte320/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- Select2 Plugin -->
-  <script src="themes/adminlte320/plugins/select2/js/select2.full.min.js"></script>
+  <script src="http://localhost/semtinel/public/themes/adminlte320/plugins/select2/js/select2.full.min.js"></script>
   <!-- AdminLTE App -->
-  <script src="themes/adminlte320/dist/js/adminlte.min.js"></script>
+  <script src="http://localhost/semtinel/public/themes/adminlte320/dist/js/adminlte.min.js"></script>
   <!-- Toastr -->
-  <script src="themes/adminlte320/plugins/toastr/toastr.min.js"></script>
+  <script src="http://localhost/semtinel/public/themes/adminlte320/plugins/toastr/toastr.min.js"></script>
   <!-- App Script -->
-  <script src="themes/semtinel/js/app.js"></script>
-  <script src="themes/semtinel/js/buttons-ripple.js"></script>
+  <script src="http://localhost/semtinel/public/themes/semtinel/js/app.js"></script>
+  <script src="http://localhost/semtinel/public/themes/semtinel/js/buttons-ripple.js"></script>
 
   @yield('level_js')
 

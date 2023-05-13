@@ -138,7 +138,7 @@ class User extends Authenticatable implements LdapAuthenticatable
     public function getSystems()
     {
         $systems = array();
-        $qry_systems = UserSystem::leftJoin('syst_subsystems', 'syst_subsystems.id', 'users_systems.user_id')
+        $qry_systems = UserSystem::leftJoin('syst_subsystems', 'syst_subsystems.id', 'users_systems.system_id')
                                     ->select('syst_subsystems.id', 'syst_subsystems.name')
                                     ->where('users_systems.user_id', $this->id)
                                     ->orderBy('syst_subsystems.name', 'ASC')->get();

@@ -320,17 +320,17 @@ export default {
                     <a href="javascript:void(0);" 
                         v-if="output.attach_path != '' && output.attach_path != null && output.attach_type == 'pdf'"
                         v-on:click.stop="openScanner(output.attach_path)">
-                        <img src="../../../../public/themes/semtinel/img/icon-pdf2.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                        <img src="http://localhost/semtinel/public/themes/semtinel/img/icon-pdf2.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
                     <a href="javascript:void(0);" 
                         v-else-if="output.attach_path != '' && output.attach_path != null && output.attach_type == 'png'"
                         v-on:click.stop="openScanner(output.attach_path)">
-                        <img src="../../../../public/themes/semtinel/img/icon-png.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                        <img src="http://localhost/semtinel/public/themes/semtinel/img/icon-png.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
                     <a href="javascript:void(0);" 
                         v-else-if="output.attach_path != '' && output.attach_path != null && output.attach_type == 'jpg'"
                         v-on:click.stop="openScanner(output.attach_path)">
-                        <img src="../../../../public/themes/semtinel/img/icon-jpg.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
+                        <img src="http://localhost/semtinel/public/themes/semtinel/img/icon-jpg.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
                     <span v-else class="badge badge-danger" v-if="output.attach_path == '' || output.attach_path == null">
                         No se ha adjuntado el documento escaneado aún.
