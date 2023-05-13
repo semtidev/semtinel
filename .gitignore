@@ -6,7 +6,7 @@
 bootstrap/
 
 public/hot
-public/build
+#public/build
 
 storage/
 .env
