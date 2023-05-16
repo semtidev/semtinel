@@ -1,4 +1,4 @@
-import { p as pushScopeId, a as popScopeId, d as defineComponent, n as nextTick, o as openBlock, c as createBlock, b as createElementBlock, r as renderSlot, e as normalizeProps, g as guardReactiveProps, f as normalizeClass, w as withScopeId, h as resolveComponent, i as createBaseVNode, F as Fragment, j as createCommentVNode, k as normalizeStyle, l as withKeys, m as withCtx, q as createVNode, s as ref, t as createApp, u as h, v as toDisplayString, x as mergeProps, y as shallowRef, z as unref, A as computed, B as reactive, C as inject, D as provide, E as watch, G as createStaticVNode, H as createTextVNode, I as renderList, J as withDirectives, K as resolveDirective, L as withModifiers } from "./vue.esm-bundler.ecfa1491.js";
+import { p as pushScopeId, a as popScopeId, d as defineComponent, n as nextTick, o as openBlock, c as createBlock, b as createElementBlock, r as renderSlot, e as normalizeProps, g as guardReactiveProps, f as normalizeClass, w as withScopeId, h as resolveComponent, i as createBaseVNode, F as Fragment, j as createCommentVNode, k as normalizeStyle, l as withKeys, m as withCtx, q as createVNode, s as ref, t as createApp, u as h, v as toDisplayString, x as mergeProps, y as effectScope, z as markRaw, A as shallowRef, B as unref, C as computed, D as reactive, E as inject, G as provide, H as watch, I as createStaticVNode, J as createTextVNode, K as renderList, L as withDirectives, M as resolveDirective, N as withModifiers } from "./vue.esm-bundler.4c64d56b.js";
 const bootstrap_min = "";
 function getBasePlacement(placement) {
   return placement.split("-")[0];
@@ -78,7 +78,7 @@ const computePosition$1 = async (reference, floating, config2) => {
   });
   let {
     x,
-    y
+    y: y2
   } = computeCoordsFromPlacement({
     ...rects,
     placement
@@ -97,7 +97,7 @@ const computePosition$1 = async (reference, floating, config2) => {
       reset
     } = await fn({
       x,
-      y,
+      y: y2,
       initialPlacement: placement,
       placement: statefulPlacement,
       strategy,
@@ -110,7 +110,7 @@ const computePosition$1 = async (reference, floating, config2) => {
       }
     });
     x = nextX != null ? nextX : x;
-    y = nextY != null ? nextY : y;
+    y2 = nextY != null ? nextY : y2;
     middlewareData = {
       ...middlewareData,
       [name]: data != null ? data : {}
@@ -129,7 +129,7 @@ const computePosition$1 = async (reference, floating, config2) => {
         }
         ({
           x,
-          y
+          y: y2
         } = computeCoordsFromPlacement({
           ...rects,
           placement: statefulPlacement
@@ -141,7 +141,7 @@ const computePosition$1 = async (reference, floating, config2) => {
   }
   return {
     x,
-    y,
+    y: y2,
     placement: statefulPlacement,
     strategy,
     middlewareData
@@ -179,7 +179,7 @@ async function detectOverflow(middlewareArguments, options) {
   }
   const {
     x,
-    y,
+    y: y2,
     platform: platform2,
     rects,
     elements,
@@ -206,7 +206,7 @@ async function detectOverflow(middlewareArguments, options) {
     rect: elementContext === "floating" ? {
       ...rects.floating,
       x,
-      y
+      y: y2
     } : rects.reference,
     offsetParent: await platform2.getOffsetParent({
       element: elements.floating
@@ -235,7 +235,7 @@ const arrow = (options) => ({
     } = options != null ? options : {};
     const {
       x,
-      y,
+      y: y2,
       placement,
       rects,
       platform: platform2
@@ -246,7 +246,7 @@ const arrow = (options) => ({
     const paddingObject = getSideObjectFromPadding(padding);
     const coords = {
       x,
-      y
+      y: y2
     };
     const basePlacement = getBasePlacement(placement);
     const axis = getMainAxisFromPlacement(basePlacement);
@@ -326,7 +326,7 @@ const autoPlacement = function(options) {
       var _middlewareData$autoP, _middlewareData$autoP2, _middlewareData$autoP3, _middlewareData$autoP4, _middlewareData$autoP5, _placementsSortedByLe;
       const {
         x,
-        y,
+        y: y2,
         rects,
         middlewareData,
         placement
@@ -351,7 +351,7 @@ const autoPlacement = function(options) {
       if (placement !== currentPlacement) {
         return {
           x,
-          y,
+          y: y2,
           reset: {
             placement: placements2[0]
           }
@@ -526,7 +526,7 @@ const offset = function(value) {
     fn(middlewareArguments) {
       const {
         x,
-        y,
+        y: y2,
         placement,
         rects
       } = middlewareArguments;
@@ -537,7 +537,7 @@ const offset = function(value) {
       });
       return {
         x: x + diffCoords.x,
-        y: y + diffCoords.y,
+        y: y2 + diffCoords.y,
         data: diffCoords
       };
     }
@@ -556,7 +556,7 @@ const shift = function(options) {
     async fn(middlewareArguments) {
       const {
         x,
-        y,
+        y: y2,
         placement
       } = middlewareArguments;
       const {
@@ -566,11 +566,11 @@ const shift = function(options) {
           fn: (_ref) => {
             let {
               x: x2,
-              y: y2
+              y: y3
             } = _ref;
             return {
               x: x2,
-              y: y2
+              y: y3
             };
           }
         },
@@ -578,7 +578,7 @@ const shift = function(options) {
       } = options;
       const coords = {
         x,
-        y
+        y: y2
       };
       const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
       const mainAxis = getMainAxisFromPlacement(getBasePlacement(placement));
@@ -608,7 +608,7 @@ const shift = function(options) {
         ...limitedCoords,
         data: {
           x: limitedCoords.x - x,
-          y: limitedCoords.y - y
+          y: limitedCoords.y - y2
         }
       };
     }
@@ -878,20 +878,20 @@ function getViewportRect(element) {
   let width = html.clientWidth;
   let height = html.clientHeight;
   let x = 0;
-  let y = 0;
+  let y2 = 0;
   if (visualViewport) {
     width = visualViewport.width;
     height = visualViewport.height;
     if (Math.abs(win.innerWidth / visualViewport.scale - visualViewport.width) < 0.01) {
       x = visualViewport.offsetLeft;
-      y = visualViewport.offsetTop;
+      y2 = visualViewport.offsetTop;
     }
   }
   return {
     width,
     height,
     x,
-    y
+    y: y2
   };
 }
 function getDocumentRect(element) {
@@ -902,7 +902,7 @@ function getDocumentRect(element) {
   const width = max(html.scrollWidth, html.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
   const height = max(html.scrollHeight, html.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
   let x = -scroll.scrollLeft + getWindowScrollBarX(element);
-  const y = -scroll.scrollTop;
+  const y2 = -scroll.scrollTop;
   if (getComputedStyle$1(body || html).direction === "rtl") {
     x += max(html.clientWidth, body ? body.clientWidth : 0) - width;
   }
@@ -910,7 +910,7 @@ function getDocumentRect(element) {
     width,
     height,
     x,
-    y
+    y: y2
   };
 }
 function getScrollParent(node) {
@@ -1811,8 +1811,8 @@ var PrivatePopper = () => defineComponent({
         const popperWrapper = this.$_popperNode.querySelector(".v-popper__wrapper");
         const parentBounds = popperWrapper.parentNode.getBoundingClientRect();
         const x = bounds.x + bounds.width / 2 - (parentBounds.left + popperWrapper.offsetLeft);
-        const y = bounds.y + bounds.height / 2 - (parentBounds.top + popperWrapper.offsetTop);
-        this.result.transformOrigin = `${x}px ${y}px`;
+        const y2 = bounds.y + bounds.height / 2 - (parentBounds.top + popperWrapper.offsetTop);
+        this.result.transformOrigin = `${x}px ${y2}px`;
       }
       this.isShown = true;
       this.$_applyAttrsToTarget({
@@ -2861,6 +2861,50 @@ const plugin = {
   install,
   options: config
 };
+var isVue2 = false;
+/*!
+  * pinia v2.0.36
+  * (c) 2023 Eduardo San Martin Morote
+  * @license MIT
+  */
+const piniaSymbol = Symbol();
+var MutationType;
+(function(MutationType2) {
+  MutationType2["direct"] = "direct";
+  MutationType2["patchObject"] = "patch object";
+  MutationType2["patchFunction"] = "patch function";
+})(MutationType || (MutationType = {}));
+function createPinia() {
+  const scope = effectScope(true);
+  const state = scope.run(() => ref({}));
+  let _p = [];
+  let toBeInstalled = [];
+  const pinia2 = markRaw({
+    install(app2) {
+      {
+        pinia2._a = app2;
+        app2.provide(piniaSymbol, pinia2);
+        app2.config.globalProperties.$pinia = pinia2;
+        toBeInstalled.forEach((plugin2) => _p.push(plugin2));
+        toBeInstalled = [];
+      }
+    },
+    use(plugin2) {
+      if (!this._a && !isVue2) {
+        toBeInstalled.push(plugin2);
+      } else {
+        _p.push(plugin2);
+      }
+      return this;
+    },
+    _p,
+    _a: null,
+    _e: scope,
+    _s: /* @__PURE__ */ new Map(),
+    state
+  });
+  return pinia2;
+}
 const scriptRel = "modulepreload";
 const assetsURL = function(dep) {
   return "/build/" + dep;
@@ -4567,20 +4611,21 @@ function extractChangingRecords(to, from) {
   }
   return [leavingRecords, updatingRecords, enteringRecords];
 }
-const LogisticsHomeComponent = () => __vitePreload(() => import("./HomeComponent.58b01dac.js"), true ? ["assets/HomeComponent.58b01dac.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js"] : void 0);
-const LogisticsEntryComponent = () => __vitePreload(() => import("./EntryComponent.955a1d02.js"), true ? ["assets/EntryComponent.955a1d02.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsEntriesComponent = () => __vitePreload(() => import("./EntriesComponent.ce894f66.js"), true ? ["assets/EntriesComponent.ce894f66.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsInventoryComponent = () => __vitePreload(() => import("./InventoryComponent.2cededc7.js"), true ? ["assets/InventoryComponent.2cededc7.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsOutputComponent = () => __vitePreload(() => import("./OutputComponent.46b14fe4.js"), true ? ["assets/OutputComponent.46b14fe4.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsOutputsComponent = () => __vitePreload(() => import("./OutputsComponent.a5ce1a35.js"), true ? ["assets/OutputsComponent.a5ce1a35.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const LogisticsEntryDetailComponent = () => __vitePreload(() => import("./EntryDetailComponent.7813d40c.js"), true ? ["assets/EntryDetailComponent.7813d40c.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const LogisticsOutputDetailComponent = () => __vitePreload(() => import("./OutputDetailComponent.93148ac9.js"), true ? ["assets/OutputDetailComponent.93148ac9.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminComponent = () => __vitePreload(() => import("./HomeComponent.e2e885ce.js"), true ? ["assets/HomeComponent.e2e885ce.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminSystemsComponent = () => __vitePreload(() => import("./SystemsComponent.a5647e5c.js"), true ? ["assets/SystemsComponent.a5647e5c.js","assets/vue.esm-bundler.ecfa1491.js","assets/jquery.8baacbdb.js","assets/jquery.dataTables.min.70653878.js"] : void 0);
-const AdminUsersComponent = () => __vitePreload(() => import("./UsersComponent.9372321f.js"), true ? ["assets/UsersComponent.9372321f.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminRolesComponent = () => __vitePreload(() => import("./RolesComponent.1b3bd7fc.js"), true ? ["assets/RolesComponent.1b3bd7fc.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminSecurityComponent = () => __vitePreload(() => import("./SecurityComponent.27fcd99e.js"), true ? ["assets/SecurityComponent.27fcd99e.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
-const AdminWarehousesComponent = () => __vitePreload(() => import("./WarehousesComponent.979ef2cc.js"), true ? ["assets/WarehousesComponent.979ef2cc.js","assets/vue.esm-bundler.ecfa1491.js"] : void 0);
+const LogisticsHomeComponent = () => __vitePreload(() => import("./HomeComponent.3bf42e70.js"), true ? ["assets/HomeComponent.3bf42e70.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js"] : void 0);
+const LogisticsEntryComponent = () => __vitePreload(() => import("./EntryComponent.013adacd.js"), true ? ["assets/EntryComponent.013adacd.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js","assets/jquery.dataTables.min.cf006e4f.js"] : void 0);
+const LogisticsEntriesComponent = () => __vitePreload(() => import("./EntriesComponent.d1c91222.js"), true ? ["assets/EntriesComponent.d1c91222.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js","assets/jquery.dataTables.min.cf006e4f.js"] : void 0);
+const LogisticsInventoryComponent = () => __vitePreload(() => import("./InventoryComponent.048cd1a8.js"), true ? ["assets/InventoryComponent.048cd1a8.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js","assets/jquery.dataTables.min.cf006e4f.js"] : void 0);
+const LogisticsOutputComponent = () => __vitePreload(() => import("./OutputComponent.9f570e87.js"), true ? ["assets/OutputComponent.9f570e87.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js","assets/jquery.dataTables.min.cf006e4f.js"] : void 0);
+const LogisticsOutputsComponent = () => __vitePreload(() => import("./OutputsComponent.586d9f93.js"), true ? ["assets/OutputsComponent.586d9f93.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js","assets/jquery.dataTables.min.cf006e4f.js"] : void 0);
+const LogisticsEntryDetailComponent = () => __vitePreload(() => import("./EntryDetailComponent.045b0406.js"), true ? ["assets/EntryDetailComponent.045b0406.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const LogisticsOutputDetailComponent = () => __vitePreload(() => import("./OutputDetailComponent.0fbccf33.js"), true ? ["assets/OutputDetailComponent.0fbccf33.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const LogisticsGoodsflowComponent = () => __vitePreload(() => import("./GoodsflowComponent.e83442d1.js"), true ? ["assets/GoodsflowComponent.e83442d1.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const AdminComponent = () => __vitePreload(() => import("./HomeComponent.e49aff9c.js"), true ? ["assets/HomeComponent.e49aff9c.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const AdminSystemsComponent = () => __vitePreload(() => import("./SystemsComponent.63e5a6a7.js"), true ? ["assets/SystemsComponent.63e5a6a7.js","assets/vue.esm-bundler.4c64d56b.js","assets/jquery.55a3af33.js","assets/jquery.dataTables.min.cf006e4f.js"] : void 0);
+const AdminUsersComponent = () => __vitePreload(() => import("./UsersComponent.a8a2a3e1.js"), true ? ["assets/UsersComponent.a8a2a3e1.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const AdminRolesComponent = () => __vitePreload(() => import("./RolesComponent.f432ec55.js"), true ? ["assets/RolesComponent.f432ec55.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const AdminSecurityComponent = () => __vitePreload(() => import("./SecurityComponent.e92d15b2.js"), true ? ["assets/SecurityComponent.e92d15b2.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
+const AdminWarehousesComponent = () => __vitePreload(() => import("./WarehousesComponent.34e081f0.js"), true ? ["assets/WarehousesComponent.34e081f0.js","assets/vue.esm-bundler.4c64d56b.js"] : void 0);
 const routes = [
   {
     path: "/semtinel/public/admin",
@@ -4653,12 +4698,87 @@ const routes = [
     name: "logistics.output.detail",
     component: LogisticsOutputDetailComponent,
     props: true
+  },
+  {
+    path: "/semtinel/public/logistics/goodsflow",
+    name: "logistics.goodsflow",
+    component: LogisticsGoodsflowComponent
   }
 ];
 const router = createRouter({
   history: createWebHistory(),
   routes
 });
+const l = {
+  addEventListeners(r, e, s) {
+    for (let t = 0, a = e.length; t < a; t++)
+      r.addEventListener(e[t], s, { passive: false });
+  },
+  removeEventListeners(r, e, s) {
+    for (let t = 0, a = e.length; t < a; t++)
+      r.removeEventListener(e[t], s, { passive: false });
+  },
+  emitEvent: function(r, e, s) {
+    if (r.componentInstance)
+      r.componentInstance.$emit(e, s);
+    else {
+      let t = new window.CustomEvent(e, { detail: s });
+      r.el.dispatchEvent(t);
+    }
+  }
+}, p = ["mousedown", "touchstart"], E = ["mousemove", "touchmove"], y = ["mouseup", "touchend"], T = function(r, e, s) {
+  let t = r, a = true, m = window;
+  typeof e.value == "boolean" ? a = e.value : typeof e.value == "object" ? (typeof e.value.target == "string" ? (t = r.querySelector(e.value.target), t || console.error("There is no element with the current target value.")) : typeof e.value.target < "u" && console.error(`The parameter "target" should be either 'undefined' or 'string'.`), typeof e.value.container == "string" ? (m = document.querySelector(e.value.container), m || console.error("There is no element with the current container value.")) : typeof e.value.container < "u" && console.error(`The parameter "container" should be be either 'undefined' or 'string'.`), typeof e.value.active == "boolean" ? a = e.value.active : typeof e.value.active < "u" && console.error(`The parameter "active" value should be either 'undefined', 'true' or 'false'.`)) : typeof e.value < "u" && console.error("The passed value should be either 'undefined', 'true' or 'false' or 'object'.");
+  const g = function(u, d) {
+    m === window ? window.scrollBy(u, d) : (m.scrollLeft += u, m.scrollTop += d);
+  }, L = function() {
+    let u, d, h2, v = false;
+    t.md = function(o) {
+      const f = o instanceof window.MouseEvent, n = f ? o.pageX : o.touches[0].pageX, i = f ? o.pageY : o.touches[0].pageY, c = document.elementFromPoint(n - window.pageXOffset, i - window.pageYOffset), w = e.arg === "nochilddrag", Y = e.modifiers.noleft, S = e.modifiers.noright, D = e.modifiers.nomiddle, N = e.modifiers.noback, O = e.modifiers.noforward, V = e.arg === "firstchilddrag", C = c === t, M = c === t.firstChild, _ = w ? typeof (c == null ? void 0 : c.dataset.dragscroll) < "u" : typeof (c == null ? void 0 : c.dataset.noDragscroll) > "u";
+      if (!(!C && (!_ || V && !M)) && !(o.button === 0 && Y)) {
+        {
+          if (o.button === 1 && D)
+            return;
+          if (o.button === 2 && S)
+            return;
+          if (o.button === 3 && N)
+            return;
+          if (o.button === 4 && O)
+            return;
+        }
+        h2 = 1, u = f ? o.clientX : o.touches[0].clientX, d = f ? o.clientY : o.touches[0].clientY;
+      }
+    }, t.mu = function(o) {
+      h2 = 0, v && l.emitEvent(s, "dragscrollend"), v = false;
+    }, t.mm = function(o) {
+      const f = o instanceof window.MouseEvent;
+      let n, i;
+      if (h2) {
+        o.preventDefault(), v || l.emitEvent(s, "dragscrollstart"), v = true;
+        const c = t.scrollLeft + t.clientWidth >= t.scrollWidth || t.scrollLeft === 0, w = t.scrollTop + t.clientHeight >= t.scrollHeight || t.scrollTop === 0;
+        n = -u + (u = f ? o.clientX : o.touches[0].clientX), i = -d + (d = f ? o.clientY : o.touches[0].clientY), e.modifiers.pass ? (t.scrollLeft -= e.modifiers.y ? -0 : n, t.scrollTop -= e.modifiers.x ? -0 : i, t === document.body && (t.scrollLeft -= e.modifiers.y ? -0 : n, t.scrollTop -= e.modifiers.x ? -0 : i), (c || e.modifiers.y) && g(-n, 0), (w || e.modifiers.x) && g(0, -i)) : (e.modifiers.x && (i = -0), e.modifiers.y && (n = -0), t.scrollLeft -= n, t.scrollTop -= i, t === document.body && (t.scrollLeft -= n, t.scrollTop -= i)), l.emitEvent(s, "dragscrollmove", {
+          deltaX: -n,
+          deltaY: -i
+        });
+      }
+    }, l.addEventListeners(t, p, t.md), l.addEventListeners(window, y, t.mu), l.addEventListeners(window, E, t.mm);
+  };
+  a ? document.readyState === "complete" ? L() : window.addEventListener("load", L) : (l.removeEventListeners(t, p, t.md), l.removeEventListeners(window, y, t.mu), l.removeEventListeners(window, E, t.mm));
+}, I = (r) => {
+  const e = r;
+  l.removeEventListeners(e, p, e.md), l.removeEventListeners(window, y, e.mu), l.removeEventListeners(window, E, e.mm);
+}, X = {
+  mounted: (r, e, s) => T(r, e, s),
+  updated: (r, e, s) => {
+    JSON.stringify(e.value) !== JSON.stringify(e.oldValue) && T(r, e, s);
+  },
+  unmounted: (r) => I(r)
+}, R = {
+  install(r) {
+    r.directive("dragscroll", X);
+  }
+};
+typeof window < "u" && window.Vue && (window.VueDragscroll = X);
 const _hoisted_1$5 = { class: "mt-2" };
 const _hoisted_2$5 = {
   class: "nav nav-pills nav-sidebar flex-column",
@@ -5032,7 +5152,7 @@ const _hoisted_17$1 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "R
 const _hoisted_18$1 = { class: "nav-item" };
 const _hoisted_19$1 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-account-key" }, null, -1);
 const _hoisted_20$1 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Permisos", -1);
-const _hoisted_21 = /* @__PURE__ */ createBaseVNode("a", {
+const _hoisted_21$1 = /* @__PURE__ */ createBaseVNode("a", {
   href: "#",
   class: "nav-link"
 }, [
@@ -5042,7 +5162,7 @@ const _hoisted_21 = /* @__PURE__ */ createBaseVNode("a", {
     /* @__PURE__ */ createBaseVNode("i", { class: "right fas fa-angle-left" })
   ])
 ], -1);
-const _hoisted_22 = { class: "nav nav-treeview" };
+const _hoisted_22$1 = { class: "nav nav-treeview" };
 const _hoisted_23 = /* @__PURE__ */ createBaseVNode("li", { class: "nav-item" }, [
   /* @__PURE__ */ createBaseVNode("a", {
     href: "#",
@@ -5138,8 +5258,8 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode("li", {
         class: normalizeClass(["nav-item", _ctx.page_active == "tree_structures" ? "menu-is-opening menu-open" : ""])
       }, [
-        _hoisted_21,
-        createBaseVNode("ul", _hoisted_22, [
+        _hoisted_21$1,
+        createBaseVNode("ul", _hoisted_22$1, [
           _hoisted_23,
           createBaseVNode("li", _hoisted_24, [
             createBaseVNode("a", {
@@ -5195,39 +5315,41 @@ const _hoisted_2 = {
   role: "menu",
   "data-accordion": "false"
 };
-const _hoisted_3 = /* @__PURE__ */ createBaseVNode("li", { class: "nav-header" }, "RECEPCI\xD3N", -1);
-const _hoisted_4 = {
+const _hoisted_3 = /* @__PURE__ */ createBaseVNode("li", { class: "nav-header" }, "MERCANC\xCDAS", -1);
+const _hoisted_4 = { class: "nav-item" };
+const _hoisted_5 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-truck-check-outline" }, null, -1);
+const _hoisted_6 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Flujo de Mercanc\xEDas", -1);
+const _hoisted_7 = /* @__PURE__ */ createBaseVNode("li", { class: "nav-header" }, "PA\xD1OLES", -1);
+const _hoisted_8 = {
   key: 0,
   class: "nav-item"
 };
-const _hoisted_5 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-truck-check-outline" }, null, -1);
-const _hoisted_6 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Nueva Entrada", -1);
-const _hoisted_7 = { class: "nav-item" };
-const _hoisted_8 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-format-list-bulleted-square" }, null, -1);
-const _hoisted_9 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Todas las Entradas", -1);
-const _hoisted_10 = /* @__PURE__ */ createBaseVNode("li", { class: "nav-header" }, "INVENTARIOS", -1);
+const _hoisted_9 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-plus-circle" }, null, -1);
+const _hoisted_10 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Nueva Entrada", -1);
 const _hoisted_11 = { class: "nav-item" };
-const _hoisted_12 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-inbox-full" }, null, -1);
-const _hoisted_13 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Inventarios en obra", -1);
-const _hoisted_14 = /* @__PURE__ */ createBaseVNode("li", { class: "nav-header" }, "DESPACHO", -1);
-const _hoisted_15 = {
+const _hoisted_12 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-format-list-bulleted-square" }, null, -1);
+const _hoisted_13 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Todas las Entradas", -1);
+const _hoisted_14 = { class: "nav-item" };
+const _hoisted_15 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-inbox-full" }, null, -1);
+const _hoisted_16 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Inventarios en obra", -1);
+const _hoisted_17 = {
   key: 1,
   class: "nav-item"
 };
-const _hoisted_16 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-cart-arrow-right" }, null, -1);
-const _hoisted_17 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Nueva Salida", -1);
-const _hoisted_18 = { class: "nav-item" };
-const _hoisted_19 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-format-list-bulleted-square" }, null, -1);
-const _hoisted_20 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Todas las Salidas", -1);
+const _hoisted_18 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-minus-circle" }, null, -1);
+const _hoisted_19 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Nueva Salida", -1);
+const _hoisted_20 = { class: "nav-item" };
+const _hoisted_21 = /* @__PURE__ */ createBaseVNode("i", { class: "nav-icon mdi mdi-format-list-bulleted-square" }, null, -1);
+const _hoisted_22 = /* @__PURE__ */ createBaseVNode("p", { class: "text" }, "Todas las Salidas", -1);
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_router_link = resolveComponent("router-link");
   return openBlock(), createElementBlock("nav", _hoisted_1, [
     createBaseVNode("ul", _hoisted_2, [
       _hoisted_3,
-      "logistics.api.store.entry" in _ctx.$root.session.permissions ? (openBlock(), createElementBlock("li", _hoisted_4, [
+      createBaseVNode("li", _hoisted_4, [
         createVNode(_component_router_link, {
-          to: "/semtinel/public/logistics/entry",
-          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "entry" ? "active" : ""])
+          to: "/semtinel/public/logistics/goodsflow",
+          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "goodsflow" ? "active" : ""])
         }, {
           default: withCtx(() => [
             _hoisted_5,
@@ -5235,24 +5357,24 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           _: 1
         }, 8, ["class"])
-      ])) : createCommentVNode("", true),
-      createBaseVNode("li", _hoisted_7, [
+      ]),
+      _hoisted_7,
+      "logistics.api.store.entry" in _ctx.$root.session.permissions ? (openBlock(), createElementBlock("li", _hoisted_8, [
         createVNode(_component_router_link, {
-          to: "/semtinel/public/logistics/entries",
-          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "entries" ? "active" : ""])
+          to: "/semtinel/public/logistics/entry",
+          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "entry" ? "active" : ""])
         }, {
           default: withCtx(() => [
-            _hoisted_8,
-            _hoisted_9
+            _hoisted_9,
+            _hoisted_10
           ]),
           _: 1
         }, 8, ["class"])
-      ]),
-      _hoisted_10,
+      ])) : createCommentVNode("", true),
       createBaseVNode("li", _hoisted_11, [
         createVNode(_component_router_link, {
-          to: "/semtinel/public/logistics/inventory",
-          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "inventory" ? "active" : ""])
+          to: "/semtinel/public/logistics/entries",
+          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "entries" ? "active" : ""])
         }, {
           default: withCtx(() => [
             _hoisted_12,
@@ -5261,27 +5383,38 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           _: 1
         }, 8, ["class"])
       ]),
-      _hoisted_14,
-      "logistics.api.store.output" in _ctx.$root.session.permissions ? (openBlock(), createElementBlock("li", _hoisted_15, [
+      createBaseVNode("li", _hoisted_14, [
+        createVNode(_component_router_link, {
+          to: "/semtinel/public/logistics/inventory",
+          class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "inventory" ? "active" : ""])
+        }, {
+          default: withCtx(() => [
+            _hoisted_15,
+            _hoisted_16
+          ]),
+          _: 1
+        }, 8, ["class"])
+      ]),
+      "logistics.api.store.output" in _ctx.$root.session.permissions ? (openBlock(), createElementBlock("li", _hoisted_17, [
         createVNode(_component_router_link, {
           to: "/semtinel/public/logistics/output",
           class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "output" ? "active" : ""])
         }, {
           default: withCtx(() => [
-            _hoisted_16,
-            _hoisted_17
+            _hoisted_18,
+            _hoisted_19
           ]),
           _: 1
         }, 8, ["class"])
       ])) : createCommentVNode("", true),
-      createBaseVNode("li", _hoisted_18, [
+      createBaseVNode("li", _hoisted_20, [
         createVNode(_component_router_link, {
           to: "/semtinel/public/logistics/outputs",
           class: normalizeClass(["nav-link", _ctx.app_name == "logistics" && _ctx.page_active == "outputs" ? "active" : ""])
         }, {
           default: withCtx(() => [
-            _hoisted_19,
-            _hoisted_20
+            _hoisted_21,
+            _hoisted_22
           ]),
           _: 1
         }, 8, ["class"])
@@ -5296,7 +5429,7 @@ const app = createApp({
       appurl: "",
       apps: {
         "admin": "systems,users,roles,security,warehouse",
-        "logistics": "entry,entries,inventory,output,outputs"
+        "logistics": "entry,entries,inventory,output,outputs,goodsflow"
       },
       app_name: "semtinel",
       page_active: "home",
@@ -5387,7 +5520,10 @@ app.component("header-content", PageHeader);
 app.component("control-sidebar", ControlSidebarComponent);
 app.component("admin-sidebar", AdminSidebarComponent);
 app.component("logistics-sidebar", LogisticsSidebarComponent);
+const pinia = createPinia();
+app.use(pinia);
 app.use(router);
+app.use(R);
 app.use(plugin);
 app.mount("#app");
 app.mounted;

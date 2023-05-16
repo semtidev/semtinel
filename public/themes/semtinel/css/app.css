@@ -67,6 +67,11 @@ a:active, a:focus {
     font-family: 'Courier New', Courier, monospace !important;
 }
 
+[class*="sidebar-dark-"] .nav-header {
+    background-color: inherit;
+    color: #46bd61;
+}
+
 .card .nav-link, .main-header .nav-link {
     color: #0c61b6 !important;
 }
@@ -219,6 +224,13 @@ a:active, a:focus {
     color: #fff;
     background-color: #2e4764 !important;
     border: #2e4764 1px solid !important;
+}
+.btn-warning {
+    color: #fff !important;
+    font-weight: 600 !important;
+    text-shadow: rgb(28, 56, 1) 0 1px !important;
+    background-color: #f1731f !important;
+    border: #f1731f 1px solid !important;
 }
 .btn-default, .btn-tool {
     border: transparent 1px solid !important;
@@ -705,3 +717,9 @@ table.dataTable.no-footer {
     color: #697986 !important;
 }
 
+.back-to-top {
+    bottom: 3rem;
+    position: fixed;
+    right: 1.25rem;
+    z-index: 1032;
+}

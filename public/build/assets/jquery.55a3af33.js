@@ -1,4 +1,4 @@
-import { M as commonjsGlobal } from "./vue.esm-bundler.ecfa1491.js";
+import { O as commonjsGlobal } from "./vue.esm-bundler.4c64d56b.js";
 var jquery = { exports: {} };
 /*!
  * jQuery JavaScript Library v3.6.3

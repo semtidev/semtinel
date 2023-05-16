@@ -1,6 +1,6 @@
-import { o as openBlock, b as createElementBlock, i as createBaseVNode } from "./vue.esm-bundler.ecfa1491.js";
-import { _ as _export_sfc } from "./app.415296ed.js";
-import "./jquery.8baacbdb.js";
+import { o as openBlock, b as createElementBlock, i as createBaseVNode } from "./vue.esm-bundler.4c64d56b.js";
+import { _ as _export_sfc } from "./app.18088dbe.js";
+import "./jquery.55a3af33.js";
 const _sfc_main = {
   data: function() {
     return {
@@ -40,7 +40,7 @@ const _hoisted_2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-center"
   /* @__PURE__ */ createBaseVNode("i", { class: "mdi mdi-truck-check mdi-72px text-success" })
 ], -1);
 const _hoisted_3 = /* @__PURE__ */ createBaseVNode("div", { class: "app-title" }, "Semtinel - Log\xEDstica", -1);
-const _hoisted_4 = /* @__PURE__ */ createBaseVNode("div", { class: "app-subtitle" }, "Sistema de Gesti\xF3n de Pa\xF1oles", -1);
+const _hoisted_4 = /* @__PURE__ */ createBaseVNode("div", { class: "app-subtitle" }, "Sistema de Gesti\xF3n de Log\xEDstica en Obras", -1);
 const _hoisted_5 = [
   _hoisted_2,
   _hoisted_3,

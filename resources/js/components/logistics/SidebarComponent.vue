@@ -20,13 +20,23 @@ export default {
             <!-- Add icons to the links using the .nav-icon class
                 with font-awesome or any other icon font library -->
             
-            <li class="nav-header">RECEPCI&Oacute;N</li>
+            <li class="nav-header">MERCANCÍAS</li>
+            <li class="nav-item">
+                <router-link 
+                    to="/semtinel/public/logistics/goodsflow" 
+                    class="nav-link" 
+                    :class="(app_name == 'logistics' && page_active == 'goodsflow') ? 'active' : ''">
+                    <i class="nav-icon mdi mdi-truck-check-outline"></i>
+                    <p class="text">Flujo de Mercancías</p>
+                </router-link>
+            </li>
+            <li class="nav-header">PAÑOLES</li>
             <li class="nav-item" v-if="('logistics.api.store.entry' in $root.session.permissions)">
                 <router-link 
                     to="/semtinel/public/logistics/entry" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'entry') ? 'active' : ''">
-                    <i class="nav-icon mdi mdi-truck-check-outline"></i>
+                    <i class="nav-icon mdi mdi-plus-circle"></i>
                     <p class="text">Nueva Entrada</p>
                 </router-link>
             </li>
@@ -39,7 +49,7 @@ export default {
                     <p class="text">Todas las Entradas</p>
                 </router-link>
             </li>
-            <li class="nav-header">INVENTARIOS</li>
+            <!--<li class="nav-header">INVENTARIOS EN PAÑOL</li>-->
             <li class="nav-item">
                 <router-link 
                     to="/semtinel/public/logistics/inventory" 
@@ -49,13 +59,13 @@ export default {
                     <p class="text">Inventarios en obra</p>
                 </router-link>
             </li>
-            <li class="nav-header">DESPACHO</li>
+            <!--<li class="nav-header">DESPACHO EN PAÑOL</li>-->
             <li class="nav-item" v-if="('logistics.api.store.output' in $root.session.permissions)">
                 <router-link 
                     to="/semtinel/public/logistics/output" 
                     class="nav-link" 
                     :class="(app_name == 'logistics' && page_active == 'output') ? 'active' : ''">
-                    <i class="nav-icon mdi mdi-cart-arrow-right"></i>
+                    <i class="nav-icon mdi mdi-minus-circle"></i>
                     <p class="text">Nueva Salida</p>
                 </router-link>
             </li>

@@ -1,15 +1,15 @@
-import { o as openBlock, b as createElementBlock, i as createBaseVNode, J as withDirectives, L as withModifiers, f as normalizeClass, F as Fragment, I as renderList, v as toDisplayString, N as vModelText, j as createCommentVNode, H as createTextVNode, G as createStaticVNode, K as resolveDirective } from "./vue.esm-bundler.ecfa1491.js";
-import { _ as _export_sfc } from "./app.415296ed.js";
+import { o as openBlock, b as createElementBlock, i as createBaseVNode, L as withDirectives, N as withModifiers, f as normalizeClass, F as Fragment, K as renderList, v as toDisplayString, P as vModelText, j as createCommentVNode, J as createTextVNode, I as createStaticVNode, M as resolveDirective } from "./vue.esm-bundler.4c64d56b.js";
+import { _ as _export_sfc } from "./app.18088dbe.js";
 const _sfc_main = {
   data: function() {
     return {
-      permissions: [],
-      permission_roles: [],
-      roles_loading: true,
+      roles: [],
+      role_permissions: [],
       permissions_loading: true,
-      permissions_empty: false,
+      roles_loading: true,
+      roles_empty: false,
       loading: true,
-      form_title: "Nuevo Permiso",
+      form_title: "Nuevo Rol",
       form_data: {
         id: "",
         name: ""
@@ -21,7 +21,7 @@ const _sfc_main = {
       form_loading: false,
       delete_text: "Eliminar",
       delete_id: "",
-      delete_permission: "",
+      delete_role: "",
       delete_error: "",
       delete_loading: false,
       session: JSON.parse(sessionStorage.getItem("semtinel"))
@@ -61,25 +61,25 @@ const _sfc_main = {
         "Accept": "application/json",
         "Authorization": "Bearer " + cmp.session.access_token
       };
-      cmp.permissions_loading = true;
-      fetch("http://localhost/semtinel/public/api/admin/permissions", {
+      cmp.roles_loading = true;
+      fetch("http://localhost/semtinel/public/api/admin/roles", {
         method: "GET",
         headers
       }).then((response) => response.json()).then((data) => {
-        cmp.permissions = data;
-        cmp.permissions_loading = false;
-        cmp.permissions_empty = data.length > 0 ? false : true;
+        cmp.roles = data;
+        cmp.roles_loading = false;
+        cmp.roles_empty = data.length > 0 ? false : true;
       }).catch((error) => {
         this.errorMessage = error;
         toastr.error("Error: " + error);
       });
     },
-    activeRole: function(idx) {
-      this.permission_roles[idx].active = !this.permission_roles[idx].active;
+    activePermission: function(idx) {
+      this.role_permissions[idx].active = !this.role_permissions[idx].active;
     },
     isValidForm: function() {
       if (this.form_data.name == null || this.form_data.name == "") {
-        this.form_error = "Debe escribir un Nombre para el permiso.";
+        this.form_error = "Debe escribir un Nombre para el rol.";
         return false;
       }
       return true;
@@ -88,59 +88,59 @@ const _sfc_main = {
       let cmp = this;
       cmp.form_action = "create";
       cmp.form_error = "";
-      cmp.form_title = "Nuevo Permiso";
+      cmp.form_title = "Nuevo Rol";
       cmp.form_data.id = "";
       cmp.form_data.name = "";
-      if (cmp.permission_roles.length > 0) {
-        cmp.permission_roles.forEach((value, key) => {
+      if (cmp.role_permissions.length > 0) {
+        cmp.role_permissions.forEach((value, key) => {
           value.active = false;
         });
       } else {
-        cmp.roles_loading = true;
+        cmp.permissions_loading = true;
         let headers = {
           "User-Agent": "testing/1.0",
           "Accept": "application/json",
           "Authorization": "Bearer " + cmp.session.access_token
         };
-        fetch("http://localhost/semtinel/public/api/admin/permission/roles/0", {
+        fetch("http://localhost/semtinel/public/api/admin/role/permissions/0", {
           method: "GET",
           headers
         }).then((response) => response.json()).then((data) => {
-          cmp.permission_roles = data;
-          cmp.roles_loading = false;
+          cmp.role_permissions = data;
+          cmp.permissions_loading = false;
         }).catch((error) => {
           this.errorMessage = error;
           toastr.error("Error: " + error);
         });
       }
     },
-    edit: function(id, name) {
+    edit: function(id, name, owner, active) {
       let cmp = this;
       cmp.form_action = "edit";
       cmp.form_error = "";
-      cmp.form_title = "Editar Permiso";
+      cmp.form_title = "Editar Rol";
       cmp.form_data.id = id;
       cmp.form_data.name = name;
-      cmp.roles_loading = true;
+      cmp.permissions_loading = true;
       let headers = {
         "User-Agent": "testing/1.0",
         "Accept": "application/json",
         "Authorization": "Bearer " + cmp.session.access_token
       };
-      fetch("http://localhost/semtinel/public/api/admin/permission/roles/" + id, {
+      fetch("http://localhost/semtinel/public/api/admin/role/permissions/" + id, {
         method: "GET",
         headers
       }).then((response) => response.json()).then((data) => {
-        cmp.permission_roles = data;
-        cmp.roles_loading = false;
+        cmp.role_permissions = data;
+        cmp.permissions_loading = false;
       }).catch((error) => {
         this.errorMessage = error;
         toastr.error("Error: " + error);
       });
     },
-    deleteDialog: function(id, permission) {
+    deleteDialog: function(id, role) {
       this.delete_id = id;
-      this.delete_permission = permission;
+      this.delete_role = role;
     },
     async store() {
       let cmp = this;
@@ -154,10 +154,10 @@ const _sfc_main = {
         "Accept": "application/json",
         "Authorization": "Bearer " + cmp.session.access_token
       };
-      await axios.post("http://localhost/semtinel/public/api/admin/permission", {
+      await axios.post("http://localhost/semtinel/public/api/admin/role", {
         "id": cmp.form_data.id,
         "name": cmp.form_data.name,
-        "roles": this.permission_roles
+        "permissions": this.role_permissions
       }, {
         headers
       }).then(function(response) {
@@ -166,9 +166,9 @@ const _sfc_main = {
           cmp.form_okbtn_text = "Aceptar";
           cmp.$refs.Close.click();
           if (cmp.form_action == "create") {
-            toastr.success("El Permiso fue Agregado con \xE9xito.");
+            toastr.success("El Rol fue Agregado con \xE9xito.");
           } else if (cmp.form_action == "edit") {
-            toastr.success("El Permiso fue Actualizado con \xE9xito.");
+            toastr.success("El Rol fue Actualizado con \xE9xito.");
           }
           cmp.listReload();
         } else {
@@ -192,7 +192,7 @@ const _sfc_main = {
         "Accept": "application/json",
         "Authorization": "Bearer " + cmp.session.access_token
       };
-      await axios.delete("http://localhost/semtinel/public/api/admin/permission/" + cmp.delete_id, {
+      await axios.delete("http://localhost/semtinel/public/api/admin/role/" + cmp.delete_id, {
         headers
       }, {}).then(function(response) {
         if (response.data.success) {
@@ -200,7 +200,7 @@ const _sfc_main = {
           cmp.delete_loading = false;
           cmp.delete_text = "Eliminar";
           cmp.$refs.delClose.click();
-          toastr.success("El Permiso fue Eliminado con \xE9xito.");
+          toastr.success("El Rol fue Eliminado con \xE9xito.");
           cmp.listReload();
         } else {
           cmp.delete_error = "";
@@ -227,7 +227,7 @@ const _sfc_main = {
 const _hoisted_1 = { class: "container-fluid px-0" };
 const _hoisted_2 = { class: "card card-default" };
 const _hoisted_3 = { class: "card-header" };
-const _hoisted_4 = /* @__PURE__ */ createBaseVNode("h3", { class: "card-title" }, "Permisos", -1);
+const _hoisted_4 = /* @__PURE__ */ createBaseVNode("h3", { class: "card-title" }, "Roles", -1);
 const _hoisted_5 = { class: "card-tools" };
 const _hoisted_6 = /* @__PURE__ */ createBaseVNode("i", { class: "mdi mdi-reload mdi-24px text-green" }, null, -1);
 const _hoisted_7 = [
@@ -240,7 +240,7 @@ const _hoisted_9 = [
 const _hoisted_10 = { class: "card-body" };
 const _hoisted_11 = /* @__PURE__ */ createBaseVNode("div", { class: "col-12 text-center py-5 loading-table" }, [
   /* @__PURE__ */ createBaseVNode("h6", null, [
-    /* @__PURE__ */ createBaseVNode("span", { class: "mdi mdi-loading mdi-spin mdi-36px" }, "\xA0Cargando permisos...")
+    /* @__PURE__ */ createBaseVNode("span", { class: "mdi mdi-loading mdi-spin mdi-36px" }, "\xA0Cargando roles...")
   ])
 ], -1);
 const _hoisted_12 = [
@@ -286,7 +286,7 @@ const _hoisted_26 = [
 ];
 const _hoisted_27 = {
   class: "modal fade",
-  id: "modal-permission-form",
+  id: "modal-role-form",
   "aria-hidden": "true",
   role: "dialog",
   "data-backdrop": "static",
@@ -318,11 +318,11 @@ const _hoisted_39 = {
 const _hoisted_40 = { class: "col-12 text-center" };
 const _hoisted_41 = { class: "form_error" };
 const _hoisted_42 = { class: "card card-default" };
-const _hoisted_43 = /* @__PURE__ */ createStaticVNode('<div class="card-header"><h3 class="card-title">Roles</h3><div class="card-tools"><button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button></div></div>', 1);
+const _hoisted_43 = /* @__PURE__ */ createStaticVNode('<div class="card-header"><h3 class="card-title">Permisos</h3><div class="card-tools"><button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button></div></div>', 1);
 const _hoisted_44 = { class: "card-body" };
 const _hoisted_45 = /* @__PURE__ */ createBaseVNode("div", { class: "col-12 text-center py-5 loading-table" }, [
   /* @__PURE__ */ createBaseVNode("h6", null, [
-    /* @__PURE__ */ createBaseVNode("span", { class: "mdi mdi-loading mdi-spin mdi-36px" }, "\xA0Cargando roles...")
+    /* @__PURE__ */ createBaseVNode("span", { class: "mdi mdi-loading mdi-spin mdi-36px" }, "\xA0Cargando permisos...")
   ])
 ], -1);
 const _hoisted_46 = [
@@ -338,9 +338,9 @@ const _hoisted_49 = /* @__PURE__ */ createBaseVNode("thead", null, [
     }, "No."),
     /* @__PURE__ */ createBaseVNode("th", null, "Nombre"),
     /* @__PURE__ */ createBaseVNode("th", {
-      width: "130",
+      width: "100",
       class: "text-center no-sort"
-    }, "Pertenece a")
+    }, "Permite")
   ])
 ], -1);
 const _hoisted_50 = { class: "text-center" };
@@ -363,7 +363,7 @@ const _hoisted_57 = {
 };
 const _hoisted_58 = {
   class: "modal fade",
-  id: "modal-permission-delete",
+  id: "modal-role-delete",
   "aria-hidden": "true",
   role: "dialog",
   "data-backdrop": "static",
@@ -429,28 +429,28 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               type: "button",
               class: "btn btn-tool pl-0",
               "data-toggle": "modal",
-              "data-target": "#modal-permission-form",
+              "data-target": "#modal-role-form",
               onClick: _cache[1] || (_cache[1] = ($event) => $options.create())
             }, _hoisted_9)), [
-              [_directive_tooltip, "Nuevo Permiso"]
+              [_directive_tooltip, "Nuevo Rol"]
             ])
           ])
         ]),
         createBaseVNode("div", _hoisted_10, [
           createBaseVNode("div", {
-            class: normalizeClass(["row mt-3", _ctx.permissions_loading ? "" : "hidden"])
+            class: normalizeClass(["row mt-3", _ctx.roles_loading ? "" : "hidden"])
           }, _hoisted_12, 2),
           createBaseVNode("div", {
-            class: normalizeClass(["row mt-3", _ctx.permissions_empty ? "" : "hidden"])
+            class: normalizeClass(["row mt-3", _ctx.roles_empty ? "" : "hidden"])
           }, _hoisted_14, 2),
           createBaseVNode("div", {
-            class: normalizeClass(["row", !_ctx.permissions_loading && !_ctx.permissions_empty ? "" : "hidden"])
+            class: normalizeClass(["row", !_ctx.roles_loading && !_ctx.roles_empty ? "" : "hidden"])
           }, [
             createBaseVNode("div", _hoisted_15, [
               createBaseVNode("table", _hoisted_16, [
                 _hoisted_17,
                 createBaseVNode("tbody", null, [
-                  (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.permissions, (item, idx) => {
+                  (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.roles, (item, idx) => {
                     return openBlock(), createElementBlock("tr", {
                       key: item.id
                     }, [
@@ -462,10 +462,10 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                           class: "btn-semti-tool",
                           style: { "padding": "4px 5px" },
                           "data-toggle": "modal",
-                          "data-target": "#modal-permission-form",
-                          onClick: ($event) => $options.edit(item.id, item.name)
+                          "data-target": "#modal-role-form",
+                          onClick: ($event) => $options.edit(item.id, item.name, item.owner, item.active)
                         }, _hoisted_22, 8, _hoisted_20)), [
-                          [_directive_tooltip, "Modificar este Permiso"]
+                          [_directive_tooltip, "Modificar este Rol"]
                         ])
                       ]),
                       createBaseVNode("td", _hoisted_23, [
@@ -474,10 +474,10 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                           class: "btn-semti-tool",
                           style: { "padding": "4px 5px" },
                           "data-toggle": "modal",
-                          "data-target": "#modal-permission-delete",
+                          "data-target": "#modal-role-delete",
                           onClick: ($event) => $options.deleteDialog(item.id, item.name)
                         }, _hoisted_26, 8, _hoisted_24)), [
-                          [_directive_tooltip, "Eliminar este Permiso"]
+                          [_directive_tooltip, "Eliminar este Rol"]
                         ])
                       ])
                     ]);
@@ -502,8 +502,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
             createBaseVNode("form", null, [
               withDirectives(createBaseVNode("input", {
                 type: "hidden",
-                name: "id_permission",
-                id: "id_permission",
+                name: "id_role",
+                id: "id_role",
                 "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.form_data.id = $event)
               }, null, 512), [
                 [vModelText, _ctx.form_data.id]
@@ -517,7 +517,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                       class: "form-control",
                       id: "name",
                       name: "name",
-                      placeholder: "Nombre del permiso",
+                      placeholder: "Nombre del rol",
                       "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.form_data.name = $event)
                     }, null, 512), [
                       [vModelText, _ctx.form_data.name]
@@ -534,16 +534,16 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                 _hoisted_43,
                 createBaseVNode("div", _hoisted_44, [
                   createBaseVNode("div", {
-                    class: normalizeClass(["row mt-3", _ctx.roles_loading ? "" : "hidden"])
+                    class: normalizeClass(["row mt-3", _ctx.permissions_loading ? "" : "hidden"])
                   }, _hoisted_46, 2),
                   createBaseVNode("div", {
-                    class: normalizeClass(["row", !_ctx.roles_loading && _ctx.permission_roles.length > 0 ? "" : "hidden"])
+                    class: normalizeClass(["row", !_ctx.permissions_loading && _ctx.role_permissions.length > 0 ? "" : "hidden"])
                   }, [
                     createBaseVNode("div", _hoisted_47, [
                       createBaseVNode("table", _hoisted_48, [
                         _hoisted_49,
                         createBaseVNode("tbody", null, [
-                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.permission_roles, (item, idx) => {
+                          (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.role_permissions, (item, idx) => {
                             return openBlock(), createElementBlock("tr", {
                               key: item.id
                             }, [
@@ -553,10 +553,10 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                                 createBaseVNode("input", {
                                   type: "checkbox",
                                   class: "form-check-input ml-0",
-                                  id: "role_active",
-                                  name: "role_active",
+                                  id: "permission_active",
+                                  name: "permission_active",
                                   checked: item.active,
-                                  onChange: ($event) => $options.activeRole(idx)
+                                  onChange: ($event) => $options.activePermission(idx)
                                 }, null, 40, _hoisted_52)
                               ])
                             ]);
@@ -595,8 +595,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
             _hoisted_67,
             createBaseVNode("div", _hoisted_68, [
               createBaseVNode("p", null, [
-                createTextVNode('El Permiso "'),
-                createBaseVNode("strong", null, toDisplayString(_ctx.delete_permission), 1),
+                createTextVNode('El Rol "'),
+                createBaseVNode("strong", null, toDisplayString(_ctx.delete_role), 1),
                 createTextVNode('" ser\xE1 Eliminado de la plataforma Semtinel.'),
                 _hoisted_69,
                 createTextVNode("Confirme que desea realizar esta operaci\xF3n.")
@@ -625,7 +625,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 64);
 }
-const SecurityComponent = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
+const RolesComponent = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
 export {
-  SecurityComponent as default
+  RolesComponent as default
 };

@@ -1,11 +1,11 @@
 {
-  "public/themes/semtinel/img/icon-pdf2.png": {
-    "file": "assets/icon-pdf2.d34bc667.png",
-    "src": "public/themes/semtinel/img/icon-pdf2.png"
-  },
   "public/themes/semtinel/img/icon-png.png": {
     "file": "assets/icon-png.5fc2f06f.png",
     "src": "public/themes/semtinel/img/icon-png.png"
+  },
+  "public/themes/semtinel/img/icon-pdf2.png": {
+    "file": "assets/icon-pdf2.d34bc667.png",
+    "src": "public/themes/semtinel/img/icon-pdf2.png"
   },
   "public/themes/semtinel/img/icon-jpg.png": {
     "file": "assets/icon-jpg.f56bc536.png",
@@ -17,11 +17,11 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app.415296ed.js",
+    "file": "assets/app.18088dbe.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js"
+      "_vue.esm-bundler.4c64d56b.js"
     ],
     "dynamicImports": [
       "resources/js/components/logistics/HomeComponent.vue",
@@ -32,6 +32,7 @@
       "resources/js/components/logistics/OutputsComponent.vue",
       "resources/js/components/logistics/EntryDetailComponent.vue",
       "resources/js/components/logistics/OutputDetailComponent.vue",
+      "resources/js/components/logistics/GoodsflowComponent.vue",
       "resources/js/components/admin/HomeComponent.vue",
       "resources/js/components/admin/SystemsComponent.vue",
       "resources/js/components/admin/UsersComponent.vue",
@@ -41,70 +42,70 @@
     ]
   },
   "resources/js/login.js": {
-    "file": "assets/login.4cf3db78.js",
+    "file": "assets/login.e3b859c9.js",
     "src": "resources/js/login.js",
     "isEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
-      "_jquery.8baacbdb.js"
+      "_vue.esm-bundler.4c64d56b.js",
+      "_jquery.55a3af33.js"
     ]
   },
-  "_vue.esm-bundler.ecfa1491.js": {
-    "file": "assets/vue.esm-bundler.ecfa1491.js"
+  "_vue.esm-bundler.4c64d56b.js": {
+    "file": "assets/vue.esm-bundler.4c64d56b.js"
   },
-  "_jquery.8baacbdb.js": {
-    "file": "assets/jquery.8baacbdb.js",
+  "_jquery.55a3af33.js": {
+    "file": "assets/jquery.55a3af33.js",
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js"
+      "_vue.esm-bundler.4c64d56b.js"
     ]
   },
   "resources/js/components/logistics/HomeComponent.vue": {
-    "file": "assets/HomeComponent.58b01dac.js",
+    "file": "assets/HomeComponent.3bf42e70.js",
     "src": "resources/js/components/logistics/HomeComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js"
+      "_jquery.55a3af33.js"
     ]
   },
   "resources/js/components/logistics/EntryComponent.vue": {
-    "file": "assets/EntryComponent.955a1d02.js",
+    "file": "assets/EntryComponent.013adacd.js",
     "src": "resources/js/components/logistics/EntryComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js",
-      "_jquery.dataTables.min.70653878.js"
+      "_jquery.55a3af33.js",
+      "_jquery.dataTables.min.cf006e4f.js"
     ]
   },
-  "_jquery.dataTables.min.70653878.js": {
-    "file": "assets/jquery.dataTables.min.70653878.js",
+  "_jquery.dataTables.min.cf006e4f.js": {
+    "file": "assets/jquery.dataTables.min.cf006e4f.js",
     "imports": [
-      "_jquery.8baacbdb.js"
+      "_jquery.55a3af33.js"
     ]
   },
   "resources/js/components/logistics/EntriesComponent.vue": {
-    "file": "assets/EntriesComponent.ce894f66.js",
+    "file": "assets/EntriesComponent.d1c91222.js",
     "src": "resources/js/components/logistics/EntriesComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js",
-      "_jquery.dataTables.min.70653878.js"
+      "_jquery.55a3af33.js",
+      "_jquery.dataTables.min.cf006e4f.js"
     ]
   },
   "resources/js/components/logistics/InventoryComponent.vue": {
-    "file": "assets/InventoryComponent.2cededc7.js",
+    "file": "assets/InventoryComponent.048cd1a8.js",
     "src": "resources/js/components/logistics/InventoryComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js",
-      "_jquery.dataTables.min.70653878.js"
+      "_jquery.55a3af33.js",
+      "_jquery.dataTables.min.cf006e4f.js"
     ],
     "assets": [
       "assets/icon-pdf2.d34bc667.png",
@@ -113,98 +114,107 @@
     ]
   },
   "resources/js/components/logistics/OutputComponent.vue": {
-    "file": "assets/OutputComponent.46b14fe4.js",
+    "file": "assets/OutputComponent.9f570e87.js",
     "src": "resources/js/components/logistics/OutputComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js",
-      "_jquery.dataTables.min.70653878.js"
+      "_jquery.55a3af33.js",
+      "_jquery.dataTables.min.cf006e4f.js"
     ]
   },
   "resources/js/components/logistics/OutputsComponent.vue": {
-    "file": "assets/OutputsComponent.a5ce1a35.js",
+    "file": "assets/OutputsComponent.586d9f93.js",
     "src": "resources/js/components/logistics/OutputsComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js",
-      "_jquery.dataTables.min.70653878.js"
+      "_jquery.55a3af33.js",
+      "_jquery.dataTables.min.cf006e4f.js"
     ]
   },
   "resources/js/components/logistics/EntryDetailComponent.vue": {
-    "file": "assets/EntryDetailComponent.7813d40c.js",
+    "file": "assets/EntryDetailComponent.045b0406.js",
     "src": "resources/js/components/logistics/EntryDetailComponent.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_vue.esm-bundler.ecfa1491.js"
+      "_vue.esm-bundler.4c64d56b.js"
     ]
   },
   "resources/js/components/logistics/OutputDetailComponent.vue": {
-    "file": "assets/OutputDetailComponent.93148ac9.js",
+    "file": "assets/OutputDetailComponent.0fbccf33.js",
     "src": "resources/js/components/logistics/OutputDetailComponent.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_vue.esm-bundler.ecfa1491.js"
+      "_vue.esm-bundler.4c64d56b.js"
+    ]
+  },
+  "resources/js/components/logistics/GoodsflowComponent.vue": {
+    "file": "assets/GoodsflowComponent.e83442d1.js",
+    "src": "resources/js/components/logistics/GoodsflowComponent.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue.esm-bundler.4c64d56b.js",
+      "resources/js/app.js"
     ]
   },
   "resources/js/components/admin/HomeComponent.vue": {
-    "file": "assets/HomeComponent.e2e885ce.js",
+    "file": "assets/HomeComponent.e49aff9c.js",
     "src": "resources/js/components/admin/HomeComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/components/admin/SystemsComponent.vue": {
-    "file": "assets/SystemsComponent.a5647e5c.js",
+    "file": "assets/SystemsComponent.63e5a6a7.js",
     "src": "resources/js/components/admin/SystemsComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js",
-      "_jquery.8baacbdb.js",
-      "_jquery.dataTables.min.70653878.js"
+      "_jquery.55a3af33.js",
+      "_jquery.dataTables.min.cf006e4f.js"
     ]
   },
   "resources/js/components/admin/UsersComponent.vue": {
-    "file": "assets/UsersComponent.9372321f.js",
+    "file": "assets/UsersComponent.a8a2a3e1.js",
     "src": "resources/js/components/admin/UsersComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/components/admin/RolesComponent.vue": {
-    "file": "assets/RolesComponent.1b3bd7fc.js",
+    "file": "assets/RolesComponent.f432ec55.js",
     "src": "resources/js/components/admin/RolesComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/components/admin/SecurityComponent.vue": {
-    "file": "assets/SecurityComponent.27fcd99e.js",
+    "file": "assets/SecurityComponent.e92d15b2.js",
     "src": "resources/js/components/admin/SecurityComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js"
     ]
   },
   "resources/js/components/admin/WarehousesComponent.vue": {
-    "file": "assets/WarehousesComponent.979ef2cc.js",
+    "file": "assets/WarehousesComponent.34e081f0.js",
     "src": "resources/js/components/admin/WarehousesComponent.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vue.esm-bundler.ecfa1491.js",
+      "_vue.esm-bundler.4c64d56b.js",
       "resources/js/app.js"
     ]
   },

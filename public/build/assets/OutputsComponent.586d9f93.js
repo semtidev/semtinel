@@ -1,31 +1,39 @@
-import { o as openBlock, b as createElementBlock, q as createVNode, i as createBaseVNode, J as withDirectives, L as withModifiers, f as normalizeClass, F as Fragment, I as renderList, v as toDisplayString, H as createTextVNode, h as resolveComponent, K as resolveDirective } from "./vue.esm-bundler.ecfa1491.js";
-import { _ as _export_sfc, P as PageHeader } from "./app.415296ed.js";
-import { $ } from "./jquery.8baacbdb.js";
-import "./jquery.dataTables.min.70653878.js";
+import { o as openBlock, b as createElementBlock, q as createVNode, i as createBaseVNode, L as withDirectives, N as withModifiers, f as normalizeClass, F as Fragment, K as renderList, v as toDisplayString, J as createTextVNode, h as resolveComponent, M as resolveDirective } from "./vue.esm-bundler.4c64d56b.js";
+import { _ as _export_sfc, P as PageHeader } from "./app.18088dbe.js";
+import { $ } from "./jquery.55a3af33.js";
+import "./jquery.dataTables.min.cf006e4f.js";
 const _sfc_main = {
   data: function() {
     return {
-      entries: [],
+      outputs: [],
       loading: true,
       session: JSON.parse(sessionStorage.getItem("semtinel"))
     };
   },
+  components: {
+    "page-header": PageHeader
+  },
   methods: {
-    newEntry: function() {
-      this.$router.push("/semtinel/public/logistics/entry");
+    newOutput: function() {
+      this.$router.push("/semtinel/public/logistics/output");
     },
     listReload: function() {
-      this.getEntriesTable(true);
+      this.getOutputsTable(true);
     },
-    entryDetail: function(entry) {
+    outputDetail: function(output) {
+      let price_total = 0;
+      output.items.map(function(value, key) {
+        price_total += parseFloat(value.price_total);
+      });
+      output.price_total = price_total;
       this.$router.push({
-        name: "logistics.entry.detail",
+        name: "logistics.output.detail",
         params: {
-          entry: JSON.stringify(entry)
+          output: JSON.stringify(output)
         }
       });
     },
-    async getEntriesTable(reload = false) {
+    async getOutputsTable(reload = false) {
       let cmp = this, pole = localStorage.getItem("stnel_logist_pole"), project = localStorage.getItem("stnel_logist_project");
       this.loading = true;
       let headers = {
@@ -33,11 +41,11 @@ const _sfc_main = {
         "Accept": "application/json",
         "Authorization": "Bearer " + cmp.session.access_token
       };
-      await fetch("http://localhost/semtinel/public/api/logistics/entries/" + pole + "/" + project + "/" + reload, {
+      await fetch("http://localhost/semtinel/public/api/logistics/outputs/" + pole + "/" + project + "/" + reload, {
         method: "GET",
         headers
       }).then((response) => response.json()).then((data) => {
-        cmp.entries = data;
+        cmp.outputs = data;
         cmp.loading = false;
         if ($("#datatable").DataTable().destroy()) {
           setTimeout(() => {
@@ -91,9 +99,6 @@ const _sfc_main = {
       });
     }
   },
-  components: {
-    "page-header": PageHeader
-  },
   mounted() {
     let cmp = this;
     if (!JSON.parse(sessionStorage.getItem("semtinel")).access_token) {
@@ -106,11 +111,11 @@ const _sfc_main = {
       "Authorization": "Bearer " + cmp.session.access_token
     };
     JSON.parse(sessionStorage.getItem("semtinel"));
-    fetch("http://localhost/semtinel/public/api/logistics/entries/" + pole + "/" + project + "/true", {
+    fetch("http://localhost/semtinel/public/api/logistics/outputs/" + pole + "/" + project + "/true", {
       method: "GET",
       headers
     }).then((response) => response.json()).then((data) => {
-      cmp.entries = data;
+      cmp.outputs = data;
       cmp.loading = false;
       setTimeout(() => {
         $("#datatable").DataTable({
@@ -156,7 +161,7 @@ const _sfc_main = {
 const _hoisted_1 = { class: "container-fluid px-0" };
 const _hoisted_2 = { class: "card" };
 const _hoisted_3 = { class: "card-header" };
-const _hoisted_4 = /* @__PURE__ */ createBaseVNode("h3", { class: "card-title" }, "Entradas de mercanc\xEDa", -1);
+const _hoisted_4 = /* @__PURE__ */ createBaseVNode("h3", { class: "card-title" }, "Salidas de mercanc\xEDa", -1);
 const _hoisted_5 = { class: "card-tools" };
 const _hoisted_6 = /* @__PURE__ */ createBaseVNode("i", { class: "mdi mdi-reload mdi-24px text-green" }, null, -1);
 const _hoisted_7 = [
@@ -168,7 +173,7 @@ const _hoisted_9 = [
 ];
 const _hoisted_10 = { class: "card-body" };
 const _hoisted_11 = /* @__PURE__ */ createBaseVNode("div", { class: "col-12 text-center py-5 loading-table" }, [
-  /* @__PURE__ */ createBaseVNode("span", { class: "mdi mdi-loading mdi-spin mdi-36px" }, "\xA0Cargando entradas...")
+  /* @__PURE__ */ createBaseVNode("span", { class: "mdi mdi-loading mdi-spin mdi-36px" }, "\xA0Cargando salidas...")
 ], -1);
 const _hoisted_12 = [
   _hoisted_11
@@ -184,10 +189,10 @@ const _hoisted_15 = /* @__PURE__ */ createBaseVNode("thead", null, [
       width: "5%",
       class: "text-center no-sort"
     }, "No."),
-    /* @__PURE__ */ createBaseVNode("th", null, "Entrada"),
-    /* @__PURE__ */ createBaseVNode("th", { width: "15%" }, "Origen"),
-    /* @__PURE__ */ createBaseVNode("th", { width: "15%" }, "Orden Compra"),
-    /* @__PURE__ */ createBaseVNode("th", { width: "15%" }, "Destino"),
+    /* @__PURE__ */ createBaseVNode("th", null, "Documento"),
+    /* @__PURE__ */ createBaseVNode("th", { width: "15%" }, "Pa\xF1ol"),
+    /* @__PURE__ */ createBaseVNode("th", { width: "15%" }, "Responsable"),
+    /* @__PURE__ */ createBaseVNode("th", { width: "15%" }, "Autoriz\xF3"),
     /* @__PURE__ */ createBaseVNode("th", {
       width: "10%",
       class: "text-center"
@@ -195,23 +200,18 @@ const _hoisted_15 = /* @__PURE__ */ createBaseVNode("thead", null, [
     /* @__PURE__ */ createBaseVNode("th", {
       width: "10%",
       class: "no-sort text-center"
-    }, "Estado"),
-    /* @__PURE__ */ createBaseVNode("th", {
-      width: "8%",
-      class: "no-sort text-center"
-    }, "Confirmada")
+    }, "Estado")
   ])
 ], -1);
 const _hoisted_16 = { class: "text-center" };
 const _hoisted_17 = ["onClick"];
 const _hoisted_18 = { class: "text-center" };
 const _hoisted_19 = { class: "text-center" };
-const _hoisted_20 = { class: "text-center" };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_page_header = resolveComponent("page-header");
   const _directive_tooltip = resolveDirective("tooltip");
   return openBlock(), createElementBlock(Fragment, null, [
-    createVNode(_component_page_header, { pagetitle: "Listado de Entradas de mercanc\xEDa" }),
+    createVNode(_component_page_header, { pagetitle: "Listado de Salidas de mercanc\xEDa de pa\xF1oles" }),
     createBaseVNode("div", _hoisted_1, [
       createBaseVNode("div", _hoisted_2, [
         createBaseVNode("div", _hoisted_3, [
@@ -229,7 +229,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               class: "btn btn-tool pl-0",
               "data-toggle": "modal",
               "data-target": "#modal-system-form",
-              onClick: _cache[1] || (_cache[1] = ($event) => $options.newEntry())
+              onClick: _cache[1] || (_cache[1] = ($event) => $options.newOutput())
             }, _hoisted_9)), [
               [_directive_tooltip, "Nueva Entrada"]
             ])
@@ -246,43 +246,36 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               createBaseVNode("table", _hoisted_14, [
                 _hoisted_15,
                 createBaseVNode("tbody", null, [
-                  (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.entries, (entry, idx) => {
+                  (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.outputs, (output, idx) => {
                     return openBlock(), createElementBlock("tr", {
-                      key: entry.id
+                      key: output.id
                     }, [
                       createBaseVNode("td", _hoisted_16, toDisplayString(idx + 1), 1),
                       createBaseVNode("td", null, [
                         withDirectives(createBaseVNode("span", {
-                          class: normalizeClass(["fas fa-paperclip", entry.attach_path == "" || entry.attach_path == null ? "icon-noexists" : "icon-exists"])
+                          class: normalizeClass(["fas fa-paperclip", output.attach_path == "" || output.attach_path == null ? "icon-noexists" : "icon-exists"])
                         }, null, 2), [
-                          [_directive_tooltip, entry.attach_path == "" || entry.attach_path == null ? "Sin arhivo adjunto" : "Archivo adjunto"]
+                          [_directive_tooltip, output.attach_path == "" || output.attach_path == null ? "Sin arhivo adjunto" : "Archivo adjunto"]
                         ]),
                         createTextVNode("\xA0 "),
                         withDirectives((openBlock(), createElementBlock("a", {
                           class: "show-lnk",
                           href: "javascript:void(0);",
-                          onClick: ($event) => $options.entryDetail(entry)
+                          onClick: ($event) => $options.outputDetail(output)
                         }, [
-                          createTextVNode(toDisplayString(entry.code), 1)
+                          createTextVNode(toDisplayString(output.code), 1)
                         ], 8, _hoisted_17)), [
-                          [_directive_tooltip, "Click para Mostrar Detalles de esta Entrada"]
+                          [_directive_tooltip, "Click para Mostrar Detalles de esta Salida"]
                         ])
                       ]),
-                      createBaseVNode("td", null, toDisplayString(entry.origin), 1),
-                      createBaseVNode("td", null, toDisplayString(entry.oc), 1),
-                      createBaseVNode("td", null, toDisplayString(entry.warehouse_name), 1),
-                      createBaseVNode("td", _hoisted_18, toDisplayString(entry.created_at), 1),
+                      createBaseVNode("td", null, toDisplayString(output.warehouse_name), 1),
+                      createBaseVNode("td", null, toDisplayString(output.warehouse_owner), 1),
+                      createBaseVNode("td", null, toDisplayString(output.authorizing), 1),
+                      createBaseVNode("td", _hoisted_18, toDisplayString(output.created_at), 1),
                       createBaseVNode("td", _hoisted_19, [
                         createBaseVNode("span", {
-                          class: normalizeClass(["badge", entry.status == "Parcial" ? "badge-warning" : "badge-dark"])
-                        }, toDisplayString(entry.status), 3)
-                      ]),
-                      createBaseVNode("td", _hoisted_20, [
-                        withDirectives(createBaseVNode("i", {
-                          class: normalizeClass(["mdi mdi-18px", entry.confirm == 1 ? "mdi-radiobox-marked icon-exists" : "mdi-checkbox-blank-circle-outline icon-noexists"])
-                        }, null, 2), [
-                          [_directive_tooltip, entry.confirm == 1 ? "Confirmada" : "Sin Confirmar"]
-                        ])
+                          class: normalizeClass(["badge", output.status == "Creada" ? "badge-warning" : "badge-dark"])
+                        }, toDisplayString(output.status), 3)
                       ])
                     ]);
                   }), 128))
@@ -295,7 +288,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 64);
 }
-const EntriesComponent = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
+const OutputsComponent = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
 export {
-  EntriesComponent as default
+  OutputsComponent as default
 };
