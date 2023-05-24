@@ -13,11 +13,11 @@
   @vite(['resources/sass/app.scss', 'resources/js/app.js'])
   
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/css/bootstrap.min.css?v=7857324">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/fas-620/css/all.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/fas-620/css/all.min.css?v=7857324">
   <!-- Material Design Icons -->
-  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="http://localhost/semtinel/public/themes/semtinel/vendor/mdi-6.9/css/materialdesignicons.min.css?v=7857324">
   <!-- Select2 Plugin -->
   <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="http://localhost/semtinel/public/themes/adminlte320/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -158,10 +158,14 @@
       <!-- /.content-wrapper -->
 
       <footer class="main-footer">
-        <div class="float-right d-none d-sm-block">
-          Plataforma de Gesti&oacute;n Corporativa <b>Semtinel - Logística</b> v1.0
+        <div class="row">
+          <div class="col-md-6 text-center text-md-left">
+            Copyright &copy; {{ date('Y') }} <b>A.E.I. UCM</b> - <b>BBI</b>. Servicios Informáticos.
+          </div>
+          <div class="col-md-6 text-center text-md-right d-none d-md-inline">
+            Plataforma de Gesti&oacute;n Corporativa <b>Semtinel - Logística</b> v1.0
+          </div>
         </div>
-        Copyright &copy; {{ date('Y') }} <b>A.E.I. UCM</b> - <b>BBI</b>. Servicios Informáticos.
       </footer>
 
       <a id="back-to-top" 

@@ -54,12 +54,13 @@ CREATE TABLE IF NOT EXISTS `logistics_outputs` (
   `authorized` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Trabajador autorizado',
   `authorizing` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Especialista que autoriza',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla semtinel.logistics_outputs: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla semtinel.logistics_outputs: ~2 rows (aproximadamente)
 INSERT INTO `logistics_outputs` (`id`, `code`, `pole`, `project`, `warehouse`, `warehouse_owner`, `created_at`, `updated_at`, `created_by`, `updated_by`, `comment`, `status`, `attach_path`, `confirm`, `cancel`, `cancel_by`, `type`, `work_object`, `destin_warehouse`, `destin_warehouse_owner`, `authorized`, `authorizing`) VALUES
-	(1, 'TRANSFER-METROP-1', 'HAB', 1, 1, 'Tony Machado', '2023-04-11 16:02:55', '2023-04-24 18:36:07', 1, 1, NULL, 'confirmada', 'uploads/outputs/TRANSFER-METROP-1.pdf', 1, NULL, NULL, 'transfer', NULL, 3, 'Diego Machado', NULL, 'Autoriza'),
-	(2, 'SAL-METROP-2', 'HAB', 1, 1, 'Tony Machado', '2023-04-23 15:47:45', '2023-04-23 21:43:10', 1, 1, 'Esto es una salida de prueba', 'cancelada', NULL, NULL, 1, 1, 'towork', 14, NULL, NULL, 'Diego Machado', 'Tony Machado');
+	(1, 'SAL-METROP-1', 'HAB', 1, 1, 'Tony Machado', '2023-05-05 10:10:04', '2023-05-05 10:11:15', 1, 1, 'Esto es una prueba...', 'confirmada', NULL, 1, NULL, NULL, 'towork', 14, NULL, NULL, 'Nombre Autorizado', 'Nombre Autoriza'),
+	(2, 'SAL-METROP-2', 'HAB', 1, 1, 'Tony Machado', '2023-05-05 10:18:21', '2023-05-12 09:31:04', 1, 1, NULL, 'confirmada', NULL, 1, NULL, NULL, 'towork', 15, NULL, NULL, 'Nombre Autorizado 2', 'Nombre Autoriza 2'),
+	(3, 'SAL-METROP-3', 'HAB', 1, 1, 'Tony Machado', '2023-05-12 09:27:47', '2023-05-12 09:40:06', 1, 1, NULL, 'confirmada', 'uploads/outputs/SAL-METROP-3.pdf', 1, NULL, NULL, 'towork', 13, NULL, NULL, 'Autorizado', 'Autoriza');
 
 -- Volcando estructura para tabla semtinel.logistics_output_items
 CREATE TABLE IF NOT EXISTS `logistics_output_items` (
@@ -78,12 +79,13 @@ CREATE TABLE IF NOT EXISTS `logistics_output_items` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla semtinel.logistics_output_items: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla semtinel.logistics_output_items: ~2 rows (aproximadamente)
 INSERT INTO `logistics_output_items` (`id`, `id_output`, `id_inventory`, `product_id`, `product_code`, `oc`, `item_description`, `um`, `quantity`, `stowage_card`, `price_unit`, `price_total`, `created_at`, `updated_at`) VALUES
-	(1, 1, 'oc.21929.200881.1', '5', 'ACA-4612', 'ROCAN2-0039', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 800 mm', 'UNIDAD', 8.00, '654789', 47.41, 379.28, '2023-04-11 16:02:55', '2023-04-11 16:02:55'),
-	(2, 2, 'oc.21929.200881.1', '5', 'ACA-4612', 'ROCAN2-0039', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 800 mm', 'UNIDAD', 5.00, '654789', 47.41, 237.05, '2023-04-23 15:47:45', '2023-04-23 15:47:45');
+	(1, 1, 'oc.21939.200947.1', '5', 'EQU-13402', 'ROCAN2-0042', 'SET DE ACCESORIOS BÁSICOS. REF. AT-069N CODIGO S.A. 8468', 'UNIDAD', 1.00, '12345876', 62.06, 62.06, '2023-05-05 10:10:04', '2023-05-05 10:10:04'),
+	(2, 2, 'oc.21939.200947.1', '5', 'EQU-13402', 'ROCAN2-0042', 'SET DE ACCESORIOS BÁSICOS. REF. AT-069N CODIGO S.A. 8468', 'UNIDAD', 2.00, '12345876', 62.06, 124.12, '2023-05-05 10:18:21', '2023-05-05 10:18:21'),
+	(3, 3, 'oc.21939.200947.1', '5', 'EQU-13402', 'ROCAN2-0042', 'SET DE ACCESORIOS BÁSICOS. REF. AT-069N CODIGO S.A. 8468', 'UNIDAD', 3.00, '12345876', 62.06, 186.18, '2023-05-12 09:27:47', '2023-05-12 09:27:47');
 
 -- Volcando estructura para tabla semtinel.logistics_receipts
 CREATE TABLE IF NOT EXISTS `logistics_receipts` (
@@ -109,14 +111,12 @@ CREATE TABLE IF NOT EXISTS `logistics_receipts` (
   `cancel` int DEFAULT NULL COMMENT 'Entrada cancelada',
   `cancel_by` int DEFAULT NULL COMMENT 'Usuario que cancela',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla semtinel.logistics_receipts: ~3 rows (aproximadamente)
+-- Volcando datos para la tabla semtinel.logistics_receipts: ~0 rows (aproximadamente)
 INSERT INTO `logistics_receipts` (`id`, `code`, `origin`, `document_type`, `document_number`, `oc`, `output`, `created_at`, `updated_at`, `created_by`, `updated_by`, `pole`, `project`, `warehouse`, `warehouse_owner`, `comment`, `status`, `attach_path`, `confirm`, `cancel`, `cancel_by`) VALUES
-	(1, 'ENT-METROP-1', 'Tiro Directo Altec', NULL, '12345', 'ROCAN2-0039', NULL, '2023-04-08 08:19:31', '2023-04-08 08:19:31', 1, 1, 'HAB', 1, 1, 'Tony Machado', NULL, 'parcial', NULL, NULL, NULL, NULL),
-	(2, 'ENT-METROP-2', 'Tiro Directo Altec', NULL, '123457', 'ROCAN2-0039', NULL, '2023-04-09 16:46:37', '2023-04-09 21:31:04', 1, 1, 'HAB', 1, 1, 'Tony Machado', 'Esto es una prueba para la presentación de abril...', 'parcial', NULL, 1, NULL, NULL),
-	(6, 'TRANSFER-METROP-1', 'Transferencia de Pañol', NULL, NULL, NULL, 'TRANSFER-METROP-1', '2023-04-11 16:02:55', '2023-04-11 17:13:01', 1, 1, 'HAB', 1, 3, 'Diego Machado', NULL, 'total', NULL, 1, NULL, NULL),
-	(7, 'ENT-METROP-7', 'Despacho de Almacén', 'Orden de Despacho', '00885', NULL, NULL, '2023-04-23 17:22:47', '2023-04-23 21:39:37', 1, 1, 'HAB', 1, 1, 'Tony Machado', NULL, 'total', NULL, 1, NULL, NULL);
+	(2, 'ENT-METROP-2', 'Tiro Directo Compras Locales', NULL, '00001', 'METROP-0032', NULL, '2023-04-28 17:38:24', '2023-04-28 17:38:24', 1, 1, 'HAB', 1, 1, 'Tony Machado', 'Carga Inicial de recursos en pañol.', 'total', NULL, NULL, NULL, NULL),
+	(3, 'ENT-METROP-3', 'Tiro Directo Altec', NULL, '123', 'ROCAN2-0042', NULL, '2023-05-05 09:22:46', '2023-05-05 09:54:03', 1, 1, 'HAB', 1, 1, 'Tony Machado', NULL, 'parcial', NULL, 1, NULL, NULL);
 
 -- Volcando estructura para tabla semtinel.logistics_receipt_items_dispatch
 CREATE TABLE IF NOT EXISTS `logistics_receipt_items_dispatch` (
@@ -140,11 +140,9 @@ CREATE TABLE IF NOT EXISTS `logistics_receipt_items_dispatch` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla semtinel.logistics_receipt_items_dispatch: ~0 rows (aproximadamente)
-INSERT INTO `logistics_receipt_items_dispatch` (`id`, `id_receipt`, `odoo_id_stock_move`, `odoo_id_stock_picking`, `oc`, `product_code`, `category_name`, `category_complete_name`, `docnum`, `item_description`, `um`, `product_quantity`, `received_quantity`, `stowage_card`, `price_unit`, `price_total`, `comment`, `created_at`, `updated_at`) VALUES
-	(1, 7, 427957, 50152, 'PLMRDA-0029', 'EQU-9579', 'EQU', 'EQU', 'METROP/OUT/00885', '[EQU-9579] Convertidor de frecuencia a doble coque e imantación permanente R112 TRIFASICO Entrada 400 Volts 60 Hz y la transforma en 46 Volts 240 Hz N. 3 tomas de corriente (salidas). Intensidad 54 A - Armazon protector', 'UNIDAD', 10.000, 10.000, '1234567811', 743.66, 7436.65, NULL, '2023-04-23 17:22:47', '2023-04-23 17:22:47');
 
 -- Volcando estructura para tabla semtinel.logistics_receipt_items_oc
 CREATE TABLE IF NOT EXISTS `logistics_receipt_items_oc` (
@@ -171,11 +169,11 @@ CREATE TABLE IF NOT EXISTS `logistics_receipt_items_oc` (
 
 -- Volcando datos para la tabla semtinel.logistics_receipt_items_oc: ~5 rows (aproximadamente)
 INSERT INTO `logistics_receipt_items_oc` (`id`, `id_receipt`, `odoo_id_order_line`, `odoo_id_order`, `product_code`, `category_name`, `category_complete_name`, `product_description`, `item_description`, `um`, `received_quantity`, `stowage_card`, `price_unit`, `price_total`, `sequence`, `comment`, `created_at`, `updated_at`) VALUES
-	(1, 1, 200876, 21929, 'ACA-4612', 'ACA', 'ACA', 'Placa acero inoxidable AISI 316/A4 pulido de 500x900x0,8 mm', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 900 mm', 'UNIDAD', 10.000, '12345678', 47.412400, 474.12, 1.00, NULL, '2023-04-08 08:19:31', '2023-04-08 08:19:31'),
-	(2, 1, 200878, 21929, 'ACA-4612', 'ACA', 'ACA', 'Placa acero inoxidable AISI 316/A4 pulido de 500x900x0,8 mm', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 750 mm', 'UNIDAD', 10.000, '87654321', 47.412400, 474.12, 2.00, NULL, '2023-04-08 08:19:31', '2023-04-08 08:19:31'),
-	(3, 1, 200879, 21929, 'ACA-4612', 'ACA', 'ACA', 'Placa acero inoxidable AISI 316/A4 pulido de 500x900x0,8 mm', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 700 mm', 'UNIDAD', 10.000, '12348765', 47.412400, 474.12, 3.00, NULL, '2023-04-08 08:19:31', '2023-04-08 08:19:31'),
-	(4, 2, 200876, 21929, 'ACA-4612', 'ACA', 'ACA', 'Placa acero inoxidable AISI 316/A4 pulido de 500x900x0,8 mm', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 900 mm', 'UNIDAD', 12.000, '12345678', 47.412400, 568.95, 1.00, NULL, '2023-04-09 16:46:38', '2023-04-09 16:46:38'),
-	(5, 2, 200881, 21929, 'ACA-4612', 'ACA', 'ACA', 'Placa acero inoxidable AISI 316/A4 pulido de 500x900x0,8 mm', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 800 mm', 'UNIDAD', 20.000, '654789', 47.412400, 948.25, 5.00, NULL, '2023-04-09 16:46:38', '2023-04-09 16:46:38');
+	(1, 2, 201462, 22009, 'ACA-REVE-FACH-0325', 'FACH', 'ACA / REVESTIMIENTO / FACHADA', 'Bola esponja limpieza manguera diám. 25 mm interior 1107520', 'Bola esponja Ø 30 mm. fina. RV', 'UNIDAD', 70.000, '114512', 0.967592, 67.73, 3.00, NULL, '2023-04-28 17:38:24', '2023-04-28 17:38:24'),
+	(2, 2, 201463, 22009, 'CON-ESTR-2478', 'ESTR', 'CON / ESTRUCTURA', 'Clavo con arandela', 'Clavo llesero acero punta templada 200 mm. RV', 'UNIDAD', 67.000, '114513', 2.498592, 167.41, 4.00, NULL, '2023-04-28 17:38:24', '2023-04-28 17:38:24'),
+	(3, 2, 201484, 22009, 'ELE-CANA-1646', 'CANA', 'ELE / CANALIZACIONES', 'Carril modular W600', 'Carril media caña nº16. RV', 'UNIDAD', 8.000, 'SN', 4.250056, 34.00, 25.00, NULL, '2023-04-28 17:38:24', '2023-04-28 17:38:24'),
+	(4, 3, 200945, 21939, 'ELE-PARA-0117', 'PARA', 'ELE / PARARRAYOS', 'Apliweld-T: Tabletas de soldadura 20 ud.', 'APLIWELD®-T TABLETAS PARA SOLDADURA EXOTÉRMICA. REF. AT-020N CODIGO S.A. 8468', 'UNIDAD', 50.000, '12345678', 2.584328, 129.22, 2.00, NULL, '2023-05-05 09:22:46', '2023-05-05 09:22:46'),
+	(5, 3, 200947, 21939, 'EQU-13402', 'EQU', 'EQU', 'Set de accesorios básicos Apliweld®-E', 'SET DE ACCESORIOS BÁSICOS. REF. AT-069N CODIGO S.A. 8468', 'UNIDAD', 10.000, '12345876', 62.060616, 620.61, 4.00, NULL, '2023-05-05 09:22:46', '2023-05-05 09:22:46');
 
 -- Volcando estructura para tabla semtinel.logistics_receipt_items_transfer
 CREATE TABLE IF NOT EXISTS `logistics_receipt_items_transfer` (
@@ -194,11 +192,9 @@ CREATE TABLE IF NOT EXISTS `logistics_receipt_items_transfer` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Volcando datos para la tabla semtinel.logistics_receipt_items_transfer: ~0 rows (aproximadamente)
-INSERT INTO `logistics_receipt_items_transfer` (`id`, `id_receipt`, `id_inventory`, `product_id`, `product_code`, `oc`, `item_description`, `um`, `received_quantity`, `stowage_card`, `price_unit`, `price_total`, `created_at`, `updated_at`) VALUES
-	(1, 6, 'oc.21929.200881.1', '5', 'ACA-4612', 'ROCAN2-0039', 'PLACA DE ACERO INOXIDABLE. CALIDAD AISI 316L/A4 PULIDO. DE 0,8 x 500 x 800 mm', 'UNIDAD', 8.000, '654789', 47.41, 379.28, '2023-04-11 16:02:55', '2023-04-11 16:02:55');
 
 -- Volcando estructura para tabla semtinel.migrations
 CREATE TABLE IF NOT EXISTS `migrations` (
@@ -245,7 +241,8 @@ INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 	(14, 'App\\Models\\User', 2),
 	(14, 'App\\Models\\User', 4),
 	(1, 'App\\Models\\User', 5),
-	(1, 'App\\Models\\User', 6);
+	(1, 'App\\Models\\User', 6),
+	(2, 'App\\Models\\User', 7);
 
 -- Volcando estructura para tabla semtinel.password_resets
 CREATE TABLE IF NOT EXISTS `password_resets` (
@@ -323,7 +320,7 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
   KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=631 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla semtinel.personal_access_tokens: ~326 rows (aproximadamente)
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
@@ -925,7 +922,38 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 	(596, 'App\\Models\\User', 1, 'auth_token', '1ff7c3e088359247abecc4e4efaffaa9434e4e906d0cf60cc6475f9611729196', '["*"]', NULL, NULL, '2023-04-22 00:25:50', '2023-04-22 00:25:50'),
 	(597, 'App\\Models\\User', 1, 'auth_token', '4b9cc88a566b42bf626e66d04286a30fcd96aafd7d3913406a5441405b2f77d6', '["*"]', NULL, NULL, '2023-04-23 17:21:30', '2023-04-23 17:21:30'),
 	(598, 'App\\Models\\User', 1, 'auth_token', '4049808ebd9467ec85adc4dcb531ba0e22431e7a2a2689d792509953a6ad2682', '["*"]', NULL, NULL, '2023-04-24 22:32:19', '2023-04-24 22:32:19'),
-	(599, 'App\\Models\\User', 1, 'auth_token', 'c49913ad80ec5f99390eb92492ac3c92242dd66af3a53bfb8edf20d73c05b39f', '["*"]', NULL, NULL, '2023-04-25 18:27:54', '2023-04-25 18:27:54');
+	(599, 'App\\Models\\User', 1, 'auth_token', 'c49913ad80ec5f99390eb92492ac3c92242dd66af3a53bfb8edf20d73c05b39f', '["*"]', NULL, NULL, '2023-04-25 18:27:54', '2023-04-25 18:27:54'),
+	(600, 'App\\Models\\User', 1, 'auth_token', 'e703493cd96b0b64cf69bd4cd94af5aa34e7b187b8b11bad54dd410044cb2824', '["*"]', NULL, NULL, '2023-04-26 19:01:52', '2023-04-26 19:01:52'),
+	(601, 'App\\Models\\User', 1, 'auth_token', 'bf643bb0e1504fd1d6ddce2a1aadd4d21e5c554777e48a925d5ac656f86adcb0', '["*"]', NULL, NULL, '2023-04-28 21:04:35', '2023-04-28 21:04:35'),
+	(602, 'App\\Models\\User', 1, 'auth_token', '08e22afbbf778efd4df5c35e09a3627d391565ca4997bbf44e48d21c066e427a', '["*"]', NULL, NULL, '2023-05-04 16:08:22', '2023-05-04 16:08:22'),
+	(603, 'App\\Models\\User', 1, 'auth_token', '48eb73fb0f6614e858c7f6b86a63d77132d6d5a7140d4f98ad2c8cf653b7ab65', '["*"]', NULL, NULL, '2023-05-04 17:31:06', '2023-05-04 17:31:06'),
+	(604, 'App\\Models\\User', 1, 'auth_token', 'a115546950278f5b514320a994543cc0e749361c48939a6c9bbf04952bca2ac7', '["*"]', NULL, NULL, '2023-05-04 18:09:42', '2023-05-04 18:09:42'),
+	(605, 'App\\Models\\User', 1, 'auth_token', '5cf7f1a92ce09f66277b8df0b936ca2c5d788d2d10645113b3849cd25c148f11', '["*"]', NULL, NULL, '2023-05-04 21:17:57', '2023-05-04 21:17:57'),
+	(606, 'App\\Models\\User', 1, 'auth_token', '19b8fa14945921c5caad2f224f98cc7c43d707dd78d060694d0b6a60db302ae8', '["*"]', NULL, NULL, '2023-05-05 12:20:11', '2023-05-05 12:20:11'),
+	(607, 'App\\Models\\User', 1, 'auth_token', 'd64e008ce2e99b400e683d8b18c4a96f9311142f28e5873b0ea65b75d6e39879', '["*"]', NULL, NULL, '2023-05-06 04:34:40', '2023-05-06 04:34:40'),
+	(608, 'App\\Models\\User', 1, 'auth_token', 'eede1dbb8ac8ab6d76b7d04ba260906d92b1e4f1a480ab40c3fa9aa3123f2167', '["*"]', NULL, NULL, '2023-05-12 12:35:15', '2023-05-12 12:35:15'),
+	(609, 'App\\Models\\User', 1, 'auth_token', 'f69d3f940c882840fe4086ff1559b9989cd40a6b4c2b6b55911c36c5e51d9832', '["*"]', NULL, NULL, '2023-05-12 13:25:54', '2023-05-12 13:25:54'),
+	(610, 'App\\Models\\User', 7, 'auth_token', 'ec043256076f8d7b91a9571a07ec2c8a733a038f400030dc5cdce719de04c6ad', '["*"]', NULL, NULL, '2023-05-12 14:35:03', '2023-05-12 14:35:03'),
+	(611, 'App\\Models\\User', 1, 'auth_token', '886d5ac65999251060121dc41242b3ba311ee6ef675a781a10cd4e61d3cb1823', '["*"]', NULL, NULL, '2023-05-12 14:35:41', '2023-05-12 14:35:41'),
+	(612, 'App\\Models\\User', 7, 'auth_token', 'f49a137387c9aa77fefff0be206375f866b93dc4d51facb42ac141986ea5998d', '["*"]', NULL, NULL, '2023-05-12 14:39:55', '2023-05-12 14:39:55'),
+	(613, 'App\\Models\\User', 7, 'auth_token', 'ac1adcc8e03a8d813aed830fd9951751edf7be7cf3d5822e04b915efb1a18adb', '["*"]', NULL, NULL, '2023-05-12 14:43:00', '2023-05-12 14:43:00'),
+	(614, 'App\\Models\\User', 7, 'auth_token', '9bad14a698e59dc7b3ae130ad86524ca8088b0469cba035fefeca4e0fecdcd06', '["*"]', NULL, NULL, '2023-05-12 14:46:21', '2023-05-12 14:46:21'),
+	(615, 'App\\Models\\User', 1, 'auth_token', '7b5b902df6daf3d7e911014233946d5c1d1cbf71ae9eb350e176dde85670737d', '["*"]', NULL, NULL, '2023-05-12 14:53:21', '2023-05-12 14:53:21'),
+	(616, 'App\\Models\\User', 7, 'auth_token', 'b137534ff36395f08d90664177988bea7f12d4256514409edf9b58c6aeacdf5b', '["*"]', NULL, NULL, '2023-05-12 14:55:14', '2023-05-12 14:55:14'),
+	(617, 'App\\Models\\User', 7, 'auth_token', '0698c344a595c52fc5e4c7e035365639fb3850c516ff4891692eb3ca4446e9c8', '["*"]', NULL, NULL, '2023-05-12 14:58:42', '2023-05-12 14:58:42'),
+	(618, 'App\\Models\\User', 1, 'auth_token', 'b75d943983b83dae308381b56d2dc366f5fd8a01b79a92b37d2f52f61528b9c1', '["*"]', NULL, NULL, '2023-05-13 18:39:49', '2023-05-13 18:39:49'),
+	(619, 'App\\Models\\User', 1, 'auth_token', '45552b5b3ba5673f721d056537aad045e86577e79bd5736536e9d0af27b71f8c', '["*"]', NULL, NULL, '2023-05-15 13:35:39', '2023-05-15 13:35:39'),
+	(620, 'App\\Models\\User', 1, 'auth_token', '85b384795f381bb60c861ef9f73d241a05aede0863e1300850594f47f2547b03', '["*"]', NULL, NULL, '2023-05-15 21:59:39', '2023-05-15 21:59:39'),
+	(621, 'App\\Models\\User', 1, 'auth_token', '23c8651afba1586386c8e4742e8ed7cecffee8fe4c9de13e529d7c77bc3104d0', '["*"]', NULL, NULL, '2023-05-15 23:32:30', '2023-05-15 23:32:30'),
+	(622, 'App\\Models\\User', 1, 'auth_token', '59bd569f5d61c64092fbe9eb75cf04a1156641334a1d41ecf5e3aecb1176bbc9', '["*"]', '2023-05-16 00:50:17', NULL, '2023-05-15 23:36:12', '2023-05-16 00:50:17'),
+	(623, 'App\\Models\\User', 1, 'auth_token', '8e79e8ba08bfa61ceec265ff7a850774ac648a654c629b15045b84490475b06c', '["*"]', NULL, NULL, '2023-05-16 11:26:42', '2023-05-16 11:26:42'),
+	(624, 'App\\Models\\User', 1, 'auth_token', 'c81720d962cb595a9d4ca9aabc094b3264bd645973a9e0a4619533878f51e424', '["*"]', NULL, NULL, '2023-05-16 20:50:38', '2023-05-16 20:50:38'),
+	(625, 'App\\Models\\User', 1, 'auth_token', 'f33623476dffe0df026e500ae8e9a3eea38fd3c07935512fa0d4231d2924184a', '["*"]', NULL, NULL, '2023-05-17 00:37:18', '2023-05-17 00:37:18'),
+	(626, 'App\\Models\\User', 1, 'auth_token', 'a208fe37f8b7313b53bb672947b96962b590e829cd7e343a646f2549c0c9f7b1', '["*"]', NULL, NULL, '2023-05-18 12:25:18', '2023-05-18 12:25:18'),
+	(627, 'App\\Models\\User', 1, 'auth_token', '2882362ad0f41edc924b26ff1522de3f461fb21acf312c90a874f68755058010', '["*"]', NULL, NULL, '2023-05-18 12:31:17', '2023-05-18 12:31:17'),
+	(628, 'App\\Models\\User', 1, 'auth_token', 'bf45276b09edbb8dd7a29c5a32cd8c1fb7b13e7cf8e75251636bef50124311b9', '["*"]', NULL, NULL, '2023-05-18 12:34:12', '2023-05-18 12:34:12'),
+	(629, 'App\\Models\\User', 1, 'auth_token', '82e13c8187940b1478a267cd57e01700b22da7e549a098661ee9517afc2b2cf8', '["*"]', NULL, NULL, '2023-05-18 12:35:56', '2023-05-18 12:35:56'),
+	(630, 'App\\Models\\User', 1, 'auth_token', 'ad1111cec9173d41226cf7e551c50eba5c668d1f0420730bcfe460b3c19f2f66', '["*"]', NULL, NULL, '2023-05-18 18:32:42', '2023-05-18 18:32:42');
 
 -- Volcando estructura para tabla semtinel.roles
 CREATE TABLE IF NOT EXISTS `roles` (
@@ -1001,13 +1029,17 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(41, 1),
 	(42, 1),
 	(1, 2),
+	(3, 2),
+	(28, 2),
 	(29, 2),
+	(39, 2),
 	(3, 3),
 	(28, 3),
 	(29, 3),
 	(39, 3),
 	(41, 3),
 	(42, 3),
+	(1, 4),
 	(3, 4),
 	(4, 4),
 	(28, 4),
@@ -1015,11 +1047,13 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(34, 4),
 	(35, 4),
 	(36, 4),
+	(37, 4),
 	(38, 4),
 	(39, 4),
 	(40, 4),
 	(41, 4),
 	(42, 4),
+	(1, 5),
 	(3, 5),
 	(4, 5),
 	(28, 5),
@@ -1095,12 +1129,10 @@ CREATE TABLE IF NOT EXISTS `syst_logs` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla semtinel.syst_logs: ~14 rows (aproximadamente)
+-- Volcando datos para la tabla semtinel.syst_logs: ~18 rows (aproximadamente)
 INSERT INTO `syst_logs` (`id`, `pole`, `project`, `client`, `action`, `description`, `entity_id`, `user`, `created_at`, `updated_at`) VALUES
-	(1, 'HAB', 1, '127.0.0.1', 'create-entry', 'Entrada Creada', 1, 1, '2023-04-08 08:00:46', '2023-04-08 08:00:46'),
-	(2, 'HAB', 1, '127.0.0.1', 'create-entry', 'Entrada Creada', 1, 1, '2023-04-08 08:19:31', '2023-04-08 08:19:31'),
 	(3, 'HAB', 1, '127.0.0.1', 'create-entry', 'Entrada Creada', 2, 1, '2023-04-09 16:46:38', '2023-04-09 16:46:38'),
 	(4, 'HAB', 1, '127.0.0.1', 'confirm-entry', 'Entrada Confirmada', 2, 1, '2023-04-09 21:31:04', '2023-04-09 21:31:04'),
 	(7, 'HAB', 1, '127.0.0.1', 'create-output', 'Salida Creada', 1, 1, '2023-04-09 23:46:08', '2023-04-09 23:46:08'),
@@ -1111,7 +1143,17 @@ INSERT INTO `syst_logs` (`id`, `pole`, `project`, `client`, `action`, `descripti
 	(20, 'HAB', 1, '127.0.0.1', 'create-entry', 'Entrada Creada', 7, 1, '2023-04-23 17:22:47', '2023-04-23 17:22:47'),
 	(21, 'HAB', 1, '127.0.0.1', 'confirm-entry', 'Entrada Confirmada', 7, 1, '2023-04-23 21:39:37', '2023-04-23 21:39:37'),
 	(22, 'HAB', 1, '127.0.0.1', 'cancel-output', 'Salida Cancelada', 2, 1, '2023-04-23 21:43:10', '2023-04-23 21:43:10'),
-	(23, 'HAB', 1, '127.0.0.1', 'attach-output', 'Archivo Adjuntado a Salida', 1, 1, '2023-04-24 18:36:07', '2023-04-24 18:36:07');
+	(23, 'HAB', 1, '127.0.0.1', 'attach-output', 'Archivo Adjuntado a Salida', 1, 1, '2023-04-24 18:36:07', '2023-04-24 18:36:07'),
+	(24, 'HAB', 1, '127.0.0.1', 'create-entry', 'Entrada Creada', 2, 1, '2023-04-28 17:38:24', '2023-04-28 17:38:24'),
+	(25, 'HAB', 1, '127.0.0.1', 'create-entry', 'Entrada Creada', 3, 1, '2023-05-05 09:22:46', '2023-05-05 09:22:46'),
+	(26, 'HAB', 1, '127.0.0.1', 'confirm-entry', 'Entrada Confirmada', 3, 1, '2023-05-05 09:54:03', '2023-05-05 09:54:03'),
+	(27, 'HAB', 1, '127.0.0.1', 'create-output', 'Salida Creada', 1, 1, '2023-05-05 10:10:04', '2023-05-05 10:10:04'),
+	(28, 'HAB', 1, '127.0.0.1', 'confirm-output', 'Salida Confirmada', 1, 1, '2023-05-05 10:11:15', '2023-05-05 10:11:15'),
+	(29, 'HAB', 1, '127.0.0.1', 'create-output', 'Salida Creada', 2, 1, '2023-05-05 10:18:21', '2023-05-05 10:18:21'),
+	(30, 'HAB', 1, '127.0.0.1', 'create-output', 'Salida Creada', 3, 1, '2023-05-12 09:27:47', '2023-05-12 09:27:47'),
+	(31, 'HAB', 1, '127.0.0.1', 'attach-output', 'Archivo Adjuntado a Salida', 3, 1, '2023-05-12 09:30:06', '2023-05-12 09:30:06'),
+	(32, 'HAB', 1, '127.0.0.1', 'confirm-output', 'Salida Confirmada', 2, 1, '2023-05-12 09:31:05', '2023-05-12 09:31:05'),
+	(33, 'HAB', 1, '127.0.0.1', 'confirm-output', 'Salida Confirmada', 3, 1, '2023-05-12 09:40:06', '2023-05-12 09:40:06');
 
 -- Volcando estructura para tabla semtinel.syst_poles
 CREATE TABLE IF NOT EXISTS `syst_poles` (
@@ -1179,13 +1221,11 @@ CREATE TABLE IF NOT EXISTS `syst_structure_projects` (
   `active` bit(1) DEFAULT b'1',
   `abbr` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Volcando datos para la tabla semtinel.syst_structure_projects: ~2 rows (aproximadamente)
+-- Volcando datos para la tabla semtinel.syst_structure_projects: ~0 rows (aproximadamente)
 INSERT INTO `syst_structure_projects` (`id`, `id_pole`, `name`, `active`, `abbr`) VALUES
-	(1, 1, 'Hotel Metrópolis', b'1', 'METROP'),
-	(6, 5, 'Prueba7', b'1', 'P7'),
-	(7, 1, 'Hotel Gran Manzana', b'1', 'HGM');
+	(1, 1, 'Hotel Metrópolis', b'1', 'METROP');
 
 -- Volcando estructura para tabla semtinel.syst_subsystems
 CREATE TABLE IF NOT EXISTS `syst_subsystems` (
@@ -1209,13 +1249,14 @@ CREATE TABLE IF NOT EXISTS `syst_warehouses` (
   `owner` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `active` bit(1) DEFAULT b'1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla semtinel.syst_warehouses: ~3 rows (aproximadamente)
 INSERT INTO `syst_warehouses` (`id`, `id_project`, `name`, `owner`, `active`) VALUES
-	(1, 1, 'Pañol Estructura', 'Tony Machado', b'1'),
-	(2, 1, 'Pañol Instalaciones', 'Yadira López', b'0'),
-	(3, 1, 'Pañol Acabado', 'Diego Machado', b'1');
+	(1, 1, 'Estructura', 'Tony Machado', b'1'),
+	(2, 1, 'Instalaciones Eléctricas', 'Yadira López', b'0'),
+	(3, 1, 'Instalaciones Mecánicas', 'Diego Machado', b'0'),
+	(8, 1, 'Instalaciones Hidro-sanitarias', 'Raul Machado', b'0');
 
 -- Volcando estructura para tabla semtinel.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -1235,7 +1276,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`),
   UNIQUE KEY `users_guid_unique` (`guid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Volcando datos para la tabla semtinel.users: ~6 rows (aproximadamente)
 INSERT INTO `users` (`id`, `id_pole`, `first_name`, `last_name`, `email`, `email_verified_at`, `username`, `password`, `remember_token`, `created_at`, `updated_at`, `guid`, `domain`) VALUES
@@ -1244,7 +1285,8 @@ INSERT INTO `users` (`id`, `id_pole`, `first_name`, `last_name`, `email`, `email
 	(3, 1, 'Nikola Tesla', NULL, 'tesla@ldap.forumsys.com', NULL, 'tesla', '$2y$10$x1lDHzx4cSsGHGmPWt2ThebDoXJtho2y7Ux3O6ZSB8gUdPZG29HKu', NULL, '2023-03-13 09:49:22', '2023-03-13 09:49:22', '751b0a76-2f64-1033-898d-a53eb149a944', 'default'),
 	(4, 1, 'Albert', 'Einstein', 'einstein@ldap.forumsys.com', NULL, 'einstein', '$2y$10$ZPphZsC.IyNPD0QBIDqWFeWmIrnMjMfPwrfCKieTeJGcZitD76tFi', NULL, '2023-03-13 06:06:45', '2023-04-17 01:48:42', '29f6dc28-2f64-1033-898b-a53eb149a944', 'default'),
 	(5, 1, 'Diego Antonio', NULL, 'diego@gmail.com', NULL, 'diego', '$2y$10$iv18Ic58M4x.9wQwn8T01Oec6EWOqnwn.j2osHT8UqqPDPAs1JTFq', NULL, '2023-04-16 04:19:39', '2023-04-16 04:19:39', NULL, NULL),
-	(6, 1, 'Roiky', 'Rodríguez Noa', 'roiky82@gmail.com', NULL, 'roiky', '$2y$10$UMb2V4HT/VnTzDu15fwQDOyGX5rXYLivoEWC/e6WUVjU4t2DVp2g2', 'F7r5S7UWQzRiIKmkIbWfebv3vwdqAbtu4QyTfgV9pjoSP2A0ZGshoWWNk278', '2023-04-16 16:26:59', '2023-04-16 16:32:05', NULL, NULL);
+	(6, 1, 'Roiky', 'Rodríguez Noa', 'roiky82@gmail.com', NULL, 'roiky', '$2y$10$UMb2V4HT/VnTzDu15fwQDOyGX5rXYLivoEWC/e6WUVjU4t2DVp2g2', 'F7r5S7UWQzRiIKmkIbWfebv3vwdqAbtu4QyTfgV9pjoSP2A0ZGshoWWNk278', '2023-04-16 16:26:59', '2023-04-16 16:32:05', NULL, NULL),
+	(7, 1, 'Luis', 'Rodríguez', 'lrodriguez@aei-ucmbybat.co.cu', NULL, 'lrodriguez', '$2y$10$ZewkJCuE.Oh/ThlCaamxieVESdmwtO2WQBMjpjg.5P8EUbg2/e2UC', 'CWddzIj5mvY1kLllbCth52UTQAyMkKs3i5PmFZvXWR0nZCEYjRyXuXD7gPpU', '2023-05-12 14:30:50', '2023-05-12 14:30:50', NULL, NULL);
 
 -- Volcando estructura para tabla semtinel.users_projects
 CREATE TABLE IF NOT EXISTS `users_projects` (
@@ -1252,11 +1294,13 @@ CREATE TABLE IF NOT EXISTS `users_projects` (
   `user_id` int DEFAULT NULL,
   `project_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla semtinel.users_projects: ~0 rows (aproximadamente)
 INSERT INTO `users_projects` (`id`, `user_id`, `project_id`) VALUES
-	(1, 6, 1);
+	(1, 6, 1),
+	(2, 7, 1),
+	(3, 1, 1);
 
 -- Volcando estructura para tabla semtinel.users_systems
 CREATE TABLE IF NOT EXISTS `users_systems` (
@@ -1264,12 +1308,13 @@ CREATE TABLE IF NOT EXISTS `users_systems` (
   `user_id` int DEFAULT NULL,
   `system_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcando datos para la tabla semtinel.users_systems: ~2 rows (aproximadamente)
 INSERT INTO `users_systems` (`id`, `user_id`, `system_id`) VALUES
 	(1, 6, 1),
-	(3, 1, 1);
+	(3, 1, 1),
+	(4, 7, 1);
 
 -- Volcando estructura para tabla semtinel.users_warehouses
 CREATE TABLE IF NOT EXISTS `users_warehouses` (
