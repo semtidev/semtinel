@@ -36,7 +36,7 @@ export default {
         //projects: JSON.parse(localStorage.getItem('semtinel_projects')),
         pole: localStorage.getItem('stnel_logist_pole'),
         project: localStorage.getItem('stnel_logist_project'),
-        warehouses: (localStorage.getItem('stnel_warehouses').length > 0) ? JSON.parse(localStorage.getItem('stnel_warehouses')) : '',
+        warehouses: '',
         products_categories: JSON.parse(localStorage.getItem('semtinel_products_categories')),
         filter_productcategory: 'all',
         filter_warehouse: 'all',
@@ -148,6 +148,8 @@ export default {
             if (value.id == cmp.project)
                 cmp.project_name = value.name
         });
+        if (cmp.session.warehouses) 
+            cmp.warehouses = cmp.session.warehouses;
     },
     methods: {
         listReload: function () {
@@ -654,7 +656,7 @@ export default {
                                         <option value="all">- Todos -</option>
                                         <template v-for="(option, index) in warehouses" :key="index">
                                             <option
-                                                :value="option['id']">
+                                                :value="index">
                                                 {{ option['name'] }}
                                             </option>
                                         </template>

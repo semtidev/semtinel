@@ -118,6 +118,7 @@ class User extends Authenticatable implements LdapAuthenticatable
                                         'syst_structure_projects.abbr',
                                         'syst_structure_projects.active'
                                     )
+                                    ->where('users_projects.user_id', $this->id)
                                     ->where('syst_structure_projects.active', 1)
                                     ->orderBy('syst_structure_projects.id', 'ASC')->get();
         foreach ($qry_projects as $project) {
