@@ -33,6 +33,8 @@ class LogisticsReceiptItemDispatch extends Model
         'comment',
         'created_at',
         'updated_at',
+        'lote',
+        'id_inventory',
     ];
 
     public function entry () {

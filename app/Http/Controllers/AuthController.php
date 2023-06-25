@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use Illuminate\Support\Arr;
 
 class AuthController extends Controller
 {
@@ -28,12 +29,12 @@ class AuthController extends Controller
             Auth::login($user);
             $token   = $user->createToken('auth_token')->plainTextToken;
             $client  = getIP();
-            $systems = $user->getSystems();
-            $permissions = $user->getPermissions();
-            $warehouses = $user->getWarehouses();
-            $roles = $user->getRoles();
-            $poles = $user->getPoles();
-            $projects = $user->getProjects();
+            $poles = $user->getPolesArray();
+            $projects = $user->getProjectsArray();
+            $roles = $user->getRolesArray();
+            $permissions = $user->getPermissionsArray();
+            $systems = $user->getSystemsArray();
+            $warehouses = $user->getWarehousesArray();
             
             // Init session
             session_start();
@@ -193,11 +194,10 @@ class AuthController extends Controller
                 'last_name' => $request->last_name,
                 'email' => $request->email,
                 'username' => $request->username,
-                'password' => Hash::make($request->password),
-                'id_pole' => $request->syst_pole_id
+                'password' => Hash::make($request->password)
             ]);
             //le asigna roles a los usuarios
-            if(!empty($request->roles)){
+            /*if(!empty($request->roles)){
                 $user->assignRole($request->roles);
             }
 
@@ -209,7 +209,7 @@ class AuthController extends Controller
             //asignar sistemas en la relacion mucho a mucho
             if(!empty($request->systems)){
                 $user->systems()->attach($request->systems);
-            }
+            }*/
 
             return response()->json([
                 'status' => true,

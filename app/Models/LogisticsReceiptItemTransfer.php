@@ -15,7 +15,6 @@ class LogisticsReceiptItemTransfer extends Model
      */
     protected $fillable = [
         'id_receipt',
-        'id_inventory',
         'product_id',
         'product_code',
         'oc',
@@ -27,6 +26,7 @@ class LogisticsReceiptItemTransfer extends Model
         'price_total',
         'created_at',
         'updated_at',
+        'id_inventory',
     ];
 
     public function entry () {

@@ -18,7 +18,6 @@ class LogisticsReceipt extends Model
         'origin', 
         'document_type', 
         'document_number', 
-        'oc',
         'output',
         'created_at',
         'updated_at',
@@ -34,6 +33,7 @@ class LogisticsReceipt extends Model
         'confirm',
         'cancel',
         'cancel_by',
+        'type',
     ];
 
     public function itemsOc () {
@@ -46,5 +46,17 @@ class LogisticsReceipt extends Model
 
     public function itemsTransfer () {
         return $this->hasMany('App\Models\LogisticsReceiptItemTransfer', 'id_receipt');
+    }
+
+    public function getProject () {
+        return $this->belongsTo('App\Models\SystStructureProject', 'project');
+    }
+
+    public function getPole () {
+        return $this->belongsTo('App\Models\SystPole', 'pole');
+    }
+
+    public function getWarehouse () {
+        return $this->belongsTo('App\Models\SystWarehouse', 'warehouse');
     }
 }

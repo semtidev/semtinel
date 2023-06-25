@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogisticsReceipt;
+use App\Models\LogisticsOutput;
 use Throwable;
 use App\Models\SystPole;
 use App\Models\SystStructureProject;
@@ -14,8 +16,10 @@ use Spatie\Permission\Models\Permission;
 use App\Models\LogisticsReceiptItemOc;
 use App\Models\LogisticsReceiptItemDispatch;
 use App\Models\User;
+use App\Models\LogisticsInventory;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Guid\Fields;
+use App\Models\OdooStockPicking;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -606,6 +610,183 @@ class AdminController extends Controller
         try {
             // Delete system
             SystWarehouse::find(intval($id))->delete();
+        } catch (Throwable $th) {
+            $response = array('success' => false, 'error' => $th->getMessage());
+            return response()->json($response, 200);
+        }
+
+        // Response
+        $response = array('success' => true);
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Set lote in dispatch.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function setLotesDispatch()
+    {
+        try {
+            $dispatch = LogisticsReceiptItemDispatch::select('id', 'odoo_id_stock_picking')->get();
+            foreach ($dispatch as $item) {
+                $lote_oc = OdooStockPicking::leftJoin('stock_move_line', 'stock_move_line.picking_id', 'stock_picking.id')
+                                        ->leftJoin('stock_production_lot', 'stock_production_lot.id', 'stock_move_line.lot_id')
+                                        ->leftJoin('purchase_order', 'purchase_order.id', 'stock_production_lot.purchase_order_id')
+                                        ->select('stock_production_lot.name AS lote', 'purchase_order.name AS oc')
+                                        ->where('stock_picking.id', $item->odoo_id_stock_picking)
+                                        ->first();
+                $row = LogisticsReceiptItemDispatch::find($item->id);
+                $row->oc = $lote_oc->oc;
+                $row->lote = $lote_oc->lote;
+                $row->save();
+            }
+        } catch (Throwable $th) {
+            $response = array('success' => false, 'error' => $th->getMessage());
+            return response()->json($response, 200);
+        }
+
+        // Response
+        $response = array('success' => true);
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Set OC in oc items.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function setOC()
+    {
+        try {
+            $entries = LogisticsReceipt::select('id', 'oc', 'type')->get();
+            foreach ($entries as $entry) {
+                if ($entry->type == 'oc') {
+                    LogisticsReceiptItemOc::where('id_receipt', $entry->id)->update([
+                        'oc' => $entry->oc
+                    ]);
+                }
+            }
+        } catch (Throwable $th) {
+            $response = array('success' => false, 'error' => $th->getMessage());
+            return response()->json($response, 200);
+        }
+
+        // Response
+        $response = array('success' => true);
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Set inventory data.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function setInventory()
+    {
+        try {
+            // SET STOCK
+            $qry_entries = LogisticsReceipt::with('itemsOc', 'itemsDispatch', 'itemsTransfer', 'getProject', 'getPole', 'getWarehouse')
+                                ->whereNull('logistics_receipts.cancel')
+                                ->where('logistics_receipts.confirm', 1)
+                                ->orderBy('logistics_receipts.id', 'DESC')
+                                ->get();
+            foreach ($qry_entries as $entry) {
+                $items = array();
+                if ($entry->type == 'oc') {
+                    $items = $entry->itemsOc;
+                }
+                if ($entry->type == 'dispatch') {
+                    $items = $entry->itemsDispatch;
+                }
+                if ($entry->type == 'transfer') {
+                    $items = $entry->itemsTransfer;
+                }
+
+                foreach ($items as $product) {
+
+                    // Create product ID
+                    if ($entry->type == 'oc') {
+                        $inventory_code = 'oc.' . $product->odoo_id_order . '.' . $product->odoo_id_order_line . '.' . $entry->warehouse;
+                    }
+                    if ($entry->type == 'dispatch') {
+                        $inventory_code = 'dispatch.' . $product->odoo_id_stock_picking . '.' . $product->odoo_id_stock_move . '.' . $entry->warehouse;
+                    }
+                    if ($entry->type == 'transfer') {
+                        $arr_inventory = explode('.', $product->id_inventory);
+                        $inventory_code = $arr_inventory[0] . '.' . $arr_inventory[1] . '.' . $arr_inventory[2] . '.' . $entry->warehouse;
+                    }
+
+                    if (LogisticsInventory::where('inventory_code', $inventory_code)->exists()) {
+                        // Update inventory Stock
+                        $inventory = LogisticsInventory::where('inventory_code', $inventory_code)->first();
+                        $inventory->stock = floatval($inventory->stock) + floatval($product->received_quantity);
+                        $inventory->save();
+
+                        // Set inventory ID
+                        $product->id_inventory = $inventory->id;
+                        $product->save();
+                    }
+                    else {
+                        // Create inventory with stock
+                        $inventory = new LogisticsInventory([
+                            'inventory_code' => $inventory_code,
+                            'stock' => floatval($product->received_quantity),
+                            'warehouse' => $entry->warehouse,
+                            'project' => $entry->project,
+                            'pole' => $entry->pole,
+                            'oc' => $product->oc,
+                            'product_code' => $product->product_code,
+                            'category_name' => $product->category_name,
+                            'item_description' => $product->item_description,
+                            'um' => $product->um,
+                            'price_unit' => $product->price_unit,
+                            'price_total' => $product->price_total,
+                            'stowage_card' => $product->stowage_card,
+                            'type' => $entry->type
+                        ]);
+                        $inventory->save();
+
+                        // Set inventory ID
+                        $product->id_inventory = $inventory->id;
+                        $product->save();
+                    }
+                }
+            }
+
+            // SET RESERVED
+            $qry_outputs = LogisticsOutput::with('Items', 'getProject', 'getPole', 'getWarehouse')
+                                ->whereNull('logistics_outputs.cancel')
+                                ->orderBy('id', 'DESC')->get();
+            foreach ($qry_outputs as $output) {
+                $items = array();
+                if (!$output->Items->isEmpty()) {
+                    $items = $output->Items;
+                }
+
+                foreach ($items as $product) {
+                    
+                    if ($output->confirm == 1) {
+                        $inventory = LogisticsInventory::where('inventory_code', $product->id_inventory)->first();
+                        $inventory->stock = floatval($inventory->stock) - floatval($product->quantity);
+                        $inventory->save();
+                    }
+                    else {
+                        $inventory = LogisticsInventory::where('inventory_code', $product->id_inventory)->first();
+                        $inventory->reserved = floatval($inventory->reserved) + floatval($product->quantity);
+                        $inventory->save();
+                    }
+                }
+            }
+
+            // SET AVAILABLE
+            $qry_inventory = LogisticsInventory::all();
+            foreach ($qry_inventory as $inventory) {
+                $item = LogisticsInventory::find($inventory->id);
+                $item->available = floatval($inventory->stock) - floatval($inventory->reserved);
+                $item->save();
+            }
+
         } catch (Throwable $th) {
             $response = array('success' => false, 'error' => $th->getMessage());
             return response()->json($response, 200);

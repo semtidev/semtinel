@@ -30,6 +30,7 @@ class LogisticsOutput extends Model
         'cancel',
         'cancel_by',
         'type',
+        'destin',
         'work_object',
         'destin_warehouse',
         'destin_warehouse_owner',
@@ -39,5 +40,17 @@ class LogisticsOutput extends Model
 
     public function Items () {
         return $this->hasMany('App\Models\LogisticsOutputItem', 'id_output');
+    }
+
+    public function getProject () {
+        return $this->belongsTo('App\Models\SystStructureProject', 'project');
+    }
+
+    public function getPole () {
+        return $this->belongsTo('App\Models\SystPole', 'pole');
+    }
+
+    public function getWarehouse () {
+        return $this->belongsTo('App\Models\SystWarehouse', 'warehouse');
     }
 }

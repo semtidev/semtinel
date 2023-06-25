@@ -31,6 +31,8 @@ class LogisticsReceiptItemOc extends Model
         'comment',
         'created_at',
         'updated_at',
+        'id_inventory',
+        'oc',
     ];
 
     public function entry () {

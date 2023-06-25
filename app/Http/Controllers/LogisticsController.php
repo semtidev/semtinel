@@ -16,12 +16,15 @@ use App\Models\LogisticsOutput;
 use App\Models\LogisticsOutputItem;
 use App\Models\User;
 use App\Models\Log;
+use App\Models\LogisticsInventory;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF as PDF;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Hamcrest\Arrays\IsArray;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class LogisticsController extends Controller
 {
@@ -40,128 +43,122 @@ class LogisticsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getEntries(Request $request, $pole, $project, $reload = false)
+    public function getEntries($id_pole, $project)
     {
         session_start();
-        $session = $_SESSION['semtinel'];
-        $fields  = $request->all();
         $entries = array();
+        
+        $qry_entries = LogisticsReceipt::with('itemsOc', 'itemsDispatch', 'itemsTransfer', 'getProject', 'getPole', 'getWarehouse')
+                            ->where('logistics_receipts.pole', intval($id_pole))
+                            ->where('logistics_receipts.project', intval($project))
+                            ->whereNull('logistics_receipts.cancel')
+                            ->orderBy('logistics_receipts.id', 'DESC')
+                            ->get();
+        foreach ($qry_entries as $entry) {
+            $items = array();
+            $is_oc = true;
+            $is_transfer = false;
+            if ($entry->type == 'oc') {
+                $items = $entry->itemsOc;
+            }
+            if ($entry->type == 'dispatch') {
+                $items = $entry->itemsDispatch;
+                $is_oc = false;
+            }
+            if ($entry->type == 'transfer') {
+                $items = $entry->itemsTransfer;
+                $is_oc = false;
+                $is_transfer = true;
+            }
+            // Formater dates
+            $arr_created = explode(' ', $entry->created_at);
+            $arr_created_date = explode('-', $arr_created[0]);
+            $created_at = $arr_created_date[2] . '/' . $arr_created_date[1] . '/' . $arr_created_date[0];
+            
+            $arr_updated = explode(' ', $entry->updated_at);
+            $arr_updated_date = explode('-', $arr_updated[0]);
+            $updated_at = $arr_updated_date[2] . '/' . $arr_updated_date[1] . '/' . $arr_updated_date[0];
 
-        if (!$reload && Cache::get('entries') != null) {
-            $entries = Cache::get('entries');
-        }
-        else {
-            $qry_entries = LogisticsReceipt::where('pole', $pole)
-                                ->where('project', intval($project))
-                                ->whereNull('cancel')
-                                ->orderBy('id', 'DESC')->get();
-            foreach ($qry_entries as $entry) {
-                $items = array();
-                $is_oc = true;
-                $is_transfer = false;
-                if (LogisticsReceiptItemOc::where('id_receipt', $entry->id)->exists()) {
-                    $items = $entry->itemsOc;
-                }
-                if (LogisticsReceiptItemDispatch::where('id_receipt', $entry->id)->exists()) {
-                    $items = $entry->itemsDispatch;
-                    $is_oc = false;
-                }
-                if (LogisticsReceiptItemTransfer::where('id_receipt', $entry->id)->exists()) {
-                    $items = $entry->itemsTransfer;
-                    $is_oc = false;
-                    $is_transfer = true;
-                }
-                // Formater dates
-                $arr_created = explode(' ', $entry->created_at);
-                $arr_created_date = explode('-', $arr_created[0]);
-                $created_at = $arr_created_date[2] . '/' . $arr_created_date[1] . '/' . $arr_created_date[0];
-                
-                $arr_updated = explode(' ', $entry->updated_at);
-                $arr_updated_date = explode('-', $arr_updated[0]);
-                $updated_at = $arr_updated_date[2] . '/' . $arr_updated_date[1] . '/' . $arr_updated_date[0];
+            // Project
+            $full_project = $entry->getProject;
 
-                // Project
-                $project = SystStructureProject::find(intval($entry->project));
+            // Pole
+            $full_pole = $entry->getPole;
 
-                // Pole
-                $pole = SystPole::where('abbr', $entry->pole)->first();
-
-                // document_number
-                $docum_number = '';
-                if ($is_oc) {
-                    $docum_number = $entry->document_number;
-                }
-                else {
-                    $docum_number = $project->abbr . "/OUT/" . $entry->document_number;
-                }
-                if ($is_transfer) {
-                    $docum_number = $entry->output;
-                }
-
-                // Get OC
-                $oc = '- Ninguna -';
-                if ($is_oc && $entry->oc != '' && $entry->oc != null) {
-                    $oc = $entry->oc;
-                }
-                else {
-                    $oc_list = array();
-                    foreach ($items as $product) {
-                        if (!in_array($product->oc, $oc_list)) {
-                            $oc_list[] = $product->oc;
-                        }
-                    }
-                    $oc = implode($oc_list);
-                }
-
-                // Get attach type
-                $attach_type = '';
-                if ($entry->attach_path != '' && $entry->attach_path != null) {
-                    $attach_arr = explode('.', $entry->attach_path);
-                    switch ($attach_arr[1]) {
-                        case 'pdf':
-                            $attach_type = 'pdf';
-                            break;
-                        case 'png':
-                            $attach_type = 'png';
-                            break;
-                        default:
-                            $attach_type = 'jpg';
-                            break;
-                    }
-                }
-                
-                $entries[] = array(
-                    'id' => $entry->id,
-                    'code' => $entry->code,
-                    'origin' => $entry->origin,
-                    'document_type' => ($entry->document_type != null && $entry->document_type != '') ? $entry->document_type : 'Factura',
-                    'document_number' => $docum_number,
-                    'oc' => $oc,
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-                    'created_by' => $entry->created_by,
-                    'updated_by' => $entry->updated_by,
-                    'pole' => $pole->abbr,
-                    'pole_name' => $pole->name,
-                    'project' => $entry->project,
-                    'project_abbr' => $project->abbr,
-                    'project_name' => $project->name,
-                    'warehouse' => $entry->warehouse,
-                    'warehouse_name' => SystWarehouse::find(intval($entry->warehouse))->name,
-                    'warehouse_owner' => $entry->warehouse_owner,
-                    'comment' => $entry->comment,
-                    'status' => ucfirst($entry->status),
-                    'attach_path' => $entry->attach_path,
-                    'attach_type' => $attach_type,
-                    'confirm' => $entry->confirm,
-                    'items' => $items,
-                    'type' => ($is_oc) ? 'oc' : 'dispatch',
-                    'transfer' => ($is_transfer) ? 1 : 0
-                );
+            // document_number
+            $docum_number = '';
+            if ($is_oc) {
+                $docum_number = $entry->document_number;
+            }
+            else {
+                $docum_number = $full_project->abbr . "/OUT/" . $entry->document_number;
+            }
+            if ($is_transfer) {
+                $docum_number = $entry->output;
             }
 
-            Cache::forever('entries', $entries);
+            // Get OC
+            $oc = '- Ninguna -';
+            if ($is_oc && $entry->oc != '' && $entry->oc != null) {
+                $oc = $entry->oc;
+            }
+            else {
+                $oc_list = array();
+                foreach ($items as $product) {
+                    if (!in_array($product->oc, $oc_list)) {
+                        $oc_list[] = $product->oc;
+                    }
+                }
+                $oc = implode($oc_list);
+            }
+
+            // Get attach type
+            $attach_type = '';
+            if ($entry->attach_path != '' && $entry->attach_path != null) {
+                $attach_arr = explode('.', $entry->attach_path);
+                switch ($attach_arr[1]) {
+                    case 'pdf':
+                        $attach_type = 'pdf';
+                        break;
+                    case 'png':
+                        $attach_type = 'png';
+                        break;
+                    default:
+                        $attach_type = 'jpg';
+                        break;
+                }
+            }
+            
+            $entries[] = array(
+                'id' => $entry->id,
+                'code' => $entry->code,
+                'origin' => $entry->origin,
+                'document_type' => ($entry->document_type != null && $entry->document_type != '') ? $entry->document_type : 'Factura',
+                'document_number' => $docum_number,
+                'oc' => $oc,
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+                'created_by' => $entry->created_by,
+                'updated_by' => $entry->updated_by,
+                'pole' => $full_pole->abbr,
+                'pole_name' => $full_pole->name,
+                'project' => $full_project->id,
+                'project_abbr' => $full_project->abbr,
+                'project_name' => $full_project->name,
+                'warehouse' => $entry->warehouse,
+                'warehouse_name' => $entry->getWarehouse->name,
+                'warehouse_owner' => $entry->warehouse_owner,
+                'comment' => $entry->comment,
+                'status' => ucfirst($entry->status),
+                'attach_path' => $entry->attach_path,
+                'attach_type' => $attach_type,
+                'confirm' => $entry->confirm,
+                'items' => $items,
+                'type' => ($is_oc) ? 'oc' : 'dispatch',
+                'transfer' => ($is_transfer) ? 1 : 0
+            );
         }
+
         return response()->json($entries, 200);
     }
 
@@ -269,7 +266,8 @@ class LogisticsController extends Controller
                     'warehouse' => $fields['destin']['warehouse'],
                     'warehouse_owner' => $fields['destin']['warehouse_owner'],
                     'comment' => $fields['destin']['comment'],
-                    'status' => $fields['status']
+                    'status' => $fields['status'],
+                    'type' => 'oc'
                 ]);
                 $entry->save();
                 // Set code
@@ -321,7 +319,8 @@ class LogisticsController extends Controller
                     'warehouse' => $fields['destin']['warehouse'],
                     'warehouse_owner' => $fields['destin']['warehouse_owner'],
                     'comment' => $fields['destin']['comment'],
-                    'status' => $fields['status']
+                    'status' => $fields['status'],
+                    'type' => 'dispatch'
                 ]);
                 $entry->save();
                 // Set code
@@ -402,20 +401,20 @@ class LogisticsController extends Controller
         }
         
         // Formater dates
-        $arr_created = explode(' ', $entry->created_at);
+        $arr_created      = explode(' ', $entry->created_at);
         $arr_created_date = explode('-', $arr_created[0]);
-        $created_at = $arr_created_date[2] . '/' . $arr_created_date[1] . '/' . $arr_created_date[0];
+        $created_at       = $arr_created_date[2] . '/' . $arr_created_date[1] . '/' . $arr_created_date[0];
         
-        $arr_updated = explode(' ', $entry->updated_at);
+        $arr_updated      = explode(' ', $entry->updated_at);
         $arr_updated_date = explode('-', $arr_updated[0]);
-        $updated_at = $arr_updated_date[2] . '/' . $arr_updated_date[1] . '/' . $arr_updated_date[0];
+        $updated_at       = $arr_updated_date[2] . '/' . $arr_updated_date[1] . '/' . $arr_updated_date[0];
 
         // Get Pole and Project name
         $pole    = SystPole::where('abbr', $entry->pole)->first();
         $project = SystStructureProject::find(intval($entry->project));
 
         // Get warehouse name and owner
-        $warehouse = SystWarehouse::find(intval($entry->warehouse));
+        $warehouse       = SystWarehouse::find(intval($entry->warehouse));
         $warehouse_name  = $warehouse->name;
         $warehouse_owner = $warehouse->owner;
 
@@ -466,7 +465,7 @@ class LogisticsController extends Controller
             $canvas = $pdf->getDomPDF()->getCanvas();
 
             $height = $canvas->get_height();
-            $width = $canvas->get_width();
+            $width  = $canvas->get_width();
 
             $canvas->set_opacity(.2,"Multiply");
 
@@ -488,13 +487,13 @@ class LogisticsController extends Controller
             'file' => 'required|mimes:jpg,jpeg,png,pdf|max:5020'   // jpg,jpeg,png,
         ]);
  
-        $fields = $request->all();
+        $fields      = $request->all();
         $entryUpload = LogisticsReceipt::find(intval($fields['id']));
-        $client = getIP();
+        $client      = getIP();
 
         if($request->file()) {
             $original_name = explode('.', $request->file->getClientOriginalName());
-            $file_name = $request->entry . '.' . $original_name[1];
+            $file_name     = $request->entry . '.' . $original_name[1];
             //$file_name = str_replace('/', '_', $file_name);
             $file_path = $request->file('file')->storeAs('uploads/entries', $file_name, 'public');
             $entryUpload->attach_path = $file_path;
@@ -581,7 +580,7 @@ class LogisticsController extends Controller
             return response()->json($response, 200);
         }
         
-        $entry->cancel = 1;
+        $entry->cancel    = 1;
         $entry->cancel_by = $request->user;
         $entry->save();
 
@@ -610,157 +609,13 @@ class LogisticsController extends Controller
      */
     public function getInventoryProducts(Request $request)
     {
-        $fields    = $request->all();
-        $products  = array();
-        $transfers = array();
+        $warehouse = intval($request->warehouse);
         
-        try {
-            $qry_entries = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
-                            ->select(
-                                'logistics_receipts.id',
-                                'logistics_receipts.pole',
-                                'logistics_receipts.project',
-                                'logistics_receipts.oc',
-                                'logistics_receipts.confirm',
-                                'logistics_receipts.output',
-                                'syst_warehouses.id as warehouse_id',
-                                'syst_warehouses.name as warehouse_name',
-                                'syst_warehouses.owner as warehouse_owner'
-                            )
-                            ->where('pole', $fields['pole'])
-                            ->where('project', intval($fields['project']))
-                            ->whereNull('cancel')
-                            ->orderBy('id', 'DESC')->get();
-            
-            foreach ($qry_entries as $entry) {
-                $stowage_cards = array();
-                $items = array();
-                $is_oc = true;
-                $is_transfer = false;
-                if (LogisticsReceiptItemOc::where('id_receipt', $entry->id)->exists()) {
-                    $items = $entry->itemsOc;
-                }
-                if (LogisticsReceiptItemDispatch::where('id_receipt', $entry->id)->exists()) {
-                    $items = $entry->itemsDispatch;
-                    $is_oc = false;
-                }
-                if (LogisticsReceiptItemTransfer::where('id_receipt', $entry->id)->exists()) {
-                    $items = $entry->itemsTransfer;
-                    $is_oc = false;
-                    $is_transfer = true;
-                }
-
-                // Type
-                $type = ($is_oc) ? 'oc' : 'dispatch';
-
-                // Project
-                $project = SystStructureProject::find(intval($entry->project));
-
-                // Pole
-                $pole = SystPole::where('abbr', $entry->pole)->first();
-                
-                foreach ($items as $product) {
-
-                    // Create product ID
-                    if ($type == 'oc') {
-                        $product_id = 'oc.' . $product->odoo_id_order . '.' . $product->odoo_id_order_line . '.' . $entry->warehouse_id;
-                    }
-                    else {
-                        if (!$is_transfer) {
-                            $product_id = 'dispatch.' . $product->odoo_id_stock_picking . '.' . $product->odoo_id_stock_move . '.' . $entry->warehouse_id;
-                        }
-                        else {
-                            $arr_inventory = explode('.', $product->id_inventory);
-                            $product_id = $arr_inventory[0] . '.' . $arr_inventory[1] . '.' . $arr_inventory[2] . '.' . $entry->warehouse_id;
-                        }
-                    }
-
-                    if (isset($products[$product_id])) {
-                        if ($entry->confirm == 1) {
-                           $products[$product_id]['quantity'] += $product->received_quantity;
-                            $products[$product_id]['quantity'] = number_format($products[$product_id]['quantity'], 2, '.', ' '); 
-                        }                        
-                    }
-                    else {
-                        $products[$product_id] = array(
-                            'id' => $product->id,
-                            'id_receipt' => $entry->id,
-                            'pole' => $pole,
-                            'project' => $project,
-                            'oc' => ($type == 'oc') ? $entry->oc : $product->oc,
-                            'product_code' => $product->product_code,
-                            'category_name' => $product->category_name,
-                            'category_complete_name' => $product->category_complete_name,
-                            'description' => $product->item_description,
-                            'um' => $product->um,
-                            'price_unit' => $product->price_unit,
-                            'quantity' => ($entry->confirm == 1) ? number_format($product->received_quantity, 2, '.', ' ') : 0,
-                            'stowage_card' => $product->stowage_card,
-                            'warehouse_id' => $entry->warehouse_id,
-                            'warehouse_name' => $entry->warehouse_name,
-                            'warehouse_owner' => $entry->warehouse_owner,
-                            'stowage_card' => $product->stowage_card,
-                            'type' => $type,
-                            'output' => $entry->output
-                        );
-                    }
-                }
-            }
-
-            // Verify Transfer, Quantity, Reserve, Available
-
-            foreach ($products as $key => $value) {
-                $quantity  = $value['quantity'];
-                // Check transfer
-                $quantity_transfer = 0;
-                if (!array_key_exists($key, $transfers)) {
-                    if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'transfer')->where('logistics_outputs.status', '<>', 'cancelada')->exists()) {
-                        $quantity_transfer = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                                                ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
-                                                ->where('logistics_output_items.id_inventory', $key)
-                                                ->where('logistics_outputs.type', 'transfer')
-                                                ->where('logistics_outputs.status', '<>', 'cancelada')
-                                                ->first()->quantity_transfer;
-                        $quantity -= $quantity_transfer;
-                        $transfers[$key] = $value['output'];
-                    }
-                }
-                // Check quantity
-                if (LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')->where('logistics_output_items.id_inventory', $key)->where('logistics_outputs.type', 'towork')->where('logistics_outputs.status', 'confirmada')->exists()) {
-                    $quantity_towork = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                            ->select(DB::raw('sum(logistics_output_items.quantity) as quantity_transfer'))
-                            ->where('logistics_output_items.id_inventory', $key)
-                            ->where('logistics_outputs.type', 'towork')
-                            ->where('logistics_outputs.status', 'confirmada')
-                            ->first()->quantity_transfer;
-                    $quantity -= $quantity_towork;
-                }
-                $quantity = number_format($quantity, 2, '.', ' ');
-                // Get reserved
-                $reserved  = 0;
-                $reserved = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                                ->select(DB::raw('sum(logistics_output_items.quantity) as reserved'))
-                                ->where('logistics_outputs.status', 'creada')
-                                ->where('logistics_output_items.id_inventory', $key)
-                                ->first()->reserved;
-                $reserved = number_format($reserved, 2, '.', ' ');
-                // Get available
-                $rest_inventory = 0;
-                if (!array_key_exists($key, $transfers)) {
-                    $rest_inventory = LogisticsOutput::leftJoin('logistics_output_items', 'logistics_output_items.id_output', 'logistics_outputs.id')
-                                    ->select(DB::raw('sum(logistics_output_items.quantity) as rest_inventory'))
-                                    ->where('logistics_outputs.status', 'confirmada')
-                                    ->where('logistics_output_items.id_inventory', $key)
-                                    ->first()->rest_inventory;
-                }
-                $available = floatval($value['quantity']) - floatval($rest_inventory) - floatval($reserved);
-                $available = number_format($available, 2, '.', ' ');
-
-                $products[$key]['quantity']  = $quantity;
-                $products[$key]['reserved']  = $reserved;
-                $products[$key]['available'] = $available;
-            }
-
+        try {            
+            $products = LogisticsInventory::where('warehouse', $warehouse)
+                            ->where('stock', '<>', 0)
+                            ->get()
+                            ->toArray();
         } catch (Throwable $th) {
             $response = array('success' => false, 'error' => $th->getMessage());
             return response()->json($response, 200);
@@ -783,71 +638,71 @@ class LogisticsController extends Controller
         try {
             if ($fields['period'] == 'today') {
                 $qry_entries = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
-                                ->select(
-                                    'logistics_receipts.id',
-                                    'logistics_receipts.pole',
-                                    'logistics_receipts.project',
-                                    'logistics_receipts.oc',
-                                    'syst_warehouses.id as warehouse_id',
-                                    'syst_warehouses.name as warehouse_name',
-                                    'syst_warehouses.owner as warehouse_owner'
-                                )
-                                ->where('pole', $fields['pole'])
-                                ->where('project', intval($fields['project']))
-                                ->whereDay('created_at' , date('d'))
-                                ->whereNull('cancel')
-                                ->orderBy('id', 'DESC')->get();
+                                    ->select(
+                                        'logistics_receipts.id',
+                                        'logistics_receipts.pole',
+                                        'logistics_receipts.project',
+                                        'logistics_receipts.oc',
+                                        'syst_warehouses.id as warehouse_id',
+                                        'syst_warehouses.name as warehouse_name',
+                                        'syst_warehouses.owner as warehouse_owner'
+                                    )
+                                    ->where('pole', $fields['pole'])
+                                    ->where('project', intval($fields['project']))
+                                    ->whereDay('created_at' , date('d'))
+                                    ->whereNull('cancel')
+                                    ->orderBy('id', 'DESC')->get();
             }
             elseif ($fields['period'] == 'currentmonth') {
                 $qry_entries = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
-                                ->select(
-                                    'logistics_receipts.id',
-                                    'logistics_receipts.pole',
-                                    'logistics_receipts.project',
-                                    'logistics_receipts.oc',
-                                    'syst_warehouses.id as warehouse_id',
-                                    'syst_warehouses.name as warehouse_name',
-                                    'syst_warehouses.owner as warehouse_owner'
-                                )
-                                ->where('pole', $fields['pole'])
-                                ->where('project', intval($fields['project']))
-                                ->whereMonth('created_at' , date('m'))
-                                ->whereNull('cancel')
-                                ->orderBy('id', 'DESC')->get();
+                                    ->select(
+                                        'logistics_receipts.id',
+                                        'logistics_receipts.pole',
+                                        'logistics_receipts.project',
+                                        'logistics_receipts.oc',
+                                        'syst_warehouses.id as warehouse_id',
+                                        'syst_warehouses.name as warehouse_name',
+                                        'syst_warehouses.owner as warehouse_owner'
+                                    )
+                                    ->where('pole', $fields['pole'])
+                                    ->where('project', intval($fields['project']))
+                                    ->whereMonth('created_at' , date('m'))
+                                    ->whereNull('cancel')
+                                    ->orderBy('id', 'DESC')->get();
             }
             elseif ($fields['period'] == 'currentyear') {
                 $qry_entries = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
-                                ->select(
-                                    'logistics_receipts.id',
-                                    'logistics_receipts.pole',
-                                    'logistics_receipts.project',
-                                    'logistics_receipts.oc',
-                                    'syst_warehouses.id as warehouse_id',
-                                    'syst_warehouses.name as warehouse_name',
-                                    'syst_warehouses.owner as warehouse_owner'
-                                )
-                                ->where('pole', $fields['pole'])
-                                ->where('project', intval($fields['project']))
-                                ->whereYear('created_at' , date('Y'))
-                                ->whereNull('cancel')
-                                ->orderBy('id', 'DESC')->get();
+                                    ->select(
+                                        'logistics_receipts.id',
+                                        'logistics_receipts.pole',
+                                        'logistics_receipts.project',
+                                        'logistics_receipts.oc',
+                                        'syst_warehouses.id as warehouse_id',
+                                        'syst_warehouses.name as warehouse_name',
+                                        'syst_warehouses.owner as warehouse_owner'
+                                    )
+                                    ->where('pole', $fields['pole'])
+                                    ->where('project', intval($fields['project']))
+                                    ->whereYear('created_at' , date('Y'))
+                                    ->whereNull('cancel')
+                                    ->orderBy('id', 'DESC')->get();
             }
             elseif ($fields['period'] == 'currentweek') {
                 $qry_entries = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
-                                ->select(
-                                    'logistics_receipts.id',
-                                    'logistics_receipts.pole',
-                                    'logistics_receipts.project',
-                                    'logistics_receipts.oc',
-                                    'syst_warehouses.id as warehouse_id',
-                                    'syst_warehouses.name as warehouse_name',
-                                    'syst_warehouses.owner as warehouse_owner'
-                                )
-                                ->where('pole', $fields['pole'])
-                                ->where('project', intval($fields['project']))
-                                ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-                                ->whereNull('cancel')
-                                ->orderBy('id', 'DESC')->get();
+                                    ->select(
+                                        'logistics_receipts.id',
+                                        'logistics_receipts.pole',
+                                        'logistics_receipts.project',
+                                        'logistics_receipts.oc',
+                                        'syst_warehouses.id as warehouse_id',
+                                        'syst_warehouses.name as warehouse_name',
+                                        'syst_warehouses.owner as warehouse_owner'
+                                    )
+                                    ->where('pole', $fields['pole'])
+                                    ->where('project', intval($fields['project']))
+                                    ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                                    ->whereNull('cancel')
+                                    ->orderBy('id', 'DESC')->get();
             }
             
             foreach ($qry_entries as $entry) {
@@ -889,7 +744,7 @@ class LogisticsController extends Controller
 
                     if (isset($products[$product_id])) {
                         $products[$product_id]['quantity'] += $product->received_quantity;
-                        $products[$product_id]['quantity'] = number_format($products[$product_id]['quantity'], 3, '.', ' ');
+                        $products[$product_id]['quantity'] = number_format($products[$product_id]['quantity'], 3, '.', '');
                     }
                     else {
                         $products[$product_id] = array(
@@ -903,7 +758,7 @@ class LogisticsController extends Controller
                             'category_complete_name' => $product->category_complete_name,
                             'description' => $product->item_description,
                             'um' => $product->um,
-                            'quantity' => number_format($product->received_quantity, 3, '.', ' '),
+                            'quantity' => number_format($product->received_quantity, 3, '.', ''),
                             'warehouse_id' => $entry->warehouse_id,
                             'warehouse_name' => $entry->warehouse_name,
                             'warehouse_owner' => $entry->warehouse_owner,
@@ -921,10 +776,10 @@ class LogisticsController extends Controller
                                     ->where('logistics_outputs.status', 'creada')
                                     ->where('logistics_output_items.id_inventory', $key)
                                     ->first()->reserved;
-                    $reserved = number_format($reserved, 2, '.', ' ');
+                    $reserved = number_format($reserved, 2, '.', '');
                     // Get available
                     $available = floatval($quantity) - floatval($reserved);                        
-                    $available = number_format($available, 2, '.', ' ');
+                    $available = number_format($available, 2, '.', '');
 
                     $products[$key]['reserved']  = $reserved;
                     $products[$key]['available'] = $available;
@@ -1349,10 +1204,21 @@ class LogisticsController extends Controller
         $client = getIP();
         // Project
         $project = SystStructureProject::find(intval($fields['project']));
+        $destin = '';
 
         try {
             // Save output
             if ($fields['type'] == 'towork') {
+                
+                $eop = SystStructureEop::find(intval($fields['destin']));
+                if ($eop->parent != 0) {
+                    $parent = SystStructureEop::find($eop->parent)->description;
+                    $destin = $parent . ' / ' . $eop->description;
+                }
+                else {
+                    $destin = $eop->description;
+                }
+
                 // If type To Work
                 $output = new LogisticsOutput([
                     'created_by' => $fields['user'],
@@ -1364,6 +1230,7 @@ class LogisticsController extends Controller
                     'comment' => $fields['comment'],
                     'status' => 'creada',
                     'type' => $fields['type'],
+                    'destin' => $destin,
                     'work_object' => intval($fields['destin']),
                     'authorized' => $fields['authorized'],
                     'authorizing' => $fields['authorizing']
@@ -1376,6 +1243,8 @@ class LogisticsController extends Controller
 
             }
             else {
+                $destin = intval($fields['destin']['name']);
+                
                 // If type Transaction
                 $output = new LogisticsOutput([
                     'created_by' => $fields['user'],
@@ -1387,6 +1256,7 @@ class LogisticsController extends Controller
                     'comment' => $fields['comment'],
                     'status' => 'creada',
                     'type' => $fields['type'],
+                    'destin' => $destin,
                     'destin_warehouse' => intval($fields['destin']['id']),
                     'destin_warehouse_owner' => $fields['destin']['owner'],
                     'authorizing' => $fields['authorizing']
@@ -1479,107 +1349,83 @@ class LogisticsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getOutputs(Request $request, $pole, $project, $reload = false)
+    public function getOutputs($pole, $project)
     {
         session_start();
-        $session = $_SESSION['semtinel'];
-        $fields  = $request->all();
         $outputs = array();
 
-        if (!$reload && Cache::get('outputs') != null) {
-            $outputs = Cache::get('outputs');
-        }
-        else {
-            $qry_outputs = LogisticsOutput::where('pole', $pole)
-                                ->where('project', intval($project))
-                                ->whereNull('cancel')
-                                ->orderBy('id', 'DESC')->get();
-            foreach ($qry_outputs as $output) {
-                $items = array();
-                if (LogisticsOutputItem::where('id_output', $output->id)->exists()) {
-                    $items = $output->Items;
-                }
-                // Formater dates
-                $arr_created = explode(' ', $output->created_at);
-                $arr_created_date = explode('-', $arr_created[0]);
-                $created_at = $arr_created_date[2] . '/' . $arr_created_date[1] . '/' . $arr_created_date[0];
-                
-                $arr_updated = explode(' ', $output->updated_at);
-                $arr_updated_date = explode('-', $arr_updated[0]);
-                $updated_at = $arr_updated_date[2] . '/' . $arr_updated_date[1] . '/' . $arr_updated_date[0];
-
-                // Project
-                $project = SystStructureProject::find(intval($output->project));
-
-                // Pole
-                $pole = SystPole::where('abbr', $output->pole)->first();
-
-                // EOP
-                $destin = '';
-                if ($output->type == 'towork') {
-                    $eop = SystStructureEop::find(intval($output->work_object));
-                    if ($eop->parent != 0) {
-                        $parent = SystStructureEop::find($eop->parent)->description;
-                        $destin = $parent . ' / ' . $eop->description;
-                    }
-                    else {
-                        $destin = $eop->description;
-                    }
-                }
-                else {
-                    $warehouse = SystWarehouse::find(intval($output->destin_warehouse));
-                    $destin = $warehouse->name;
-                }
-
-                // Get attach type
-                $attach_type = '';
-                if ($output->attach_path != '' && $output->attach_path != null) {
-                    $attach_arr = explode('.', $output->attach_path);
-                    switch ($attach_arr[1]) {
-                        case 'pdf':
-                            $attach_type = 'pdf';
-                            break;
-                        case 'png':
-                            $attach_type = 'png';
-                            break;
-                        default:
-                            $attach_type = 'jpg';
-                            break;
-                    }
-                }
-                
-                $outputs[] = array(
-                    'id' => $output->id,
-                    'code' => $output->code,
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-                    'created_by' => $output->created_by,
-                    'updated_by' => $output->updated_by,
-                    'pole' => $pole->abbr,
-                    'pole_name' => $pole->name,
-                    'project' => $output->project,
-                    'project_abbr' => $project->abbr,
-                    'project_name' => $project->name,
-                    'warehouse' => $output->warehouse,
-                    'warehouse_name' => SystWarehouse::find(intval($output->warehouse))->name,
-                    'warehouse_owner' => $output->warehouse_owner,
-                    'comment' => $output->comment,
-                    'status' => ucfirst($output->status),
-                    'type' => $output->type,
-                    'attach_path' => $output->attach_path,
-                    'attach_type' => $attach_type,
-                    'confirm' => $output->confirm,
-                    'items' => $items,
-                    'authorized' => $output->authorized,
-                    'authorizing' => $output->authorizing,
-                    'destin' => $destin,
-                    'type' => ($output->type == 'towork') ? 'Despacho a Obra' : 'Transferencia',
-                    'destin_warehouse_owner' => $output->destin_warehouse_owner
-                );
+        $qry_outputs = LogisticsOutput::with('Items', 'getProject', 'getPole', 'getWarehouse')
+                            ->where('pole', $pole)
+                            ->where('project', intval($project))
+                            ->whereNull('cancel')
+                            ->orderBy('id', 'DESC')->get();
+        foreach ($qry_outputs as $output) {
+            $items = array();
+            if (!$output->Items->isEmpty()) {
+                $items = $output->Items;
             }
+            // Formater dates
+            $arr_created = explode(' ', $output->created_at);
+            $arr_created_date = explode('-', $arr_created[0]);
+            $created_at = $arr_created_date[2] . '/' . $arr_created_date[1] . '/' . $arr_created_date[0];
+            
+            $arr_updated = explode(' ', $output->updated_at);
+            $arr_updated_date = explode('-', $arr_updated[0]);
+            $updated_at = $arr_updated_date[2] . '/' . $arr_updated_date[1] . '/' . $arr_updated_date[0];
 
-            Cache::forever('outputs', $outputs);
+            // Project
+            $project = $output->getProject;
+
+            // Pole
+            $pole = $output->getPole;
+
+            // Get attach type
+            $attach_type = '';
+            if ($output->attach_path != '' && $output->attach_path != null) {
+                $attach_arr = explode('.', $output->attach_path);
+                switch ($attach_arr[1]) {
+                    case 'pdf':
+                        $attach_type = 'pdf';
+                        break;
+                    case 'png':
+                        $attach_type = 'png';
+                        break;
+                    default:
+                        $attach_type = 'jpg';
+                        break;
+                }
+            }
+            
+            $outputs[] = array(
+                'id' => $output->id,
+                'code' => $output->code,
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+                'created_by' => $output->created_by,
+                'updated_by' => $output->updated_by,
+                'pole' => $pole->abbr,
+                'pole_name' => $pole->name,
+                'project' => $output->project,
+                'project_abbr' => $project->abbr,
+                'project_name' => $project->name,
+                'warehouse' => $output->warehouse,
+                'warehouse_name' => $output->getWarehouse->name,
+                'warehouse_owner' => $output->warehouse_owner,
+                'comment' => $output->comment,
+                'status' => ucfirst($output->status),
+                'type' => $output->type,
+                'attach_path' => $output->attach_path,
+                'attach_type' => $attach_type,
+                'confirm' => $output->confirm,
+                'items' => $items,
+                'authorized' => $output->authorized,
+                'authorizing' => $output->authorizing,
+                'destin' => $output->destin,
+                'type' => ($output->type == 'towork') ? 'Despacho a Obra' : 'Transferencia',
+                'destin_warehouse_owner' => $output->destin_warehouse_owner
+            );
         }
+
         return response()->json($outputs, 200);
     }
 
