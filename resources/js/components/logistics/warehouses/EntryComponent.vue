@@ -744,11 +744,15 @@ export default {
                                 <td>
                                     <a class="show-lnk" 
                                         href="javascript:void(0);"
-                                        v-tooltip="'Click para Mostrar Detalles de este producto'"
+                                        v-tooltip="item.item_description"
                                         data-toggle="modal" 
                                         data-target="#modal-item-details"
                                         v-on:click="show(idx)">
-                                        {{ item.item_description }}
+                                        {{ 
+                                            (item.item_description.length > 60) 
+                                                ? item.item_description.substring(0,60).trim() + '...' 
+                                                : item.item_description
+                                        }}
                                     </a>
                                 </td>
                                 <td class="text-center">{{ item.um }}</td>
@@ -797,11 +801,15 @@ export default {
                                 <td>
                                     <a class="show-lnk" 
                                         href="javascript:void(0);"
-                                        v-tooltip="'Click para Mostrar Detalles de este producto'"
+                                        v-tooltip="item.item_description"
                                         data-toggle="modal" 
                                         data-target="#modal-item-details"
                                         v-on:click="show(idx)">
-                                        {{ item.item_description }}
+                                        {{ 
+                                            (item.item_description.length > 60) 
+                                                ? item.item_description.substring(0,60).trim() + '...' 
+                                                : item.item_description
+                                        }}
                                     </a>
                                 </td>
                                 <td class="text-center">{{ item.um }}</td>

@@ -810,12 +810,15 @@ class LogisticsController extends Controller
                 $qry_logs = Log::where('pole', $fields['pole'])
                                 ->where('project', intval($fields['project']))
                                 ->whereDay('created_at' , date('d'))
+                                ->whereMonth('created_at' , date('m'))
+                                ->whereYear('created_at' , date('Y'))
                                 ->orderBy('id', 'DESC')->get();
             }
             elseif ($fields['period'] == 'currentmonth') {
                 $qry_logs = Log::where('pole', $fields['pole'])
                                 ->where('project', intval($fields['project']))
                                 ->whereMonth('created_at' , date('m'))
+                                ->whereYear('created_at' , date('Y'))
                                 ->orderBy('id', 'DESC')->get();
             }
             elseif ($fields['period'] == 'currentyear') {
@@ -836,345 +839,347 @@ class LogisticsController extends Controller
                                 ->orderBy('id', 'DESC')->get();
             }
             
-            foreach ($qry_logs as $log) {
+            if (!$qry_logs->isEmpty()) {
+                foreach ($qry_logs as $log) {
                 
-                // Get date
-                $arr_created = explode(' ', $log->created_at);
-                $date = $arr_created[0];
-                $hour_arr = explode(':', $arr_created[1]);
-                $hour = $hour_arr[0] . ':' . $hour_arr[1];
-                
-                // History Entry type
-                if (strpos($log->action, 'entry') !== false) {
-                    $entry = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
-                                    ->select(
-                                        'logistics_receipts.id',
-                                        'logistics_receipts.code',
-                                        'logistics_receipts.origin',
-                                        'logistics_receipts.document_number',
-                                        'logistics_receipts.oc',
-                                        'logistics_receipts.created_at',
-                                        'logistics_receipts.created_by',
-                                        'logistics_receipts.warehouse',
-                                        'logistics_receipts.warehouse_owner',
-                                        'logistics_receipts.status',
-                                        'logistics_receipts.attach_path',
-                                        'logistics_receipts.confirm',
-                                        'logistics_receipts.cancel',
-                                        'logistics_receipts.cancel_by',
-                                        'syst_warehouses.name as warehouse_name'
-                                    )
-                                    ->where('logistics_receipts.id', $log->entity_id)
-                                    ->first();
-                    $entry_items = array();
-                    $is_oc = true;
-                    if (LogisticsReceiptItemOc::where('id_receipt', $entry->id)->exists()) {
-                        $entry_items = $entry->itemsOc;
-                    }
-                    if (LogisticsReceiptItemDispatch::where('id_receipt', $entry->id)->exists()) {
-                        $entry_items = $entry->itemsDispatch;
-                        $is_oc = false;
-                    }
-                    if (LogisticsReceiptItemTransfer::where('id_receipt', $entry->id)->exists()) {
-                        $entry_items = $entry->itemsTransfer;
-                        $is_oc = false;
-                    }
-
-                    // categories
-                    $categories = array();
-                    foreach ($entry_items as $product) {
-                        if ($product->category_name != null && $product->category_name != '') {
-                            if (array_search($product->category_name, $categories) === false) {
-                                $categories[] = $product->category_name;
-                            }
+                    // Get date
+                    $arr_created = explode(' ', $log->created_at);
+                    $date = $arr_created[0];
+                    $hour_arr = explode(':', $arr_created[1]);
+                    $hour = $hour_arr[0] . ':' . $hour_arr[1];
+                    
+                    // History Entry type
+                    if (strpos($log->action, 'entry') !== false) {
+                        $entry = LogisticsReceipt::leftJoin('syst_warehouses', 'syst_warehouses.id', 'logistics_receipts.warehouse')
+                                        ->select(
+                                            'logistics_receipts.id',
+                                            'logistics_receipts.code',
+                                            'logistics_receipts.origin',
+                                            'logistics_receipts.document_number',
+                                            'logistics_receipts.oc',
+                                            'logistics_receipts.created_at',
+                                            'logistics_receipts.created_by',
+                                            'logistics_receipts.warehouse',
+                                            'logistics_receipts.warehouse_owner',
+                                            'logistics_receipts.status',
+                                            'logistics_receipts.attach_path',
+                                            'logistics_receipts.confirm',
+                                            'logistics_receipts.cancel',
+                                            'logistics_receipts.cancel_by',
+                                            'syst_warehouses.name as warehouse_name'
+                                        )
+                                        ->where('logistics_receipts.id', $log->entity_id)
+                                        ->first();
+                        $entry_items = array();
+                        $is_oc = true;
+                        if (LogisticsReceiptItemOc::where('id_receipt', $entry->id)->exists()) {
+                            $entry_items = $entry->itemsOc;
                         }
-                        
-                    }
-                    $categories = implode($categories);
-
-                    // warehouse
-                    $warehouse = $entry->warehouse;
-
-                    // project
-                    $project = $log->getProject;
-
-                    // document_number
-                    $docum_number = ($is_oc) ? $entry->document_number : $project->abbr . "/OUT/" . $entry->document_number;
-
-                    // user
-                    $log_user = $log->getUser;
-
-                    // Get OC
-                    $entry_oc = '- Ninguna -';
-                    if ($is_oc && $entry->oc != '' && $entry->oc != null) {
-                        $entry_oc = $entry->oc;
-                    }
-                    else {
-                        $oc_list = array();
+                        if (LogisticsReceiptItemDispatch::where('id_receipt', $entry->id)->exists()) {
+                            $entry_items = $entry->itemsDispatch;
+                            $is_oc = false;
+                        }
+                        if (LogisticsReceiptItemTransfer::where('id_receipt', $entry->id)->exists()) {
+                            $entry_items = $entry->itemsTransfer;
+                            $is_oc = false;
+                        }
+    
+                        // categories
+                        $categories = array();
                         foreach ($entry_items as $product) {
-                            if (!in_array($product->oc, $oc_list)) {
-                                $oc_list[] = $product->oc;
+                            if ($product->category_name != null && $product->category_name != '') {
+                                if (array_search($product->category_name, $categories) === false) {
+                                    $categories[] = $product->category_name;
+                                }
+                            }
+                            
+                        }
+                        $categories = implode($categories);
+    
+                        // warehouse
+                        $warehouse = $entry->warehouse;
+    
+                        // project
+                        $project = $log->getProject;
+    
+                        // document_number
+                        $docum_number = ($is_oc) ? $entry->document_number : $project->abbr . "/OUT/" . $entry->document_number;
+    
+                        // user
+                        $log_user = $log->getUser;
+    
+                        // Get OC
+                        $entry_oc = '- Ninguna -';
+                        if ($is_oc && $entry->oc != '' && $entry->oc != null) {
+                            $entry_oc = $entry->oc;
+                        }
+                        else {
+                            $oc_list = array();
+                            foreach ($entry_items as $product) {
+                                if (!in_array($product->oc, $oc_list)) {
+                                    $oc_list[] = $product->oc;
+                                }
+                            }
+                            $entry_oc = implode($oc_list);
+                        }
+    
+                        if ($oc == null && $descript == '') {
+                            
+                            // Entry created
+                            if ($log->action == 'create-entry') {
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $entry->id,
+                                    'code' => $entry->code,
+                                    'origin' => $entry->origin,
+                                    'document_number' => $docum_number,
+                                    'oc' => $oc,
+                                    'warehouse_owner' => $entry->warehouse_owner,
+                                    'status' => $entry->status,
+                                    'attach_path' => $entry->attach_path,
+                                    'confirm' => ($entry->confirm == 1) ? 'SI' : 'NO',
+                                    'warehouse_name' => $entry->warehouse_name,
+                                    'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'created_by_email' => $log_user->email,
+                                    'hour' => $hour,
+                                    'categories' => $categories,
+                                    'warehouse' => $warehouse
+                                );
+                            }                    
+                            
+                            // Entry canceled
+                            if ($log->action == 'cancel-entry') {
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $entry->id,
+                                    'code' => $entry->code,
+                                    'document_number' => $docum_number,
+                                    'attach_path' => $entry->attach_path,
+                                    'cancel_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'cancel_by_email' => $log_user->email,
+                                    'hour' => $hour,
+                                    'categories' => $categories,
+                                    'warehouse' => $warehouse
+                                );
+                            }
+    
+                            // Entry confirm
+                            if ($log->action == 'confirm-entry') {
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $entry->id,
+                                    'code' => $entry->code,
+                                    'document_number' => $docum_number,
+                                    'attach_path' => $entry->attach_path,
+                                    'confirm_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'confirm_by_email' => $log_user->email,
+                                    'hour' => $hour,
+                                    'categories' => $categories,
+                                    'warehouse' => $warehouse,
+                                    'warehouse_name' => $entry->warehouse_name
+                                );
+                            }
+    
+                            // Entry attach
+                            if ($log->action == 'attach-entry') {
+                                $filename_arr = explode('.', $entry->attach_path);
+                                $attach_type = $filename_arr[1];
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $entry->id,
+                                    'code' => $entry->code,
+                                    'document_number' => $docum_number,
+                                    'attach_path' => $entry->attach_path,
+                                    'attach_type' => $attach_type,
+                                    'attach_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'attach_by_email' => $log_user->email,
+                                    'hour' => $hour,
+                                    'categories' => $categories,
+                                    'warehouse' => $warehouse
+                                );
                             }
                         }
-                        $entry_oc = implode($oc_list);
-                    }
-
-                    if ($oc == null && $descript == '') {
-                        
-                        // Entry created
-                        if ($log->action == 'create-entry') {
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $entry->id,
-                                'code' => $entry->code,
-                                'origin' => $entry->origin,
-                                'document_number' => $docum_number,
-                                'oc' => $oc,
-                                'warehouse_owner' => $entry->warehouse_owner,
-                                'status' => $entry->status,
-                                'attach_path' => $entry->attach_path,
-                                'confirm' => ($entry->confirm == 1) ? 'SI' : 'NO',
-                                'warehouse_name' => $entry->warehouse_name,
-                                'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'created_by_email' => $log_user->email,
-                                'hour' => $hour,
-                                'categories' => $categories,
-                                'warehouse' => $warehouse
-                            );
-                        }                    
-                        
-                        // Entry canceled
-                        if ($log->action == 'cancel-entry') {
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $entry->id,
-                                'code' => $entry->code,
-                                'document_number' => $docum_number,
-                                'attach_path' => $entry->attach_path,
-                                'cancel_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'cancel_by_email' => $log_user->email,
-                                'hour' => $hour,
-                                'categories' => $categories,
-                                'warehouse' => $warehouse
-                            );
-                        }
-
-                        // Entry confirm
-                        if ($log->action == 'confirm-entry') {
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $entry->id,
-                                'code' => $entry->code,
-                                'document_number' => $docum_number,
-                                'attach_path' => $entry->attach_path,
-                                'confirm_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'confirm_by_email' => $log_user->email,
-                                'hour' => $hour,
-                                'categories' => $categories,
-                                'warehouse' => $warehouse,
-                                'warehouse_name' => $entry->warehouse_name
-                            );
-                        }
-
-                        // Entry attach
-                        if ($log->action == 'attach-entry') {
-                            $filename_arr = explode('.', $entry->attach_path);
-                            $attach_type = $filename_arr[1];
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $entry->id,
-                                'code' => $entry->code,
-                                'document_number' => $docum_number,
-                                'attach_path' => $entry->attach_path,
-                                'attach_type' => $attach_type,
-                                'attach_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'attach_by_email' => $log_user->email,
-                                'hour' => $hour,
-                                'categories' => $categories,
-                                'warehouse' => $warehouse
-                            );
-                        }
-                    }
-                    else {
-                        // Get entry items
-                        $entry_items = ($is_oc) ? $entry->itemsOc : $entry->itemsDispatch;
-                        if ($log->action == 'confirm-entry') {                            
-                            foreach ($entry_items as $item) {
-                                if ($entry->oc == $oc && $item->item_description == $descript) {
-                                    $history[$date][] = array(
-                                        'node_type' => 'product-add',
-                                        'id' => $item->id,
-                                        'code' => $entry->code,
-                                        'id_receipt' => $item->id_receipt,
-                                        'attach_path' => $entry->attach_path,
-                                        'origin' => $entry->origin,
-                                        'oc' => $oc,
-                                        'document_number' => $docum_number,
-                                        'um' => $item->um,
-                                        'received_quantity' => $item->received_quantity,
-                                        'warehouse_name' => $entry->warehouse_name,
-                                        'warehouse_owner' => $entry->warehouse_owner,
-                                        'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                        'created_by_email' => $log_user->email,
-                                        'hour' => $hour,
-                                        'categories' => $categories,
-                                        'warehouse' => $warehouse
-                                    );
+                        else {
+                            // Get entry items
+                            $entry_items = ($is_oc) ? $entry->itemsOc : $entry->itemsDispatch;
+                            if ($log->action == 'confirm-entry') {                            
+                                foreach ($entry_items as $item) {
+                                    if ($entry->oc == $oc && $item->item_description == $descript) {
+                                        $history[$date][] = array(
+                                            'node_type' => 'product-add',
+                                            'id' => $item->id,
+                                            'code' => $entry->code,
+                                            'id_receipt' => $item->id_receipt,
+                                            'attach_path' => $entry->attach_path,
+                                            'origin' => $entry->origin,
+                                            'oc' => $oc,
+                                            'document_number' => $docum_number,
+                                            'um' => $item->um,
+                                            'received_quantity' => $item->received_quantity,
+                                            'warehouse_name' => $entry->warehouse_name,
+                                            'warehouse_owner' => $entry->warehouse_owner,
+                                            'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                            'created_by_email' => $log_user->email,
+                                            'hour' => $hour,
+                                            'categories' => $categories,
+                                            'warehouse' => $warehouse
+                                        );
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
-                // History Output type
-                if (strpos($log->action, 'output') !== false) {
-                    $output = LogisticsOutput::leftJoin(
-                                        'syst_warehouses', 
-                                        'syst_warehouses.id', 
-                                        'logistics_outputs.warehouse'
-                                    )
-                                    ->select(
-                                        'logistics_outputs.id',
-                                        'logistics_outputs.code',
-                                        'logistics_outputs.created_at',
-                                        'logistics_outputs.created_by',
-                                        'logistics_outputs.warehouse',
-                                        'logistics_outputs.warehouse_owner',
-                                        'logistics_outputs.status',
-                                        'logistics_outputs.attach_path',
-                                        'logistics_outputs.confirm',
-                                        'logistics_outputs.cancel',
-                                        'logistics_outputs.cancel_by',
-                                        'logistics_outputs.type',
-                                        'logistics_outputs.work_object',
-                                        'logistics_outputs.destin_warehouse',
-                                        'logistics_outputs.authorized',
-                                        'logistics_outputs.authorizing',
-                                        'syst_warehouses.name as warehouse_name',
-                                    )
-                                    ->where('logistics_outputs.id', $log->entity_id)
-                                    ->first();
-                    $output_items = array();
-                    $output_items = $output->Items;
-
-                    // project
-                    $project = $log->getProject;
-
-                    // EOP
-                    $destin = '';
-                    if ($output->type == 'towork') {
-                        $eop = SystStructureEop::find(intval($output->work_object));
-                        if ($eop->parent != 0) {
-                            $parent = SystStructureEop::find($eop->parent)->description;
-                            $destin = $parent . ' / ' . $eop->description;
+    
+                    // History Output type
+                    if (strpos($log->action, 'output') !== false) {
+                        $output = LogisticsOutput::leftJoin(
+                                            'syst_warehouses', 
+                                            'syst_warehouses.id', 
+                                            'logistics_outputs.warehouse'
+                                        )
+                                        ->select(
+                                            'logistics_outputs.id',
+                                            'logistics_outputs.code',
+                                            'logistics_outputs.created_at',
+                                            'logistics_outputs.created_by',
+                                            'logistics_outputs.warehouse',
+                                            'logistics_outputs.warehouse_owner',
+                                            'logistics_outputs.status',
+                                            'logistics_outputs.attach_path',
+                                            'logistics_outputs.confirm',
+                                            'logistics_outputs.cancel',
+                                            'logistics_outputs.cancel_by',
+                                            'logistics_outputs.type',
+                                            'logistics_outputs.work_object',
+                                            'logistics_outputs.destin_warehouse',
+                                            'logistics_outputs.authorized',
+                                            'logistics_outputs.authorizing',
+                                            'syst_warehouses.name as warehouse_name',
+                                        )
+                                        ->where('logistics_outputs.id', $log->entity_id)
+                                        ->first();
+                        $output_items = array();
+                        $output_items = $output->Items;
+    
+                        // project
+                        $project = $log->getProject;
+    
+                        // EOP
+                        $destin = '';
+                        if ($output->type == 'towork') {
+                            $eop = SystStructureEop::find(intval($output->work_object));
+                            if ($eop->parent != 0) {
+                                $parent = SystStructureEop::find($eop->parent)->description;
+                                $destin = $parent . ' / ' . $eop->description;
+                            }
+                            else {
+                                $destin = $eop->description;
+                            }
                         }
                         else {
-                            $destin = $eop->description;
+                            $warehouse = SystWarehouse::find(intval($output->destin_warehouse));
+                            $destin = $warehouse->name;
                         }
-                    }
-                    else {
-                        $warehouse = SystWarehouse::find(intval($output->destin_warehouse));
-                        $destin = $warehouse->name;
-                    }
-
-                    // user
-                    $log_user = $log->getUser;
-
-                    if ($oc == null && $descript == '') {
-                        
-                        // Output created
-                        if ($log->action == 'create-output') {
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $output->id,
-                                'code' => $output->code,
-                                'status' => ucfirst($output->status),
-                                'attach_path' => $output->attach_path,
-                                'confirm' => ($output->confirm == 1) ? 'SI' : 'NO',
-                                'warehouse_name' => $output->warehouse_name,
-                                'warehouse_owner' => $output->warehouse_owner,
-                                'authorized' => $output->authorized,
-                                'authorizing' => $output->authorizing,
-                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
-                                'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'created_by_email' => $log_user->email,
-                                'hour' => $hour,
-                                'destin' => $destin
-                            );
-                        }                    
-                        
-                        // Output canceled
-                        if ($log->action == 'cancel-output') {
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $output->id,
-                                'code' => $output->code,
-                                'attach_path' => $output->attach_path,
-                                'warehouse_name' => $output->warehouse_name,
-                                'cancel_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'cancel_by_email' => $log_user->email,
-                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
-                                'hour' => $hour,
-                                'destin' => $destin
-                            );
+    
+                        // user
+                        $log_user = $log->getUser;
+    
+                        if ($oc == null && $descript == '') {
+                            
+                            // Output created
+                            if ($log->action == 'create-output') {
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $output->id,
+                                    'code' => $output->code,
+                                    'status' => ucfirst($output->status),
+                                    'attach_path' => $output->attach_path,
+                                    'confirm' => ($output->confirm == 1) ? 'SI' : 'NO',
+                                    'warehouse_name' => $output->warehouse_name,
+                                    'warehouse_owner' => $output->warehouse_owner,
+                                    'authorized' => $output->authorized,
+                                    'authorizing' => $output->authorizing,
+                                    'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                    'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'created_by_email' => $log_user->email,
+                                    'hour' => $hour,
+                                    'destin' => $destin
+                                );
+                            }                    
+                            
+                            // Output canceled
+                            if ($log->action == 'cancel-output') {
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $output->id,
+                                    'code' => $output->code,
+                                    'attach_path' => $output->attach_path,
+                                    'warehouse_name' => $output->warehouse_name,
+                                    'cancel_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'cancel_by_email' => $log_user->email,
+                                    'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                    'hour' => $hour,
+                                    'destin' => $destin
+                                );
+                            }
+    
+                            // Output confirm
+                            if ($log->action == 'confirm-output') {
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $output->id,
+                                    'code' => $output->code,
+                                    'attach_path' => $output->attach_path,
+                                    'warehouse_name' => $output->warehouse_name,
+                                    'attach_path' => $output->attach_path,
+                                    'confirm_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                    'confirm_by_email' => $log_user->email,
+                                    'hour' => $hour,
+                                    'destin' => $destin
+                                );
+                            }
+    
+                            // Output attach
+                            if ($log->action == 'attach-output') {
+                                $filename_arr = explode('.', $output->attach_path);
+                                $attach_type = $filename_arr[1];
+                                $history[$date][] = array(
+                                    'node_type' => $log->action,
+                                    'id' => $output->id,
+                                    'code' => $output->code,
+                                    'warehouse_name' => $output->warehouse_name,
+                                    'attach_path' => $output->attach_path,
+                                    'attach_type' => $attach_type,
+                                    'attach_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                    'attach_by_email' => $log_user->email,
+                                    'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
+                                    'hour' => $hour,
+                                    'destin' => $destin
+                                );
+                            }
                         }
-
-                        // Output confirm
-                        if ($log->action == 'confirm-output') {
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $output->id,
-                                'code' => $output->code,
-                                'attach_path' => $output->attach_path,
-                                'warehouse_name' => $output->warehouse_name,
-                                'attach_path' => $output->attach_path,
-                                'confirm_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
-                                'confirm_by_email' => $log_user->email,
-                                'hour' => $hour,
-                                'destin' => $destin
-                            );
-                        }
-
-                        // Output attach
-                        if ($log->action == 'attach-output') {
-                            $filename_arr = explode('.', $output->attach_path);
-                            $attach_type = $filename_arr[1];
-                            $history[$date][] = array(
-                                'node_type' => $log->action,
-                                'id' => $output->id,
-                                'code' => $output->code,
-                                'warehouse_name' => $output->warehouse_name,
-                                'attach_path' => $output->attach_path,
-                                'attach_type' => $attach_type,
-                                'attach_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                'attach_by_email' => $log_user->email,
-                                'type' => ($output->type == 'transfer') ? 'Transferencia de Pañol' : 'Salida hacia Obra',
-                                'hour' => $hour,
-                                'destin' => $destin
-                            );
-                        }
-                    }
-                    else {
-                        // Get output items
-                        if ($log->action == 'confirm-output') {                            
-                            foreach ($output_items as $item) {
-                                if ($item->oc == $oc && $item->item_description == $descript) {
-                                    $history[$date][] = array(
-                                        'node_type' => 'product-output',
-                                        'id' => $item->id,
-                                        'id_output' => $output->id,
-                                        'attach_path' => $output->attach_path,
-                                        'um' => $item->um,
-                                        'quantity' => $item->quantity,
-                                        'authorizing' => $output->authorizing,
-                                        'warehouse_name' => $entry->warehouse_name,
-                                        'warehouse_owner' => $entry->warehouse_owner,
-                                        'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
-                                        'created_by_email' => $log_user->email,
-                                        'hour' => $hour,
-                                        'destin' => $destin
-                                    );
+                        else {
+                            // Get output items
+                            if ($log->action == 'confirm-output') {                            
+                                foreach ($output_items as $item) {
+                                    if ($item->oc == $oc && $item->item_description == $descript) {
+                                        $history[$date][] = array(
+                                            'node_type' => 'product-output',
+                                            'id' => $item->id,
+                                            'id_output' => $output->id,
+                                            'attach_path' => $output->attach_path,
+                                            'um' => $item->um,
+                                            'quantity' => $item->quantity,
+                                            'authorizing' => $output->authorizing,
+                                            'warehouse_name' => $entry->warehouse_name,
+                                            'warehouse_owner' => $entry->warehouse_owner,
+                                            'created_by_name' => $log_user->first_name . ' ' . $log_user->last_name,
+                                            'created_by_email' => $log_user->email,
+                                            'hour' => $hour,
+                                            'destin' => $destin
+                                        );
+                                    }
                                 }
                             }
                         }

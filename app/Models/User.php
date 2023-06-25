@@ -106,7 +106,22 @@ class User extends Authenticatable implements LdapAuthenticatable
     public function getProjectsArray()
     {
         $projects     = array();
+<<<<<<< HEAD
         foreach ($this->projects as $project) {
+=======
+        $qry_projects = UserProject::leftJoin('syst_structure_projects', 'syst_structure_projects.id', 'users_projects.project_id')
+                                    ->select(
+                                        'syst_structure_projects.id',
+                                        'syst_structure_projects.id_pole',
+                                        'syst_structure_projects.name',
+                                        'syst_structure_projects.abbr',
+                                        'syst_structure_projects.active'
+                                    )
+                                    ->where('users_projects.user_id', $this->id)
+                                    ->where('syst_structure_projects.active', 1)
+                                    ->orderBy('syst_structure_projects.id', 'ASC')->get();
+        foreach ($qry_projects as $project) {
+>>>>>>> 83270e2175dbb7c560aae0254ff43869c130eb8f
             $projects[] = array(
                 'id' => $project->id,
                 'id_pole' => $project->id_pole,

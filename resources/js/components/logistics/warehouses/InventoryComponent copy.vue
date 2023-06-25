@@ -32,10 +32,19 @@ export default {
         filter_apply: false,
         lastproducts_loading: true,
         session: JSON.parse(sessionStorage.getItem('semtinel')),
+<<<<<<< HEAD:resources/js/components/logistics/warehouses/InventoryComponent copy.vue
         pole: sessionStorage.getItem('stnel_logist_pole'),
         project: sessionStorage.getItem('stnel_logist_project'),
         warehouses: (sessionStorage.getItem('stnel_logist_warehouses').length > 0) ? JSON.parse(sessionStorage.getItem('stnel_logist_warehouses')) : '',
         products_categories: JSON.parse(sessionStorage.getItem('stnel_prod_categories')),
+=======
+        //poles: JSON.parse(localStorage.getItem('semtinel_poles')),
+        //projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+        pole: localStorage.getItem('stnel_logist_pole'),
+        project: localStorage.getItem('stnel_logist_project'),
+        warehouses: '',
+        products_categories: JSON.parse(localStorage.getItem('semtinel_products_categories')),
+>>>>>>> 83270e2175dbb7c560aae0254ff43869c130eb8f:resources/js/components/logistics/InventoryComponent.vue
         filter_productcategory: 'all',
         filter_warehouse: 'all',
         filter_oc: '',
@@ -146,6 +155,8 @@ export default {
             if (value.id == cmp.project)
                 cmp.project_name = value.name
         });
+        if (cmp.session.warehouses) 
+            cmp.warehouses = cmp.session.warehouses;
     },
     methods: {
         listReload: function () {
@@ -652,7 +663,7 @@ export default {
                                         <option value="all">- Todos -</option>
                                         <template v-for="(option, index) in warehouses" :key="index">
                                             <option
-                                                :value="option['id']">
+                                                :value="index">
                                                 {{ option['name'] }}
                                             </option>
                                         </template>

@@ -66,6 +66,27 @@ export default {
                     cmp.categories_load = true
                 });
         }
+<<<<<<< HEAD
+=======
+        /*await fetch("http://localhost/semtinel/public/api/logistics/warehouses/" + cmp.project, {
+                method: 'GET',
+                headers: headers
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Warehouses store
+                localStorage.setItem('stnel_warehouses', JSON.stringify(data))
+            });*/
+        await fetch("http://localhost/semtinel/public/api/logistics/products_categories", {
+                method: 'GET',
+                headers: headers
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Warehouses store
+                localStorage.setItem('semtinel_products_categories', JSON.stringify(data))
+            });
+>>>>>>> 83270e2175dbb7c560aae0254ff43869c130eb8f
     },
     methods: {
         
@@ -80,6 +101,6 @@ export default {
     <div class="h-100 text-center app_name">
         <div class="text-center"><i class="mdi mdi-truck-check mdi-72px text-success"></i></div>
         <div class="app-title">Semtinel - Logística</div>
-        <div class="app-subtitle">Sistema de Gesti&oacute;n de Log&iacute;stica en Obras</div>
+        <div class="app-subtitle">Gesti&oacute;n y Control de Log&iacute;stica en obras</div>
     </div>
 </template>
