@@ -1,10 +1,10 @@
-<script>
+<script allowJs="true">
 import "jquery/dist/jquery.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
-import PageHeader from "../layouts/HeaderComponent.vue";
+import PageHeader from "../../layouts/HeaderComponent.vue";
 
 export default {
     data: function () {
@@ -15,11 +15,39 @@ export default {
       };
     },
     methods: {
+        createDataTable: function () {
+            let cmp = this
+            $("#dt_entries").DataTable({
+                retrieve: true,
+                lengthMenu: [
+                    [10, 15, 25, 50, -1],
+                    [10, 15, 25, 50, "Todos"],
+                ],
+                pageLength: 10,
+                //order: [[5, 'asc']],
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                    "order": []
+                }],
+                "columns": [
+                    { "width": "5%" },
+                    null,
+                    { "width": "15%" },
+                    { "width": "10%" },
+                    { "width": "15%" },
+                    { "width": "10%" },
+                    { "width": "10%" },
+                    { "width": "5%" }
+                ],
+                language: cmp.$root.dataTableLanguage
+            });
+        },
         newEntry: function () {
             this.$router.push('/semtinel/public/logistics/entry')
         },
         listReload: function () {
-            this.getEntriesTable(true)
+            this.getEntriesTable()
         },
         entryDetail: function (entry) {
             this.$router.push({ 
@@ -29,17 +57,17 @@ export default {
                 }
             }) //'/semtinel/logistics/entry.detail'
         },
-        async getEntriesTable (reload = false) {
+        async getEntriesTable () {
             let cmp = this,
-                pole = localStorage.getItem('stnel_logist_pole'),
-                project = localStorage.getItem('stnel_logist_project')
+                pole = sessionStorage.getItem('stnel_logist_pole'),
+                project = sessionStorage.getItem('stnel_logist_project')
             this.loading = true
             let headers = {
                 'User-Agent': 'testing/1.0',
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            await fetch("http://localhost/semtinel/public/api/logistics/entries/" + pole + "/" + project + "/" + reload, {
+            await fetch("http://localhost/semtinel/public/api/logistics/entries/" + pole + "/" + project, {
                         method: 'GET',
                         headers: headers
                     })
@@ -47,51 +75,10 @@ export default {
                     .then((data) => {
                         cmp.entries = data
                         cmp.loading = false
-                        if ($("#datatable").DataTable().destroy()) {
+                        sessionStorage.setItem('stnel_logist_entries', JSON.stringify(data));
+                        if ($("#dt_entries").DataTable().destroy()) {
                             setTimeout(() => {
-                                $("#datatable").DataTable({
-                                    lengthMenu: [
-                                        [10, 15, 25, 50, -1],
-                                        [10, 15, 25, 50, "Todos"],
-                                    ],
-                                    pageLength: 10,
-                                    //order: [[5, 'asc']],
-                                    "columnDefs": [{
-                                        "targets": 'no-sort',
-                                        "orderable": false,
-                                        "order": []
-                                    }],
-                                    "columns": [
-                                        { "width": "5%" },
-                                        null,
-                                        { "width": "15%" },
-                                        { "width": "15%" },
-                                        { "width": "15%" },
-                                        { "width": "10%" },
-                                        { "width": "10%" },
-                                        { "width": "8%" }
-                                    ],
-                                    language: {
-                                        "decimal": "",
-                                        "emptyTable": "No hay información",
-                                        "info": "Mostrando _START_ a _END_ de _TOTAL_ Registros",
-                                        "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-                                        "infoFiltered": "(Filtrado de _MAX_ total registros)",
-                                        "infoPostFix": "",
-                                        "thousands": ",",
-                                        "lengthMenu": "Mostrar _MENU_ Registros",
-                                        "loadingRecords": "Cargando...",
-                                        "processing": "Procesando...",
-                                        "search": "Buscar: ",
-                                        "zeroRecords": "Sin resultados encontrados",
-                                        "paginate": {
-                                            "first": "Primero",
-                                            "last": "Ultimo",
-                                            "next": "Siguiente",
-                                            "previous": "Anterior"
-                                        }
-                                    }
-                                });
+                                cmp.createDataTable();
                             });
                         }
                     })
@@ -111,63 +98,42 @@ export default {
             sessionStorage.clear()
             window.document.location.href = 'http://localhost/semtinel/public/login'
         }
-        let pole = localStorage.getItem('stnel_logist_pole'),
-            project = localStorage.getItem('stnel_logist_project'),
-            headers = {
-            'User-Agent': 'testing/1.0',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + cmp.session.access_token
-        }
-        let user = JSON.parse(sessionStorage.getItem('semtinel'))
-        fetch("http://localhost/semtinel/public/api/logistics/entries/" + pole + "/" + project + "/true", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                cmp.entries = data;
-                cmp.loading = false;
+        // Load from session storage
+        if (sessionStorage.getItem('stnel_logist_entries') && sessionStorage.getItem('stnel_logist_entries') != '') {
+            cmp.entries = JSON.parse(sessionStorage.getItem('stnel_logist_entries'));
+            if ($("#dt_entries").DataTable().destroy()) {
                 setTimeout(() => {
-                    $("#datatable").DataTable({
-                        retrieve: true,
-                        lengthMenu: [
-                            [10, 15, 25, 50, -1],
-                            [10, 15, 25, 50, "Todos"],
-                        ],
-                        pageLength: 10,
-                        //order: [[5, 'asc']],
-                        "columnDefs": [{
-                            "targets": 'no-sort',
-                            "orderable": false,
-                            "order": []
-                        }],
-                        language: {
-                            "decimal": "",
-                            "emptyTable": "No hay información",
-                            "info": "Mostrando _START_ a _END_ de _TOTAL_ Registros",
-                            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-                            "infoFiltered": "(Filtrado de _MAX_ total registros)",
-                            "infoPostFix": "",
-                            "thousands": ",",
-                            "lengthMenu": "Mostrar _MENU_ Registros",
-                            "loadingRecords": "Cargando...",
-                            "processing": "Procesando...",
-                            "search": "Buscar: ",
-                            "zeroRecords": "Sin resultados encontrados",
-                            "paginate": {
-                                "first": "Primero",
-                                "last": "Ultimo",
-                                "next": "Siguiente",
-                                "previous": "Anterior"
-                            }
-                        }
-                    });
+                    cmp.createDataTable();
                 });
-            })
-            .catch(error => {
-                this.errorMessage = error;
-                toastr.error("Error: " + error);
-            });
+            }
+            cmp.loading = false;
+        }
+        else {
+            let pole = sessionStorage.getItem('stnel_logist_pole'),
+                project = sessionStorage.getItem('stnel_logist_project'),
+                headers = {
+                'User-Agent': 'testing/1.0',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + cmp.session.access_token
+            }
+            fetch("http://localhost/semtinel/public/api/logistics/entries/" + pole + "/" + project, {
+                    method: 'GET',
+                    headers: headers
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    cmp.entries = data;
+                    cmp.loading = false;
+                    sessionStorage.setItem('stnel_logist_entries', JSON.stringify(data));
+                    setTimeout(() => {
+                        cmp.createDataTable();
+                    });
+                })
+                .catch(error => {
+                    this.errorMessage = error;
+                    toastr.error("Error: " + error);
+                });
+        }
     },
 };
 </script>
@@ -209,17 +175,17 @@ export default {
                 </div>
                 <div class="row" :class="loading ? 'hidden' : ''">
                     <div class="col-12">
-                        <table id="datatable" class="table table-striped">
+                        <table id="dt_entries" class="table table-striped">
                             <thead>
                             <tr>
                                 <th width="5%" class="text-center no-sort">No.</th>
                                 <th>Entrada</th>
                                 <th width="15%">Origen</th>
-                                <th width="15%">Orden Compra</th>
+                                <th width="10%">Orden Compra</th>
                                 <th width="15%">Destino</th>
                                 <th width="10%" class="text-center">Fecha</th>
                                 <th width="10%" class="no-sort text-center">Estado</th>
-                                <th width="8%" class="no-sort text-center">Confirmada</th>
+                                <th width="5%" class="no-sort text-center">Confirm.</th>
                             </tr>
                             </thead>
                             <tbody>

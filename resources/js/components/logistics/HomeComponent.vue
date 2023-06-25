@@ -6,46 +6,66 @@ import $ from "jquery";
 export default {
     data: function () {
       return {
-        project: localStorage.getItem('stnel_logist_project'),
-        session: JSON.parse(sessionStorage.getItem('semtinel'))
+        project: sessionStorage.getItem('stnel_logist_project'),
+        session: JSON.parse(sessionStorage.getItem('semtinel')),
+        warehouses_load: false,
+        categories_load: false
       };
     },
     watch: {
-        
+        warehouses_load: function (val) {
+            if (val && this.categories_load) {
+                this.$root.app_load = true
+            }
+        },
+        categories_load: function (val) {
+            if (val && this.warehouses_load) {
+                this.$root.app_load = true
+            }
+        }
     },
     components: {
         
     },
     async created() {
         let cmp = this
-        // Clear warehouse store
-        localStorage.setItem('stnel_warehouses', '')
-        // ---------------------------
-        //   Create app local stores
-        // ---------------------------
-        let headers = {
-            'User-Agent': 'testing/1.0',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + cmp.session.access_token
+        
+        if (
+            sessionStorage.getItem('stnel_logist_warehouses') && 
+            sessionStorage.getItem('stnel_logist_warehouses') != '' &&
+            sessionStorage.getItem('stnel_prod_categories') && 
+            sessionStorage.getItem('stnel_prod_categories') != ''
+        ) {
+            cmp.warehouses_load = true
+            cmp.categories_load = true
         }
-        await fetch("http://localhost/semtinel/public/api/logistics/warehouses/" + cmp.project, {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Warehouses store
-                localStorage.setItem('stnel_warehouses', JSON.stringify(data))
-            });
-        await fetch("http://localhost/semtinel/public/api/logistics/products_categories", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Warehouses store
-                localStorage.setItem('semtinel_products_categories', JSON.stringify(data))
-            });
+        else {
+            let headers = {
+                'User-Agent': 'testing/1.0',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + cmp.session.access_token
+            }
+            await fetch("http://localhost/semtinel/public/api/logistics/warehouses/" + cmp.project, {
+                    method: 'GET',
+                    headers: headers
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Warehouses store
+                    sessionStorage.setItem('stnel_logist_warehouses', JSON.stringify(data))
+                    cmp.warehouses_load = true
+                });
+            await fetch("http://localhost/semtinel/public/api/logistics/products_categories", {
+                    method: 'GET',
+                    headers: headers
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Warehouses store
+                    sessionStorage.setItem('stnel_prod_categories', JSON.stringify(data))
+                    cmp.categories_load = true
+                });
+        }
     },
     methods: {
         

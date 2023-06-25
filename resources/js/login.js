@@ -100,7 +100,7 @@ var login = createApp({
         },
     },
     mounted() {
-        sessionStorage.removeItem('semtinel');
+        sessionStorage.clear();   //removeItem('semtinel');
         $(".toggle-password").off().on("click", function () {
             $(this).toggleClass("fa-eye fa-eye-slash");
             var input = $($(this).attr("toggle"));

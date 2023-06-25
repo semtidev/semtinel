@@ -4,8 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
-import PageHeader from "../layouts/HeaderComponent.vue";
-import Timeline from "../common/TimelineComponent.vue";
+import 'datatables.net-select';
+import 'datatables.net-buttons';
+import 'datatables.net-buttons/js/buttons.html5';
+import jszip from 'jszip';
+import pdfmake from 'pdfmake';
+import PageHeader from "../../layouts/HeaderComponent.vue";
+import Timeline from "../../common/TimelineComponent.vue";
 
 export default {
     data: function () {
@@ -13,6 +18,7 @@ export default {
         pole_name: '',
         project_name: '',
         tabactive: 1,
+        inventory_cost: 0,
         store_products: [],
         products: [],
         products_filter: {},
@@ -28,16 +34,14 @@ export default {
         history_product: {},
         history_product_loading: true,
         history_product_empty: false,
-        period: 'today',
+        period: 'all',
         filter_apply: false,
         lastproducts_loading: true,
         session: JSON.parse(sessionStorage.getItem('semtinel')),
-        //poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-        //projects: JSON.parse(localStorage.getItem('semtinel_projects')),
-        pole: localStorage.getItem('stnel_logist_pole'),
-        project: localStorage.getItem('stnel_logist_project'),
-        warehouses: (localStorage.getItem('stnel_warehouses').length > 0) ? JSON.parse(localStorage.getItem('stnel_warehouses')) : '',
-        products_categories: JSON.parse(localStorage.getItem('semtinel_products_categories')),
+        pole: sessionStorage.getItem('stnel_logist_pole'),
+        project: sessionStorage.getItem('stnel_logist_project'),
+        warehouses: (sessionStorage.getItem('stnel_logist_warehouses').length > 0) ? JSON.parse(sessionStorage.getItem('stnel_logist_warehouses')) : '',
+        products_categories: JSON.parse(sessionStorage.getItem('stnel_prod_categories')),
         filter_productcategory: 'all',
         filter_warehouse: 'all',
         filter_oc: '',
@@ -72,67 +76,14 @@ export default {
         productcart_form_okbtn_text: 'Aceptar',
         productcart_warehouse_error: '',
         show_details: false,
-        cart_error: '',
-        datatable_language: {
-            "decimal": "",
-            "emptyTable": "No hay información",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ Registros",
-            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-            "infoFiltered": "(Filtrado de _MAX_ total registros)",
-            "infoPostFix": "",
-            "thousands": ",",
-            "lengthMenu": "Mostrar _MENU_ Registros",
-            "loadingRecords": "Cargando...",
-            "processing": "Procesando...",
-            "search": "Buscar: ",
-            "zeroRecords": "Sin resultados encontrados",
-            "paginate": {
-                "first": "Primero",
-                "last": "Ultimo",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            }
-        }
+        cart_error: ''
       };
     },
     watch: {
-        period: function(val) {
+        /*period: function(val) {
             this.getLastProductsTable(val)
             this.getHistoryTimeline(val)
-        },
-        tabactive: function (val) {
-            let cmp = this
-            if (val == 1) {
-                if ($("#dt_products").DataTable().destroy()) {
-                    setTimeout(() => {
-                        $("#dt_products").DataTable({
-                            lengthMenu: [
-                                [10, 15, 25, 50, -1],
-                                [10, 15, 25, 50, "Todos"],
-                            ],
-                            pageLength: 10,
-                            order: [[0, 'asc']],
-                            "columnDefs": [{
-                                "targets": 'no-sort',
-                                "orderable": false,
-                                "order": []
-                            }],
-                            "columns": [
-                                { "width": "12%" },
-                                { "width": "12%" },
-                                null,
-                                { "width": "10%" },
-                                { "width": "10%" },
-                                { "width": "10%" },
-                                { "width": "10%" },
-                                { "width": "10%" }
-                            ],
-                            language: cmp.datatable_language
-                        });
-                    });
-                }
-            }
-        }
+        }*/
     },
     components: {
         'page-header': PageHeader,
@@ -140,18 +91,130 @@ export default {
     },
     created() {
         let cmp = this
+        // Set pole name
         cmp.session.poles.map(function(value, key) {
-            if (value.abbr == cmp.pole)
+            if (value.id == cmp.pole)
                 cmp.pole_name = value.name
         });
+        // Set projects name & filter warehouse
         cmp.session.projects.map(function(value, key) {
-            if (value.id == cmp.project)
+            if (value.id == cmp.project) {
                 cmp.project_name = value.name
+            }
+            if (
+                sessionStorage.getItem('stnel_logist_inv_warehouse') && 
+                sessionStorage.getItem('stnel_logist_inv_warehouse') != ''
+            ) {
+                cmp.filter_warehouse = parseInt(sessionStorage.getItem('stnel_logist_inv_warehouse'));
+            }
+            else {
+                cmp.filter_warehouse = cmp.warehouses[0].id;
+                sessionStorage.setItem('stnel_logist_inv_warehouse', cmp.warehouses[0].id);
+            }
+        });
+        // Set warehouse name
+        cmp.warehouses.map(function(value, key) {
+            if (value.id == cmp.filter_warehouse)
+                cmp.warehouse_name = value.name
+                cmp.warehouse_owner = value.owner
         });
     },
     methods: {
-        listReload: function () {
-            //this.getEntriesTable(true)
+        createDataTable: function () {
+            let cmp = this
+            $("#dt_products").DataTable({
+                retrieve: true,
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                lengthMenu: [
+                    [10, 15, 25, 50, -1],
+                    [10, 15, 25, 50, "Todos"],
+                ],
+                pageLength: 10,
+                //order: [[5, 'asc']],
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                    "order": []
+                }],
+                "columns": [
+                    null,
+                    { "width": "10%" },
+                    { "width": "10%" },
+                    { "width": "10%" },
+                    { "width": "7%" },
+                    { "width": "7%" },
+                    { "width": "7%" },
+                    { "width": "5%" }
+                ],
+                language: cmp.$root.dataTableLanguage
+            }).buttons().container().appendTo('#products_wrapper .col-md-6:eq(0)');
+        },
+        inventoryCost: function () {
+            let cmp = this,
+                cost = 0;
+            cmp.products.map(function(product, key) {
+                cost += Number(product.price_total);
+            });
+            cmp.inventory_cost = Math.floor(cost * 100) / 100;
+        },
+        activeTab: function (tab) {
+            let cmp = this
+            cmp.tabactive = tab;
+            if (tab == 1) {
+                cmp.products_loading = true
+                if ($("#dt_products").DataTable().destroy()) {
+                    setTimeout(() => {
+                        cmp.createDataTable();
+                    });
+                }
+                cmp.products_loading = false    
+            }                   
+        },
+        getProducts: function () {
+            let cmp = this,
+                headers = {
+                'User-Agent': 'testing/1.0',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + cmp.session.access_token
+            }
+            cmp.products_loading = true;
+            $("#dt_products").DataTable().destroy();
+            axios.post('http://localhost/semtinel/public/api/logistics/inventory/products', {
+                    'warehouse' : cmp.filter_warehouse
+                }, {
+                    headers: headers
+                }).then(function (response) {
+                    if (response.data.success) {
+                        cmp.store_products = response.data.products;
+                        cmp.products = response.data.products;
+                        sessionStorage.setItem('stnel_logist_inventory', JSON.stringify(response.data.products));
+                        cmp.products_loading = false;
+                        setTimeout(() => {
+                            cmp.createDataTable();
+                        });
+                        // Set inventory cost
+                        cmp.inventoryCost();
+                    }
+                    else {
+                        toastr.error('Error al intentar cargar los datos.')
+                    }
+                }).catch(function (error) {
+                    toastr.error('Error al intentar cargar los datos.')
+                    return;
+                });
+        },
+        changeWarehouse: function () {
+            let cmp = this;
+            sessionStorage.setItem('stnel_logist_inv_warehouse', cmp.filter_warehouse);
+            // Clear filters
+            cmp.filter_productcategory = 'all'
+            cmp.period = 'all'
+            cmp.filter_oc = ''
+            cmp.filter_product = ''
+            cmp.filter_apply = false
+            // Load products
+            cmp.getProducts();
         },
         addCart: function (idx, product) {
             let cmp = this
@@ -173,7 +236,7 @@ export default {
                 oc: product.oc,
                 id_inventory: idx,
                 product_code: product.product_code,
-                description: product.description,
+                description: product.item_description,
                 um: product.um,
                 quantity: 1,
                 available: product.available,
@@ -215,26 +278,57 @@ export default {
             let cmp = this
             cmp.products_loading = true
             cmp.products = cmp.store_products
-            cmp.history = cmp.store_history
+            //cmp.history = cmp.store_history
             cmp.filter_apply = false
             cmp.products_filter = {},
-            cmp.history_filter = {},
-            cmp.history_loading = true
+            //cmp.history_filter = {},
+            //cmp.history_loading = true
             // Filter products
             Object.keys(cmp.products).forEach(key => {
                 let idx = key, valid = true
+                // Filter product category
                 if (cmp.filter_productcategory != 'all' && cmp.products[key].category_name != cmp.filter_productcategory) {
                     valid = false
                 }
-                if (cmp.filter_warehouse != 'all' && cmp.products[key].warehouse_id != cmp.filter_warehouse) {
+                // Filter period
+                if (cmp.period != 'all') {
+                    if (cmp.period == 'today') {
+                        let today_date   = new Date(),
+                            product_date = cmp.products[key].updated_at.split('T')[0];
+                        today_date = today_date.toISOString().split('T')[0];
+                        if (today_date != product_date)
+                            valid = false
+                    }
+                    if (cmp.period == 'currentweek') {
+                        let today_date   = new Date(),
+                            first_date   = new Date(today_date.setDate(today_date.getDate() - today_date.getDay() )),
+                            last_date    = new Date(today_date.setDate(today_date.getDate() - today_date.getDay() + 7)),
+                            product_date = new Date(cmp.products[key].updated_at.split('T')[0]);
+                        if (!(product_date > first_date && product_date < last_date))
+                            valid = false
+                    }
+                    if (cmp.period == 'currentmonth') {
+                        let today_date   = new Date(),
+                            product_date = new Date(cmp.products[key].updated_at.split('T')[0]);
+                        if (today_date.getMonth() != product_date.getMonth())
+                            valid = false
+                    }
+                    if (cmp.period == 'currentyear') {
+                        let today_date   = new Date(),
+                            product_date = new Date(cmp.products[key].updated_at.split('T')[0]);
+                        if (today_date.getYear() != product_date.getYear())
+                            valid = false
+                    }
+                }
+                // Filter OC
+                if (cmp.filter_oc != '' && cmp.filter_oc.length > 0 && cmp.products[key].oc.indexOf(cmp.filter_oc) === -1) {
                     valid = false
                 }
-                if (cmp.filter_oc != '' && cmp.filter_oc.length > 0 && cmp.products[key].oc != cmp.filter_oc) {
+                // Filter product
+                if (cmp.filter_product != '' && cmp.filter_product.length > 0 && cmp.products[key].product_code.indexOf(cmp.filter_product) === -1 ) {
                     valid = false
                 }
-                if (cmp.filter_product != '' && cmp.filter_product.length > 0 && cmp.products[key].product_code != cmp.filter_product) {
-                    valid = false
-                }
+                // Filter apply
                 if (valid) {
                     cmp.products_filter[idx] = cmp.products[key]
                 }                    
@@ -245,65 +339,17 @@ export default {
             }
             if ($("#dt_products").DataTable().destroy()) {
                 setTimeout(() => {
-                    $("#dt_products").DataTable({
-                        lengthMenu: [
-                            [10, 15, 25, 50, -1],
-                            [10, 15, 25, 50, "Todos"],
-                        ],
-                        pageLength: 10,
-                        order: [[0, 'asc']],
-                        "columnDefs": [{
-                            "targets": 'no-sort',
-                            "orderable": false,
-                            "order": []
-                        }],
-                        "columns": [
-                            { "width": "12%" },
-                            { "width": "12%" },
-                            null,
-                            { "width": "10%" },
-                            { "width": "10%" },
-                            { "width": "10%" },
-                            { "width": "10%" },
-                            { "width": "10%" }
-                        ],
-                        language: cmp.datatable_language
-                    });
+                    cmp.createDataTable();
                 });
             }
             cmp.products_loading = false
-            // Filter history
-            /*Object.keys(cmp.history).forEach(key => {
-                let idx = key, valid = true
-                if (cmp.filter_productcategory != 'all') {
-                    let history_item = []
-                    cmp.history[key].map(function(value, id) {
-                        if (value.categories.indexOf(cmp.filter_productcategory) !== -1)
-                        history_item.push(value)
-                    });                    
-                }
-                if (cmp.filter_warehouse != 'all') {
-                    cmp.history[key].map(function(value, id) {
-                        if (value.warehouse != cmp.filter_warehouse)
-                            cmp.history[key].splice(id, 1)
-                    });
-                }
-                if (valid) {
-                    cmp.history_filter[idx] = cmp.history[key]
-                }                    
-            })
-            if (Object.keys(cmp.history).length != Object.keys(cmp.history_filter).length) {
-                cmp.history = cmp.history_filter
-                cmp.filter_apply = true
-            }
-            cmp.history_loading = false*/
         },
         filterClear: function () {
             let cmp = this
             cmp.products_loading = true
             //cmp.history_loading = true
             cmp.filter_productcategory = 'all'
-            cmp.filter_warehouse = 'all'
+            cmp.period = 'all'
             cmp.filter_oc = ''
             cmp.filter_product = ''
             cmp.products = cmp.store_products
@@ -311,30 +357,7 @@ export default {
             cmp.filter_apply = false
             if ($("#dt_products").DataTable().destroy()) {
                 setTimeout(() => {
-                    $("#dt_products").DataTable({
-                        lengthMenu: [
-                            [10, 15, 25, 50, -1],
-                            [10, 15, 25, 50, "Todos"],
-                        ],
-                        pageLength: 10,
-                        order: [[0, 'asc']],
-                        "columnDefs": [{
-                            "targets": 'no-sort',
-                            "orderable": false,
-                            "order": []
-                        }],
-                        "columns": [
-                            { "width": "12%" },
-                            { "width": "12%" },
-                            null,
-                            { "width": "10%" },
-                            { "width": "10%" },
-                            { "width": "10%" },
-                            { "width": "10%" },
-                            { "width": "10%" }
-                        ],
-                        language: cmp.datatable_language
-                    });
+                    cmp.createDataTable();
                 });
             }
             cmp.products_loading = false
@@ -343,15 +366,15 @@ export default {
         show: function (idx) {
             let cmp = this
             cmp.item_details = {
-                pole: cmp.products[idx].pole,
-                project: cmp.products[idx].project,
+                pole: cmp.pole_name,
+                project: cmp.project_name,
                 oc: cmp.products[idx].oc,
                 product_code: cmp.products[idx].product_code,
-                description: cmp.products[idx].description,
+                description: cmp.products[idx].item_description,
                 um: cmp.products[idx].um,
-                quantity: cmp.products[idx].quantity,
-                warehouse_name: cmp.products[idx].warehouse_name,
-                warehouse_owner: cmp.products[idx].warehouse_owner,
+                quantity: cmp.products[idx].stock,
+                warehouse_name: cmp.warehouse_name,
+                warehouse_owner: cmp.warehouse_owner,
                 stowage_card: cmp.products[idx].stowage_card
             }
             cmp.show_details = true
@@ -459,79 +482,24 @@ export default {
             sessionStorage.clear()
             window.document.location.href = 'http://localhost/semtinel/public/login'
         }
-        let headers = {
-                'User-Agent': 'testing/1.0',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + cmp.session.access_token
+        // Load from session storage
+        if (sessionStorage.getItem('stnel_logist_inventory') && sessionStorage.getItem('stnel_logist_inventory') != '') {
+            cmp.store_products = JSON.parse(sessionStorage.getItem('stnel_logist_inventory'));
+            cmp.products = cmp.store_products;
+            if ($("#dt_products").DataTable().destroy()) {
+                setTimeout(() => {
+                    cmp.createDataTable();
+                });
             }
-        axios.post('http://localhost/semtinel/public/api/logistics/inventory/products', {
-                'pole' : cmp.pole,
-                'project': cmp.project
-            }, {
-                headers: headers
-            }).then(function (response) {
-                if (response.data.success) {
-                    cmp.store_products = response.data.products
-                    cmp.products = response.data.products
-                    cmp.products_loading = false
-                    setTimeout(() => {
-                        $("#dt_products").DataTable({
-                            retrieve: true,
-                            lengthMenu: [
-                                [10, 15, 25, 50, -1],
-                                [10, 15, 25, 50, "Todos"],
-                            ],
-                            pageLength: 10,
-                            order: [[0, 'asc']],
-                            "columnDefs": [{
-                                "targets": 'no-sort',
-                                "orderable": false,
-                                "order": []
-                            }],
-                            "columns": [
-                                { "width": "12%" },
-                                { "width": "12%" },
-                                null,
-                                { "width": "10%" },
-                                { "width": "10%" },
-                                { "width": "10%" },
-                                { "width": "10%" },
-                                { "width": "10%" }
-                            ],
-                            language: cmp.datatable_language
-                        });
-                    });
-                }
-                else {
-                    toastr.error('Error al intentar cargar los datos.')
-                }
-            }).catch(function (error) {
-                toastr.error('Error al intentar cargar los datos.')
-                return;
-            })
+            cmp.products_loading = false;
+            // Set inventory cost
+            cmp.inventoryCost();
+        }
+        else {
+            cmp.getProducts();
+        }
 
-        axios.post('http://localhost/semtinel/public/api/logistics/inventory/lastproducts', {
-                'pole' : cmp.pole,
-                'project': cmp.project,
-                'period': cmp.period
-            }, {
-                headers: headers
-            }).then(function (response) {
-                if (response.data.success) {
-                    cmp.store_lastproducts = response.data.products
-                    cmp.lastproducts = response.data.products
-                    cmp.lastproducts_loading = false
-                    cmp.lastproducts_empty = (Object.keys(response.data.products).length > 0) ? false : true
-                }
-                else {
-                    toastr.error('Error al intentar cargar los datos.')
-                }
-            }).catch(function (error) {
-                toastr.error('Error al intentar cargar los datos.')
-                return;
-            })
-
-        axios.post('http://localhost/semtinel/public/api/logistics/inventory/history', {
+        /*axios.post('http://localhost/semtinel/public/api/logistics/inventory/history', {
                 'pole' : cmp.pole,
                 'project': cmp.project,
                 'period': cmp.period,
@@ -550,142 +518,155 @@ export default {
             }).catch(function (error) {
                 toastr.error('Error al intentar cargar los datos.')
                 return;
-            })
+            });*/
     },
 };
 </script>
 
 <template>
     <page-header 
-        :pagetitle="'Inventario de productos en pañoles'"
+        :pagetitle="'Inventarios en pañol'"
         :breadcrumbs="false"
         :pole_project="true"
         :pole="pole_name"
-        :project="project_name">
+        :project="project_name"
+        :inventory_cost="inventory_cost">
     </page-header>
+
+    <div class="card card-default filters-panel mb-4">
+        <div class="card-header">
+            <h4 class="card-title">
+                <i class="fas fa-filter" :class="(filter_apply) ? 'text-danger' : ''"></i>&nbsp;Filtros
+                <small v-if="filter_apply">(<i>Filtro aplicado</i>)</small>
+            </h4>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" 
+                    v-tooltip="'Click para aplicar los filtros a la tabla'"
+                    v-on:click="filterApply()">
+                    Aplicar Filtros
+                </button>
+                <button type="button" class="btn btn-tool" 
+                    v-tooltip="'Click para quitar los filtros aplicados a la tabla'"
+                    v-on:click="filterClear()">
+                    Limpiar Filtros
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" 
+                    v-tooltip="'Contraer/Expandir'">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_category">Categoría Producto</label>
+                        <select 
+                            class="form-control" 
+                            id="filter_category"
+                            v-model="filter_productcategory">
+                            <option value="all">- Todas -</option>
+                            <template v-for="(option, index) in products_categories" :key="index">
+                                <option
+                                    :value="index">
+                                    {{ option }}
+                                </option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="inventory_period">Periodo de Entradas:</label>
+                        <select 
+                            name="inventory_period" 
+                            id="inventory_period" 
+                            class="form-control" 
+                            v-model="period">
+                            <option value="all">- Todas -</option>
+                            <option value="today">Hoy</option>
+                            <option value="currentweek">Esta semana</option>
+                            <option value="currentmonth">Este mes</option>
+                            <option value="currentyear">Este a&ntilde;o</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_oc">Orden de Compra</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="filter_oc" 
+                            placeholder="Orden de compra"
+                            v-model="filter_oc">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="filter_product">Código Producto</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="filter_product" 
+                            placeholder="Código de producto"
+                            v-model="filter_product">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="card">
         <div class="card-header p-2">
             <ul class="nav nav-pills float-start">
                 <li class="nav-item">
                     <a class="nav-link active" href="#products" data-toggle="tab"
-                        @click="tabactive = 1">Productos</a>
+                        v-on:click="activeTab(1)">Productos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#timeline" data-toggle="tab"
-                        @click="tabactive = 2">Historial</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#lastentries" data-toggle="tab"
-                        @click="tabactive = 3">Últimas entradas</a>
+                        v-on:click="activeTab(2)">Historial</a>
                 </li>
             </ul>
-            <div class="inventory-period float-end pr-1" v-if="tabactive == 2 || tabactive == 3">
-                <label for="inventory_period" class="float-left pt-2 text-right" style="width: auto;">Mostrando:</label>
+            <div class="inventory-tools float-end pr-1" v-if="tabactive == 1">
+                <button type="button" 
+                    class="btn btn-tool float-end pr-2"
+                    v-tooltip="'Recargar Listado'"
+                    v-on:click.stop="getProducts()">
+                    <i class="mdi mdi-file-pdf-box mdi-24px text-green"></i>
+                </button>
+                <button type="button" 
+                    class="btn btn-tool float-end pr-2"
+                    v-tooltip="'Recargar Listado'"
+                    v-on:click.stop="getProducts()">
+                    <i class="mdi mdi-reload mdi-24px text-green"></i>
+                </button>
+                <label for="inventory_period" class="float-left pt-2 mr-2 text-left" style="width: auto;">
+                    Mostrando Pa&ntilde;ol:
+                </label>
                 <select 
-                    name="inventory_period" 
-                    id="inventory_period" 
-                    class="form-control float-end" 
-                    style="width: auto;" 
-                    v-model="period">
-                    <option value="today">Hoy</option>
-                    <option value="currentweek">Esta semana</option>
-                    <option value="currentmonth">Este mes</option>
-                    <option value="currentyear">Este a&ntilde;o</option>
-                </select>
+                    id="filter_warehouse" 
+                    size="1" 
+                    class="form-control float-start"
+                    style="width: auto;"
+                    v-model="filter_warehouse">
+                    <template v-for="(option, index) in warehouses" :key="index">
+                        <option
+                            :value="option['id']"
+                            v-on:click.stop="changeWarehouse()">
+                            {{ option['name'] }}
+                        </option>
+                    </template>
+                </select> 
+                
             </div>
         </div><!-- /.card-header -->
         <div class="card-body">
         <div class="tab-content">
             
             <div class="tab-pane active" id="products">
-                
-                <div class="card card-default filters-panel mb-4" v-if="tabactive == 1">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-filter" :class="(filter_apply) ? 'text-danger' : ''"></i>&nbsp;Filtros
-                            <small v-if="filter_apply">(<i>Filtro aplicado</i>)</small>
-                        </h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" 
-                                v-tooltip="'Click para aplicar los filtros a la tabla'"
-                                v-on:click="filterApply()">
-                                Aplicar Filtros
-                            </button>
-                            <button type="button" class="btn btn-tool" 
-                                v-tooltip="'Click para quitar los filtros aplicados a la tabla'"
-                                v-on:click="filterClear()">
-                                Limpiar Filtros
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" 
-                                v-tooltip="'Contraer/Expandir'">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="filter_category">Categoría</label>
-                                    <select 
-                                        class="form-control" 
-                                        id="filter_category"
-                                        v-model="filter_productcategory">
-                                        <option value="all">- Todas -</option>
-                                        <template v-for="(option, index) in products_categories" :key="index">
-                                            <option
-                                                :value="index">
-                                                {{ option }}
-                                            </option>
-                                        </template>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="filter_warehouse">Pa&ntilde;ol</label>
-                                    <select 
-                                        id="filter_warehouse" 
-                                        size="1" 
-                                        class="form-control"
-                                        v-model="filter_warehouse">
-                                        <option value="all">- Todos -</option>
-                                        <template v-for="(option, index) in warehouses" :key="index">
-                                            <option
-                                                :value="option['id']">
-                                                {{ option['name'] }}
-                                            </option>
-                                        </template>
-                                    </select> 
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="filter_oc">Orden Compra</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        id="filter_oc" 
-                                        placeholder="Orden de compra"
-                                        v-model="filter_oc">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="filter_product">Código Producto</label>
-                                    <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        id="filter_product" 
-                                        placeholder="Código de producto"
-                                        v-model="filter_product">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- loading -->
                 <div class="row" :class="!products_loading ? 'hidden' : ''">
@@ -697,20 +678,18 @@ export default {
                 <table id="dt_products" class="table table-striped w-100" :class="products_loading ? 'hidden' : ''">
                     <thead>
                     <tr>
-                        <th width="12%">Pa&ntilde;ol</th>
-                        <th width="12%">Orden Compra</th>
                         <th>Descripción</th>
-                        <th width="10%" class="text-center">UM</th>
-                        <th width="10%" class="text-center">Existencia</th>
-                        <th width="10%" class="text-center">Reservado</th>
-                        <th width="10%" class="text-center">Disponible</th>
-                        <th width="10%" class="text-right no-sort"></th>
+                        <th width="10%" class="text-center no-sort">UM</th>
+                        <th width="10%" class="text-right no-sort">Precio Unit.</th>
+                        <th width="10%" class="text-right no-sort">Precio Total</th>
+                        <th width="7%" class="text-right no-sort">Stock</th>
+                        <th width="7%" class="text-right no-sort">Reserv.</th>
+                        <th width="7%" class="text-right no-sort">Disp.</th>
+                        <th width="5%" class="text-right no-sort"></th>
                     </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(item, idx) in products" :key="item.id">
-                            <td>{{ item.warehouse_name }}</td>
-                            <td>{{ item.oc }}</td>
                             <td>
                                 <a class="show-lnk" 
                                 href="javascript:void(0);"
@@ -718,13 +697,15 @@ export default {
                                 data-toggle="modal" 
                                 data-target="#modal-item-details"
                                 v-on:click="show(idx)">
-                                    {{ item.description }}
+                                    {{ item.item_description }}
                                 </a>
                             </td>
                             <td class="text-center">{{ item.um }}</td>
-                            <td class="text-center">{{ item.quantity }}</td>
-                            <td class="text-center">{{ item.reserved }}</td>
-                            <td class="text-center">{{ item.available }}</td>
+                            <td class="text-right">{{ item.price_unit }}</td>
+                            <td class="text-right">{{ item.price_total }}</td>
+                            <td class="text-right">{{ item.stock }}</td>
+                            <td class="text-right">{{ item.reserved }}</td>
+                            <td class="text-right">{{ item.available }}</td>
                             <td class="text-right">
                                 <!--<a href="javascript:void(0);"
                                     class="btn-semti-tool"
@@ -736,7 +717,7 @@ export default {
                                     <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
                                 </a> &nbsp;-->
                                 <a href="javascript:void(0);"
-                                    v-if="item.warehouse_id in session.warehouses"
+                                    v-if="item.warehouse in session.warehouses"
                                     class="btn-semti-tool"
                                     style="padding: 4px 5px;"
                                     data-toggle="modal" 
@@ -763,80 +744,6 @@ export default {
             </div>
             <!-- /.tab-pane -->
 
-            <div class="tab-pane" id="lastentries" v-if="tabactive == 3">
-                
-                <!-- loading -->
-                <div class="row" :class="!lastproducts_loading ? 'hidden' : ''">
-                    <div class="col-12 text-center py-5 loading-table">
-                        <span class="mdi mdi-loading mdi-spin mdi-36px">&nbsp;Cargando productos...</span>
-                    </div>
-                </div>
-                <!-- Products table -->
-                <div class="row mt-3" :class="(lastproducts_empty && !lastproducts_loading) ? '' : 'hidden'">
-                    <div class="col-12 text-center empty-table">
-                        <h6>Ning&uacute;n Producto encontrado</h6>
-                    </div>
-                </div>
-                <table class="table table-striped table-responsive" :class="(lastproducts_loading || lastproducts_empty) ? 'hidden' : ''">
-                    <thead>
-                    <tr>
-                        <th width="12%">Orden Compra</th>
-                        <th width="12%">Código</th>
-                        <th>Descripción</th>
-                        <th width="10%" class="text-center">UM</th>
-                        <th width="10%" class="text-center">Existencia</th>
-                        <th width="10%" class="text-center">Reservado</th>
-                        <th width="10%" class="text-center">Disponible</th>
-                        <th width="10%" class="text-right no-sort"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, idx) in lastproducts" :key="item.id">
-                            <td>{{ item.oc }}</td>
-                            <td>{{ item.product_code }}</td>
-                            <td>
-                                <a class="show-lnk" 
-                                href="javascript:void(0);"
-                                v-tooltip="'Click para Mostrar Detalles de este producto'"
-                                data-toggle="modal" 
-                                data-target="#modal-item-details"
-                                v-on:click="show(idx)">
-                                    {{ item.description }}
-                                </a>
-                            </td>
-                            <td class="text-center">{{ item.um }}</td>
-                            <td class="text-center">{{ item.quantity }}</td>
-                            <td class="text-center">{{ item.reserved }}</td>
-                            <td class="text-center">{{ item.available }}</td>
-                            <td class="text-right">
-                                <!--<a href="javascript:void(0);"
-                                    class="btn-semti-tool"
-                                    style="padding: 4px 5px;"
-                                    data-toggle="modal" 
-                                    data-target="#modal-item-history"
-                                    v-tooltip="'Historial de este producto'"
-                                    v-on:click="productHistory(item.oc, item.description)">
-                                    <span class="mdi mdi-timeline-clock mdi-18px text-green"></span>
-                                </a> &nbsp;-->
-                                <a href="javascript:void(0);"
-                                    v-if="item.warehouse_id in session.warehouses"
-                                    class="btn-semti-tool"
-                                    style="padding: 4px 5px;"
-                                    data-toggle="modal" 
-                                    data-target="#modal-item-addcart"
-                                    v-tooltip="'Agregar al carrito'"
-                                    v-on:click="addCart(idx, item)">
-                                    <span class="mdi mdi-cart mdi-18px text-orange"></span>
-                                </a>
-                                <span class="px-2" v-else>&nbsp;&nbsp;&nbsp;</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <!--  / Products table -->
-            </div>
-            <!-- /.tab-pane -->
-
         </div>
         <!-- /.tab-content -->
         </div><!-- /.card-body -->
@@ -858,25 +765,21 @@ export default {
                 </div>
                 <div class="modal-body px-4 rounded-bottom">
                     <div class="row py-1">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <span class="detail-title">Polo</span>
-                            <h6 class="detail-desc">{{ item_details.pole.name }}</h6>
+                            <h6 class="detail-desc">{{ item_details.pole }}</h6>
                         </div>
-                    </div>
-                    <div class="row py-1">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <span class="detail-title">Proyecto</span>
-                            <h6 class="detail-desc">{{ item_details.project.name }}</h6>
+                            <h6 class="detail-desc">{{ item_details.project }}</h6>
                         </div>
                     </div>
                     <div class="row py-1">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <span class="detail-title">Código del Producto</span>
                             <h6 class="detail-desc">{{ item_details.product_code }}</h6>
                         </div>
-                    </div>
-                    <div class="row py-1">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <span class="detail-title">Orden de Compra</span>
                             <h6 class="detail-desc">{{ item_details.oc }}</h6>
                         </div>

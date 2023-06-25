@@ -57,7 +57,7 @@ const app = createApp({
             .then((response) => response.json())
             .then((data) => {
                 // Poles store
-                localStorage.setItem('semtinel_poles', JSON.stringify(data))
+                sessionStorage.setItem('semtinel_poles', JSON.stringify(data))
             });*/
         /*await fetch("http://localhost/semtinel/api/projects", {
                 method: 'GET',
@@ -66,7 +66,7 @@ const app = createApp({
             .then((response) => response.json())
             .then((data) => {
                 // Projects store
-                localStorage.setItem('semtinel_projects', JSON.stringify(data))
+                sessionStorage.setItem('semtinel_projects', JSON.stringify(data))
             });*/
     },
     mounted() {

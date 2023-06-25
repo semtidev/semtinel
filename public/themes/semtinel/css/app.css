@@ -18,6 +18,29 @@
     src: url('fonts/Poppins-Regular.otf') format("opentype");
 }
 
+#app-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    background: rgba(0, 20, 44, 0.95);
+    z-index: 9999;
+}
+#app-loading .msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -125px;
+    width: 250px;
+    height: 100px;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+}
+
 .hidden {
     display: none !important;
 }
@@ -37,6 +60,7 @@
 .app-subtitle {
     font-family: 'roboto';
     font-size: 20px;
+    color: #343A40;
 }
 
 .brand-text {
@@ -63,7 +87,7 @@ a:active, a:focus {
 }
 
 .navbar-badge {
-    padding: 2px 3px !important;
+    padding: 2px 4px !important;
     font-family: 'Courier New', Courier, monospace !important;
 }
 
@@ -173,6 +197,10 @@ a:active, a:focus {
 }
 .card-header {
     padding: 12px auto !important;
+    border-bottom: rgba(0, 0, 0, .1) 1px solid !important;
+}
+.table > :not(:last-child) > :last-child > * {
+    border-bottom-color: #949ca4;
 }
 .card-title {
     margin: 5px auto !important;
@@ -436,6 +464,7 @@ form .info {
 }
 .dataTables_wrapper select {
     margin: auto 5px !important;
+    background-color: #fff !important;
 }
 .dataTables_length {
     float: left !important;
@@ -616,15 +645,25 @@ table.dataTable.no-footer {
 .nav-pills .nav-link.active:hover {
     color: #fff !important;
 }
-.filters-panel .card-tools button {
+.inventory-tools {
+    width: 420px !important;
+}
+.filters-panel .card-tools button, .inventory-tools button {
     color: #0c61b6;
     font-family: 'roboto' !important;
     font-size: 14px !important;
 }
-.filters-panel .card-tools button:hover {
+.filters-panel .card-tools button:hover, .inventory-tools button:hover {
     background-color: #fff;
     border-color: #dddddd !important;
     color: #024991;
+}
+.inventory-tools button:hover {
+    margin-top: 0;
+    padding: 1px 8px 0 8px !important;
+}
+.inventory-tools button {
+    padding-top: 13px !important;
 }
 
 .v-popper--theme-my-theme .v-popper__inner {

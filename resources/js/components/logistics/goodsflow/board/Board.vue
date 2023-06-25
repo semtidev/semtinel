@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="col-md-6 text-right">
-        <button type="button" class="btn btn-warning">Nueva Mercanc&iacute;a</button>
+        <button type="button" class="btn btn-warning">Nueva Entrada</button>
       </div>
     </div>
     <div class="row pt-2">

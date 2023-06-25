@@ -2,8 +2,8 @@
 export default {    
     data: function () {
         return {
-            //store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-            //store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
+            //store_poles: JSON.parse(sessionStorage.getItem('semtinel_poles')),
+            //store_projects: JSON.parse(sessionStorage.getItem('semtinel_projects')),
             session: JSON.parse(sessionStorage.getItem('semtinel')),
             pole: '',
             pole_name: '',
@@ -21,7 +21,7 @@ export default {
                 projects = [],
                 warehouses = []
             // Set pole
-            cmp.pole = pole_abbr
+            cmp.pole = parseInt(pole_id)
             cmp.pole_name = pole_name
             // Set projects and select the first
             cmp.session.projects.map(function(value, key) {
@@ -31,15 +31,15 @@ export default {
             cmp.projects = projects
             cmp.project  = cmp.projects[0]['id']
             cmp.project_name = cmp.projects[0]['name']
-            localStorage.setItem('stnel_logist_pole', cmp.pole)
-            localStorage.setItem('stnel_logist_project', cmp.project)
+            sessionStorage.setItem('stnel_logist_pole', cmp.pole)
+            sessionStorage.setItem('stnel_logist_project', cmp.project)
             cmp.$router.push('/semtinel/public/logistics')
         },
         changeProject: function (project_id, project_name) {
             let cmp = this
             cmp.project = project_id
             cmp.project_name = project_name
-            localStorage.setItem('stnel_logist_project', cmp.project)
+            sessionStorage.setItem('stnel_logist_project', cmp.project)
             cmp.$router.push('/semtinel/public/logistics')
         }
     },

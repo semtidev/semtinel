@@ -1,52 +1,45 @@
 <script allowJs="true">
-import PageHeader from "../layouts/HeaderComponent.vue"
+import PageHeader from "../../layouts/HeaderComponent.vue"
 
 export default {
     data: function () {
       return {
-        entry: {},
+        output: {},
         pagetitle: '',
         upload_id: '',
-        upload_entry: '',
+        upload_output: '',
         upload_file: '',
         upload_form_error: {
             error_text: ''
         },
         upload_form_loading: false,
         upload_form_okbtn_text: 'Adjuntar',
-        upload_entry: '',
         table_oc: true,
         show_details: false,
         item_details: {
-            docnum: '',
-            product_quantity: '',
+            pole: '',
+            project: '',
+            warehouse: '',
+            warehouse_owner: '',
             cod_product: '',
-            oc: '',
-            generic_descript: '',
             item_description: '',
             um: '',
-            received_quantity: 0,
-            stowage_card: '-',
-            price_unit: '',
-            price_total: 0,
-            comment: ''
+            quantity: 0,
+            price_unit: 0,
+            price_total: 0
         },
         confirm_loading: false,
         cancel_loading: false,
         confirm_text: 'Confirmar',
         session: JSON.parse(sessionStorage.getItem('semtinel')),
-        pole: localStorage.getItem('stnel_logist_pole'),
-        project: localStorage.getItem('stnel_logist_project')
+        pole: sessionStorage.getItem('stnel_logist_pole'),
+        project: sessionStorage.getItem('stnel_logist_project')
       };
     },
     created() {
-        this.entry = JSON.parse(this.$route.params.entry)
-        this.pagetitle = this.entry['code']
-        if (this.entry['type'] == 'oc')
-            this.table_oc = true
-        else
-            this.table_oc = false
-        if (this.entry['confirm'] == 1)
+        this.output = JSON.parse(this.$route.params.output)
+        this.pagetitle = this.output['code']
+        if (this.output['confirm'] == 1)
             this.confirm_text = 'Confirmada'
         else
             this.confirm_text = 'Confirmar'
@@ -64,49 +57,32 @@ export default {
     },
     methods: {
         openScanner: function (path) {
-            window.open('http://localhost/semtinel/public/storage/app/public/' + path, '_blank', 'noreferrer')
+            window.open('http://localhost/semtinel/storage/app/public/' + path, '_blank', 'noreferrer')
         },
-        docPdf: function(entry) {
-            window.open('http://localhost/semtinel/public/api/logistics/pdf/entry/' + entry, '_blank', 'noreferrer')
+        docPdf: function(output) {
+            window.open('http://localhost/semtinel/public/api/logistics/pdf/output/' + output, '_blank', 'noreferrer')
         },
         show: function (idx) {
             let cmp = this
-            if (cmp.table_oc) {
-                cmp.item_details = {
-                    cod_product: cmp.entry['items'][idx].product_code,
-                    oc: cmp.entry['oc'],
-                    generic_descript: cmp.entry['items'][idx].product_description,
-                    item_description: cmp.entry['items'][idx].item_description,
-                    um: cmp.entry['items'][idx].um,
-                    received_quantity: cmp.entry['items'][idx].received_quantity,
-                    stowage_card: cmp.entry['items'][idx].stowage_card,
-                    price_unit: cmp.entry['items'][idx].price_unit,
-                    price_total: cmp.entry['items'][idx].price_total,
-                    comment: (cmp.entry['items'][idx].comment == '') ? '-' : cmp.entry['items'][idx].comment
-                }
-            }
-            else {
-                cmp.item_details = {
-                    cod_product: cmp.entry['items'][idx].product_code,
-                    oc: cmp.entry['items'][idx].oc,
-                    docnum: (cmp.entry['origin'] != 'Transferencia de Pañol') ? cmp.entry['items'][idx].docnum : cmp.entry.document_number,
-                    item_description: cmp.entry['items'][idx].item_description,
-                    um: cmp.entry['items'][idx].um,
-                    product_quantity: (cmp.entry['origin'] != 'Transferencia de Pañol') ? cmp.entry['items'][idx].product_quantity : cmp.entry['items'][idx].received_quantity,
-                    received_quantity: cmp.entry['items'][idx].received_quantity,
-                    stowage_card: cmp.entry['items'][idx].stowage_card,
-                    price_unit: cmp.entry['items'][idx].price_unit,
-                    price_total: cmp.entry['items'][idx].price_total,
-                    comment: (cmp.entry['items'][idx].comment == '') ? '-' : cmp.entry['items'][idx].comment
-                }
+            cmp.item_details = {
+                pole: cmp.output['pole_name'],
+                project: cmp.output['project_name'],
+                warehouse: cmp.output['warehouse_name'],
+                warehouse_owner: cmp.output['warehouse_owner'],
+                cod_product: cmp.output['items'][idx].product_code,
+                item_description: cmp.output['items'][idx].item_description,
+                um: cmp.output['items'][idx].um,
+                quantity: cmp.output['items'][idx].quantity,
+                price_unit: cmp.output['items'][idx].price_unit,
+                price_total: cmp.output['items'][idx].price_total,
             }
             cmp.show_details = true
         },
-        attachFile: function (id, entry) {
+        attachFile: function (id, code) {
             this.$refs.uploadFile.value = null
             this.upload_form_error.error_text = ''
             this.upload_id = id
-            this.upload_entry = entry
+            this.upload_output = code
         },
         onChangeFile(e) {
             this.upload_file = e.target.files[0];
@@ -127,22 +103,22 @@ export default {
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
             data.append('id', cmp.upload_id)
-            data.append('entry', cmp.upload_entry)
+            data.append('output', cmp.upload_output)
             data.append('file', cmp.upload_file)
             data.append('user', cmp.session.id)
             data.append('pole', cmp.pole)
             data.append('project', cmp.project)
 
-            axios.post('http://localhost/semtinel/public/api/logistics/entry/upload', data, {
+            axios.post('http://localhost/semtinel/public/api/logistics/output/upload', data, {
                     headers: headers
                 }).then(function (response) {
                     if (response.data.success) {
                         // Hide modal
                         cmp.$refs.CloseUpload.click()
                         cmp.upload_form_loading = false
-                        cmp.entry.attach_path = response.data.path
-                        let path_arr = cmp.entry.attach_path.split('.')
-                        cmp.entry.attach_type = path_arr[1]
+                        cmp.output.attach_path = response.data.path
+                        let path_arr = cmp.output.attach_path.split('.')
+                        cmp.output.attach_type = path_arr[1]
                         toastr.success('El archivo fue adjuntado con éxito.')
                     }
                     else {
@@ -159,7 +135,7 @@ export default {
                     return;
                 })
         },
-        confirmEntry: function () {
+        confirmOutput: function () {
             let cmp = this
             cmp.confirm_loading = true
             let headers = {
@@ -167,21 +143,19 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            axios.post('http://localhost/semtinel/public/api/logistics/entry/confirm', {
-                    'entry' : cmp.entry.id,
+            axios.post('http://localhost/semtinel/public/api/logistics/output/confirm', {
+                    'output' : cmp.output.id,
                     'user': cmp.session.id,
                     'pole': cmp.pole,
-                    'project': cmp.project,
-                    'transfer': cmp.entry.transfer,
-                    'code': cmp.entry.code
+                    'project': cmp.project
                 }, {
                     headers: headers
                 }).then(function (response) {
                     if (response.data.success) {
                         cmp.confirm_loading = false
-                        cmp.entry.confirm = 1
+                        cmp.output.confirm = 1
                         cmp.confirm_text = 'Confirmada'
-                        toastr.success('La Entrada fue Confirmada con éxito.')
+                        toastr.success('La Salida fue Confirmada con éxito.')
                     }
                     else {
                         cmp.confirm_loading = false
@@ -193,7 +167,7 @@ export default {
                     return;
                 })
         },
-        cancelEntry: function () {
+        cancelOutput: function () {
             let cmp = this
             cmp.cancel_loading = true
             let headers = {
@@ -201,8 +175,8 @@ export default {
                 'Accept': 'application/json',
                 'Authorization': 'Bearer ' + cmp.session.access_token
             }
-            axios.post('http://localhost/semtinel/public/api/logistics/entry/cancel', {
-                    'entry' : cmp.entry.id,
+            axios.post('http://localhost/semtinel/public/api/logistics/output/cancel', {
+                    'output' : cmp.output.id,
                     'user': cmp.session.id,
                     'pole': cmp.pole,
                     'project': cmp.project
@@ -211,8 +185,8 @@ export default {
                 }).then(function (response) {
                     if (response.data.success) {
                         cmp.cancel_loading = false
-                        toastr.success('La Entrada fue Cancelada con éxito.')
-                        cmp.$router.push('/semtinel/public/logistics/entries')
+                        toastr.success('La Salida fue Cancelada con éxito.')
+                        cmp.$router.push('/semtinel/public/logistics/outputs')
                     }
                     else {
                         cmp.cancel_loading = false
@@ -230,17 +204,17 @@ export default {
 
 <template>
     <page-header 
-        :pagetitle="'Detalle de la entrada: ' + pagetitle"
+        :pagetitle="'Detalle de la Salida No. ' + pagetitle"
         :breadcrumbs="true"
         :navbar="[
             {
-                page: 'Entradas',
-                link: '/semtinel/public/logistics/entries',
-                tooltip: 'Click para regresar al listado de Entradas',
+                page: 'Salidas',
+                link: '/semtinel/public/logistics/outputs',
+                tooltip: 'Click para regresar al listado de Salidas',
                 active: false
             },
             {
-                page: 'Detalle de entrada',
+                page: 'Detalle de Salida',
                 link: '',
                 tooltip: '',
                 active: true
@@ -253,36 +227,37 @@ export default {
         <div class="row">
             <div class="col-sm-6">
                 <h5>
-                    <i class="mdi mdi-truck-check-outline mdi-36px align-middle"></i>&nbsp;&nbsp;Fecha de la entrada: {{ entry.created_at }}
+                    <i class="mdi mdi-cart-arrow-right mdi-36px align-middle"></i>&nbsp;&nbsp;Fecha de la salida: {{ output.created_at }}
                 </h5>
             </div>
             <div class="col-sm-6 text-right">
                 <a href="javascript:void(0);"
                     class="btn btn-app system"
                     v-tooltip="'Generar documento PDF'"
-                    v-on:click="docPdf(entry.id)">
+                    v-on:click="docPdf(output.id)">
                   <i class="fas fa-file-pdf"></i> Documento
                 </a>
-                <a href="javascript:void(0);" v-if="('logistics.api.upload.entry' in $root.session.permissions)"
+                <a href="javascript:void(0);" v-if="('logistics.api.upload.output' in $root.session.permissions)"
                     class="btn btn-app system"
                     data-toggle="modal" 
                     data-target="#modal-upload-form"
                     v-tooltip="'Adjuntar documento escaneado'"
-                    v-on:click="attachFile(entry.id, entry.code)">
+                    v-on:click="attachFile(output.id, output.code)">
                   <i class="fas fa-paperclip"></i> Adjuntar
                 </a>
-                <a href="javascript:void(0);" v-if="('logistics.api.cofirm.entry' in $root.session.permissions)"
+                <a href="javascript:void(0);" 
+                    v-if="(output.type == 'Despacho a Obra') && ('logistics.api.cofirm.output' in $root.session.permissions)"
                     class="btn btn-app success"
-                    :class="(entry.confirm == 1) ? 'disabled' : ''"
-                    v-tooltip="'Confirmar entrada'"
-                    v-on:click.stop="confirmEntry()">
+                    :class="(output.confirm == 1) ? 'disabled' : ''"
+                    v-tooltip="'Confirmar salida'"
+                    v-on:click.stop="confirmOutput()">
                   <i class="fas" :class="(confirm_loading) ? 'fa-spinner fa-pulse' : 'fa-check'"></i> {{ confirm_text }}
                 </a>
                 <a href="javascript:void(0);" 
-                    v-if="(entry.confirm != 1 && entry.transfer != 1) && (session.id == entry.created_by || ('Responsable de Especialidad' in $root.session.roles && entry.warehouse in session.warehouses))" 
                     class="btn btn-app danger"
-                    v-tooltip="'Cancelar entrada'"
-                    v-on:click.stop="cancelEntry()">
+                    v-if="(output.confirm != 1) && (session.id == output.created_by || ('Responsable de Especialidad' in $root.session.roles && output.warehouse in session.warehouses))"
+                    v-tooltip="'Cancelar salida'"
+                    v-on:click.stop="cancelOutput()">
                   <i class="fas" :class="(cancel_loading) ? 'fa-spinner fa-pulse' : 'fa-times'"></i> Cancelar
                 </a>
             </div>
@@ -292,67 +267,72 @@ export default {
         <div class="row invoice-info">
             <div class="col-sm-3 invoice-col">
                 <div class="form-group">
+                    <label class="mb-1">Polo</label>
+                    <h6 class="p-0"><strong>{{ output.pole_name }}</strong></h6>
+                </div>
+                <div class="form-group">
+                    <label class="mb-1">Proyecto</label>
+                    <h6 class="p-0"><strong>{{ output.project_name }}</strong></h6>
+                </div>
+                <div class="form-group">
                     <label class="mb-1">Origen</label>
-                    <h6 class="p-0"><strong>{{ entry.origin }}</strong></h6>
+                    <h6 class="p-0"><strong>{{ output.warehouse_name }}</strong></h6>
                 </div>
                 <div class="form-group">
-                    <label class="mb-1">Tipo de documento</label>
-                    <h6 class="p-0"><strong>{{ entry.document_type }}</strong></h6>
-                </div>
-                <div class="form-group">
-                    <label class="mb-1">No. documento</label>
-                    <h6 class="p-0"><strong>{{ entry.document_number }}</strong></h6>
-                </div>
-                <div class="form-group">
-                    <label class="mb-1">Orden de Compra</label>
-                    <h6 class="p-0"><strong>{{ entry.oc }}</strong></h6>
+                    <label class="mb-1">Responsable</label>
+                    <h6 class="p-0"><strong>{{ output.warehouse_owner }}</strong></h6>
                 </div>
             </div>
             <!-- /.col -->
             <div class="col-sm-3 invoice-col">
                 <div class="form-group">
+                    <label class="mb-1">Tipo</label>
+                    <h6 class="p-0"><strong>{{ output.type }}</strong></h6>
+                </div>
+                <div class="form-group">
                     <label class="mb-1">Destino</label>
-                    <h6 class="p-0"><strong>{{ entry.warehouse_name }}</strong></h6>
+                    <h6 class="p-0"><strong>{{ output.destin }}</strong></h6>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="output.type == 'Despacho a Obra'">
+                    <label class="mb-1">Autorizado</label>
+                    <h6 class="p-0"><strong>{{ output.authorized }}</strong></h6>
+                </div>
+                <div class="form-group" v-else>
                     <label class="mb-1">Responsable</label>
-                    <h6 class="p-0"><strong>{{ entry.warehouse_owner }}</strong></h6>
+                    <h6 class="p-0"><strong>{{ output.destin_warehouse_owner }}</strong></h6>
                 </div>
                 <div class="form-group">
-                    <label class="mb-1">Polo</label>
-                    <h6 class="p-0"><strong>{{ entry.pole_name }}</strong></h6>
+                    <label class="mb-1">Autoriza</label>
+                    <h6 class="p-0"><strong>{{ output.authorizing }}</strong></h6>
                 </div>
-                <div class="form-group">
-                    <label class="mb-1">Proyecto</label>
-                    <h6 class="p-0"><strong>{{ entry.project_name }}</strong></h6>
-                </div>
+                
             </div>
             <!-- /.col -->
             <div class="col-sm-3 invoice-col">
                 <div class="form-group">
                     <label class="mb-1">Estado</label><br>
-                    <span class="badge" :class="(entry.status == 'Parcial') ? 'badge-warning' : 'badge-dark'">
-                        Entrega {{ entry.status }}
+                    <span class="badge" :class="(output.status == 'Creada') ? 'badge-warning' : 'badge-dark'">
+                        Salida {{ output.status }}
                     </span>
                 </div>
                 <div class="form-group" >
                     <label class="mb-1">Documento escaneado</label><br>
                     <a href="javascript:void(0);" 
-                        v-if="entry.attach_path != '' && entry.attach_path != null && entry.attach_type == 'pdf'"
-                        v-on:click.stop="openScanner(entry.attach_path)">
+                        v-if="output.attach_path != '' && output.attach_path != null && output.attach_type == 'pdf'"
+                        v-on:click.stop="openScanner(output.attach_path)">
                         <img src="http://localhost/semtinel/public/themes/semtinel/img/icon-pdf2.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
                     <a href="javascript:void(0);" 
-                        v-else-if="entry.attach_path != '' && entry.attach_path != null && entry.attach_type == 'png'"
-                        v-on:click.stop="openScanner(entry.attach_path)">
+                        v-else-if="output.attach_path != '' && output.attach_path != null && output.attach_type == 'png'"
+                        v-on:click.stop="openScanner(output.attach_path)">
                         <img src="http://localhost/semtinel/public/themes/semtinel/img/icon-png.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
                     <a href="javascript:void(0);" 
-                        v-else-if="entry.attach_path != '' && entry.attach_path != null && entry.attach_type == 'jpg'"
-                        v-on:click.stop="openScanner(entry.attach_path)">
+                        v-else-if="output.attach_path != '' && output.attach_path != null && output.attach_type == 'jpg'"
+                        v-on:click.stop="openScanner(output.attach_path)">
                         <img src="http://localhost/semtinel/public/themes/semtinel/img/icon-jpg.png" alt="Documento Escaneado" v-tooltip="'Click para abrir'"/>
                     </a>
-                    <span v-else class="badge badge-danger" v-if="entry.attach_path == '' || entry.attach_path == null">
+                    <span v-else class="badge badge-danger" v-if="output.attach_path == '' || output.attach_path == null">
                         No se ha adjuntado el documento escaneado aún.
                     </span>
                 </div>
@@ -361,97 +341,44 @@ export default {
         </div>
         <!-- /.row -->
 
-        <!-- Table OC row -->
-        <label class="pt-3 mb-0">LISTADO DE PRODUCTOS RECIBIDOS:</label>
-        <div class="row pt-3" :class="(!table_oc) ? 'hidden' : ''">
+        <!-- Table Products -->
+        <div class="row pt-4">
             <div class="col-12 table-responsive">
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th width="50" class="text-center no-sort">No.</th>
+                        <th width="150" class="text-center">C&oacute;digo</th>
                         <th>Descripción</th>
-                        <th width="100" class="text-center no-sort">UM</th>
-                        <th width="100" class="text-center no-sort">Ctdad Recibida</th>
-                        <th width="100" class="text-right no-sort">Precio Unitario</th>
-                        <th width="130" class="text-right no-sort">Importe Total</th>
-                        <th width="150" class="text-center no-sort">Tarjeta Estiba</th>
-                        <th width="300" class="no-sort">Comentario</th>
+                        <th width="100" class="text-center">UM</th>
+                        <th width="100" class="text-center">Ctdad</th>
+                        <th width="100" class="text-right">Precio Unitario</th>
+                        <th width="130" class="text-right">Precio Total</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(item, idx) in entry['items']" :key="item['id']">
-                        <td class="text-center">{{ idx + 1 }}</td>
+                    <tr v-for="(item, idx) in output['items']" :key="item['id']">
+                        <td class="text-center">{{ item['product_code'] }}</td>
                         <td>
-                            <a class="show-lnk" 
-                                href="javascript:void(0);"
-                                v-tooltip="'Click para Mostrar Detalles de este producto'"
-                                data-toggle="modal" 
-                                data-target="#modal-item-details"
-                                v-on:click="show(idx)">
-                                {{ item['item_description'] }}
-                            </a>
+                            {{ item['item_description'] }}
                         </td>
                         <td class="text-center">{{ item['um'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-received'" class="text-center">{{ item['received_quantity'] }}</td>
+                        <td class="text-center">{{ item['quantity'] }}</td>
                         <td class="text-right">{{ item['price_unit'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-pricetotal'" class="text-right">{{ item['price_total'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-stowagecard'" class="text-center">{{ item['stowage_card'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-comment'">{{ item['comment'] }}</td>
+                        <td class="text-right">{{ item['price_total'] }}</td>
                     </tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-right"><strong>Costo Total:</strong></td>
+                            <td class="text-right"><strong>{{ output.price_total }}</strong></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             <!-- /.col -->
         </div>
         <!-- /.row -->
         
-        <!-- Table picking row -->
-        <div class="row pt-3" :class="(table_oc) ? 'hidden' : ''">
-            <div class="col-12 table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th width="50" class="text-center no-sort">No.</th>
-                        <th>Descripción</th>
-                        <th width="100" class="text-center no-sort">UM</th>
-                        <th width="100" class="text-center no-sort"
-                            v-if="entry['origin'] != 'Transferencia de Pañol'">Ctdad Despachada</th>
-                        <th width="100" class="text-center no-sort">Ctdad Recibida</th>
-                        <th width="100" class="text-right no-sort">Precio Unitario</th>
-                        <th width="130" class="text-right no-sort">Importe Total</th>
-                        <th width="150" class="text-center no-sort">Tarjeta Estiba</th>
-                        <th width="300" class="no-sort"
-                            v-if="entry['origin'] != 'Transferencia de Pañol'">Comentario</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(item, idx) in entry['items']" :key="item['id']">
-                        <td class="text-center">{{ idx + 1 }}</td>
-                        <td>
-                            <a class="show-lnk" 
-                                href="javascript:void(0);"
-                                v-tooltip="'Click para Mostrar Detalles de este producto'"
-                                data-toggle="modal" 
-                                data-target="#modal-item-details"
-                                v-on:click="show(idx)">
-                                {{ item['item_description'] }}
-                            </a>
-                        </td>
-                        <td class="text-center">{{ item['um'] }}</td>
-                        <td class="text-center"
-                            v-if="entry['origin'] != 'Transferencia de Pañol'">{{ item['product_quantity'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-received'" class="text-center">{{ item['received_quantity'] }}</td>
-                        <td class="text-right">{{ item['price_unit'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-pricetotal'" class="text-right">{{ item['price_total'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-stowagecard'" class="text-center">{{ item['stowage_card'] }}</td>
-                        <td :id="'item-' + (idx + 1) + '-comment'"
-                            v-if="entry['origin'] != 'Transferencia de Pañol'">{{ item['comment'] }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- /.row -->
     </div>
 
     <!-- Modal Form -->
@@ -471,13 +398,13 @@ export default {
                 <div class="modal-body px-4">
                     <form enctype="multipart/form-data">
                         <input type="hidden" 
-                            name="upload_id_entry" 
-                            id="upload_id_entry"
+                            name="upload_id_output" 
+                            id="upload_id_output"
                             v-model="upload_id">
                         <div class="row pt-3 pb-1">
                             <div class="col-md-12">
                                 <h6 class="text-green">
-                                    Entrada No. <strong>{{ upload_entry }}</strong>
+                                    Salida No. <strong>{{ upload_output }}</strong>
                                 </h6>
                             </div>
                         </div>
@@ -520,7 +447,7 @@ export default {
     </div>
     <!-- /.Modal Form -->
 
-    <!-- Modal Details -->
+    <!-- Modal Details
     <div class="modal fade" id="modal-item-details" aria-hidden="true" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -602,6 +529,6 @@ export default {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- /.Modal Details -->
 </template>

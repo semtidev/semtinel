@@ -41,6 +41,12 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
   
+  <div id="app-loading">
+    <div class="msg">
+      Estamos preparando todo. Espera unos segundos... 
+    </div>
+  </div>
+
   <!-- App container -->
   <div id="app">
     <!-- App wrapper -->

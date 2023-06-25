@@ -39,10 +39,10 @@
   onMounted(async () => {
     //INIT STORAGE
     boardsStore.$subscribe((mutations, state) => {
-      localStorage.setItem("boards", JSON.stringify(state));
+      sessionStorage.setItem("boards", JSON.stringify(state));
       console.log("eaea");
     });
-    const storageData = localStorage.getItem("boards");
+    const storageData = sessionStorage.getItem("boards");
     if (storageData === null) {
       const jsonData = await import("@/json/data.json");
       boardsStore.boards = jsonData.boards;

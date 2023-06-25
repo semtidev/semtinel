@@ -28,6 +28,11 @@ export default {
       type: String,
       default: 'Proyecto',
       required: false
+    },
+    inventory_cost: {
+      type: Number,
+      default: 0,
+      required: false
     }
   }
 };
@@ -60,7 +65,9 @@ export default {
             <!-- POLE & PROJECT -->
             <div v-if="pole_project">
               <h6 class="text-right">
-                <span>Polo:</span> {{ pole }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>Proyecto:</span> {{ project }}
+                <span>Polo:</span> <font class="mr-5">{{ pole }}</font>
+                <span>Proyecto:</span> <font :class="(inventory_cost != 0) ? 'mr-5' : ''">{{ project }}</font>
+                <span v-if="(inventory_cost > 0)">Costo de Inventarios:</span> {{ inventory_cost }}
               </h6> 
             </div>
             <!-- \ BREADCRUMBS -->

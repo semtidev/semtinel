@@ -2,13 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // LOGISTICS
 const LogisticsHomeComponent = () => import('../components/logistics/HomeComponent.vue');
-const LogisticsEntryComponent = () => import('../components/logistics/EntryComponent.vue');
-const LogisticsEntriesComponent = () => import('../components/logistics/EntriesComponent.vue');
-const LogisticsInventoryComponent = () => import('../components/logistics/InventoryComponent.vue');
-const LogisticsOutputComponent = () => import('../components/logistics/OutputComponent.vue');
-const LogisticsOutputsComponent = () => import('../components/logistics/OutputsComponent.vue');
-const LogisticsEntryDetailComponent = () => import('../components/logistics/EntryDetailComponent.vue');
-const LogisticsOutputDetailComponent = () => import('../components/logistics/OutputDetailComponent.vue');
+const LogisticsEntryComponent = () => import('../components/logistics/warehouses/EntryComponent.vue');
+const LogisticsEntriesComponent = () => import('../components/logistics/warehouses/EntriesComponent.vue');
+const LogisticsInventoryComponent = () => import('../components/logistics/warehouses/InventoryComponent.vue');
+const LogisticsOutputComponent = () => import('../components/logistics/warehouses/OutputComponent.vue');
+const LogisticsOutputsComponent = () => import('../components/logistics/warehouses/OutputsComponent.vue');
+const LogisticsEntryDetailComponent = () => import('../components/logistics/warehouses/EntryDetailComponent.vue');
+const LogisticsOutputDetailComponent = () => import('../components/logistics/warehouses/OutputDetailComponent.vue');
 const LogisticsGoodsflowComponent = () => import("../components/logistics/goodsflow/GoodsflowComponent.vue");
 
 // ADMINISTRATOR

@@ -4,19 +4,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
-import PageHeader from "../layouts/HeaderComponent.vue";
+import PageHeader from "../../layouts/HeaderComponent.vue";
 
-import TreeselectEopComponent from '../common/TreeselectEopComponent.vue';
+import TreeselectEopComponent from '../../common/TreeselectEopComponent.vue';
 
 export default {
     data: function () {
       return {
-        //store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-        //store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
-        //store_warehouses: (localStorage.getItem('semtinel_warehouses') != '') ? JSON.parse(localStorage.getItem('semtinel_warehouses')) : null,
-        pole: localStorage.getItem('stnel_logist_pole'),
+        //store_poles: JSON.parse(sessionStorage.getItem('semtinel_poles')),
+        //store_projects: JSON.parse(sessionStorage.getItem('semtinel_projects')),
+        //store_warehouses: (sessionStorage.getItem('semtinel_warehouses') != '') ? JSON.parse(sessionStorage.getItem('semtinel_warehouses')) : null,
+        pole: sessionStorage.getItem('stnel_logist_pole'),
         pole_name: '',
-        project: localStorage.getItem('stnel_logist_project'),
+        project: sessionStorage.getItem('stnel_logist_project'),
         project_name: '',
         session: JSON.parse(sessionStorage.getItem('semtinel')),
         warehouse_id: '',
@@ -51,7 +51,7 @@ export default {
     async created() {
         let cmp = this
         cmp.session.poles.map(function(value, key) {
-            if (value.abbr == cmp.pole)
+            if (value.id == cmp.pole)
                 cmp.pole_name = value.name
         });
         cmp.session.projects.map(function(value, key) {

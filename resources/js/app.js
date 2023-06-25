@@ -3,6 +3,7 @@
 // Vendor
 import './bootstrap';
 import "jquery/dist/jquery.min.js";
+import $ from "jquery";
 import "bootstrap/dist/css/bootstrap.min.css";
 import FloatingVue from 'floating-vue'
 import { createApp, ref, computed, watch } from 'vue';
@@ -29,6 +30,7 @@ const app = createApp({
                 'admin': 'systems,users,roles,security,warehouse',
                 'logistics': 'entry,entries,inventory,output,outputs,goodsflow'
             },
+            app_load: false,
             app_name: 'semtinel',
             page_active: 'home',
             cart_items: [],
@@ -37,37 +39,31 @@ const app = createApp({
             cart_totals: {
                 price_total: 0
             },
-            session: JSON.parse(sessionStorage.getItem('semtinel'))
+            session: JSON.parse(sessionStorage.getItem('semtinel')),
+            dataTableLanguage: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando de _START_ a _END_ de _TOTAL_ Registros",
+                "infoEmpty": "Mostrando de 0 a 0 of 0 registros",
+                "infoFiltered": "(Filtrado de _MAX_ total registros)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Registros",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar: ",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
         };
     },
     async created() {
-        /*let cmp = this
-        // ---------------------------
-        //   Create app local stores
-        // ---------------------------
-        let headers = {
-            'User-Agent': 'testing/1.0',
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + cmp.session.access_token
-        }
-        await fetch("http://localhost/semtinel/api/poles", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Poles store
-                localStorage.setItem('semtinel_poles', JSON.stringify(data))
-            });*/
-        /*await fetch("http://localhost/semtinel/api/projects", {
-                method: 'GET',
-                headers: headers
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                // Projects store
-                localStorage.setItem('semtinel_projects', JSON.stringify(data))
-            });*/
+        
     },
     mounted() {
         // Start bootstrap tooltips
@@ -79,6 +75,12 @@ const app = createApp({
     watch: {
         $route(to, from) {
             this.setAppActive(to.fullPath)
+        },
+        app_load: function (val) {
+            if (val)
+                $("#app-loading").addClass('hidden')
+            else
+                $("#app-loading").removeClass('hidden')
         }
     },
     methods: {

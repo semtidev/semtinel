@@ -4,17 +4,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
-import PageHeader from "../layouts/HeaderComponent.vue";
+import PageHeader from "../../layouts/HeaderComponent.vue";
 
 export default {
     data: function () {
       return {
-        //store_poles: JSON.parse(localStorage.getItem('semtinel_poles')),
-        //store_projects: JSON.parse(localStorage.getItem('semtinel_projects')),
-        //store_warehouses: JSON.parse(localStorage.getItem('semtinel_warehouses')),
-        pole: localStorage.getItem('stnel_logist_pole'),
+        //store_poles: JSON.parse(sessionStorage.getItem('semtinel_poles')),
+        //store_projects: JSON.parse(sessionStorage.getItem('semtinel_projects')),
+        //store_warehouses: JSON.parse(sessionStorage.getItem('semtinel_warehouses')),
+        pole: sessionStorage.getItem('stnel_logist_pole'),
         pole_name: '',
-        project: localStorage.getItem('stnel_logist_project'),
+        project: sessionStorage.getItem('stnel_logist_project'),
         project_name: '',
         projects: [],
         warehouses: [],
@@ -121,7 +121,7 @@ export default {
     created() {
         let cmp = this
         cmp.session.poles.map(function(value, key) {
-            if (value.abbr == cmp.pole)
+            if (value.id == cmp.pole)
                 cmp.pole_name = value.name
         });
         cmp.session.projects.map(function(value, key) {
@@ -487,7 +487,7 @@ export default {
                     'doctype': cmp.origin_data.doctype_value,
                     'ocnumber': cmp.origin_data.ocnumber,
                     'docnum': cmp.origin_data.docnum_value,
-                    'project': localStorage.getItem('stnel_logist_project')
+                    'project': sessionStorage.getItem('stnel_logist_project')
                 }, {
                     headers: headers
                 }).then(function (response) {

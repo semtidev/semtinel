@@ -49,9 +49,9 @@
             </a>
             <ul>
               <li><a href="logout">Cerrar Sesi&oacute;n</a></li>
-              @can('app.web.admin')
+              <!--@can('app.web.admin')
               <li><a href="admin">Administraci&oacute;n</a></li>
-              @endcan
+              @endcan-->
             </ul>
           </li>
         </ul>
